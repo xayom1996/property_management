@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/widgets/box_text.dart';
@@ -59,12 +60,12 @@ class _BoxInputFieldState extends State<BoxInputField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 23),
+      padding: EdgeInsets.only(bottom: 23.h),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.sp),
         decoration: BoxDecoration(
             color: getBackgroundColor(),
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderRadius: BorderRadius.all(Radius.circular(12.sp)),
             border: widget.isError
                 ? Border.all(color: Color.fromRGBO(255, 77, 109, 1))
                 : isFocused
@@ -105,7 +106,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
               Column(
                 children: [
                   SizedBox(
-                    height: 10,
+                    height: 10.h,
                   ),
                   Container(
                     child: widget.trailing,

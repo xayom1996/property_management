@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 
@@ -35,8 +36,8 @@ class BoxButton extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 350),
         width: double.infinity,
-        padding: EdgeInsets.all(16),
-        // height: 48,
+        // padding: EdgeInsets.all(16.sp),
+        height: 56.h,
         alignment: Alignment.center,
         decoration: !outline
             ? BoxDecoration(
@@ -45,11 +46,11 @@ class BoxButton extends StatelessWidget {
                 : !disabled 
                   ? kcPrimaryColor 
                   : kcLightGreyColor,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.sp),
         )
             : BoxDecoration(
                   color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(24.sp),
                   border: Border.all(
                     color: kcPrimaryColor,
                     width: 1,
@@ -60,7 +61,7 @@ class BoxButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (leading != null) leading!,
-                  if (leading != null) SizedBox(width: 5),
+                  if (leading != null) SizedBox(width: 5.w),
                   Text(
                     title,
                     style: body.copyWith(

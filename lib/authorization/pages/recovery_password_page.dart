@@ -18,6 +18,8 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
   bool isSuccess = false;
   final TextEditingController emailController = TextEditingController();
 
+  String email = '';
+
   String validateEmail(String? value) {
     String pattern =
         r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
@@ -36,11 +38,11 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
 
   @override
   void initState() {
-    // emailController.addListener(() {
-    //   setState(() {
-    //     login = loginController.text;
-    //   });
-    // });
+    emailController.addListener(() {
+      setState(() {
+        email = emailController.text;
+      });
+    });
 
     super.initState();
   }
@@ -50,7 +52,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(252, 252, 252, 1),
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         body: !isSuccess
             ? Stack(
                 children: [
@@ -80,7 +82,12 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                       left: 16,
                     ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 44, horizontal: 24),
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).viewInsets.bottom == 0
+                            ? 44.h
+                            : 0,
+                        horizontal: 24.w
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -126,7 +133,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                           disabled: isDisabledButton() ? false : true,
                           onTap: () {
                             setState(() {
-                              if (validateEmail(emailController.text).isNotEmpty) {
+                              if (validateEmail(email).isNotEmpty) {
                                 isError = true;
                               }
                               else{
@@ -144,7 +151,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                 ],
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(vertical: 44, horizontal: 24),
+                padding: EdgeInsets.symmetric(vertical: 44.h, horizontal: 24.w),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -152,7 +159,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                     Spacer(),
                     SvgPicture.asset(
                       'assets/icons/success_rounded.svg',
-                      height: 68,
+                      height: 68.h,
                     ),
                     SizedBox(
                       height: 64.h,
