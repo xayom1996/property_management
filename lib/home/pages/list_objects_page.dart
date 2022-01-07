@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'create_object_page.dart';
 import 'package:property_management/home/widgets/object_card.dart';
 import 'package:property_management/home/widgets/object_skeleton.dart';
 import 'package:property_management/theme/colors.dart';
@@ -55,7 +56,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 4), () {
+    Timer(const Duration(seconds: 2), () {
       setState(() {
         isLoading = false;
       });
@@ -255,23 +256,31 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/plus.svg',
-                              color: Color(0xff4B81EF),
-                              height: 16.h,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              'Добавить',
-                              style: title2.copyWith(
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/plus.svg',
                                 color: Color(0xff4B81EF),
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400
+                                height: 16.h,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 4.w),
+                              Text(
+                                'Добавить',
+                                style: title2.copyWith(
+                                  color: Color(0xff4B81EF),
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

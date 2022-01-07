@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/authorization/pages/authorization_page.dart';
+import 'package:property_management/characteristics/pages/characteristics_page.dart';
 import 'package:property_management/home/pages/list_objects_page.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/widgets/box_icon.dart';
@@ -24,7 +25,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   final List<Widget> pages = [
     ListObjectsPage(),
-    Container(),
+    CharacteristicsPage(),
     Container(),
     Container(),
     Container(),

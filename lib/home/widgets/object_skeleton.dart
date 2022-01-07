@@ -14,17 +14,6 @@ class ObjectSkeleton extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            height: 44.h,
-            width: 44.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(22.sp)),
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(
-            width: 16.w,
-          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -12,6 +12,7 @@ class BoxInputField extends StatefulWidget {
   final Widget? trailing;
   bool password;
   final bool isError;
+  final bool? enabled;
   final void Function()? trailingTapped;
 
 
@@ -20,6 +21,7 @@ class BoxInputField extends StatefulWidget {
     required this.controller,
     required this.title,
     this.placeholder = '',
+    this.enabled = true,
     this.leading,
     this.trailing,
     this.trailingTapped,
@@ -81,6 +83,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
                 children: [
                   BoxText.caption(widget.title),
                   TextField(
+                    enabled: widget.enabled,
                     controller: widget.controller,
                     style: body,
                     focusNode: _focus,
@@ -102,7 +105,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
                 ],
               ),
             ),
-            if (isFocused || widget.controller.text.isNotEmpty)
+            // if (isFocused || widget.controller.text.isNotEmpty)
               Column(
                 children: [
                   SizedBox(

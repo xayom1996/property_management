@@ -20,12 +20,13 @@ class _SplashPageState extends State<SplashPage> {
 
   void setTimer(){
     Timer(const Duration(milliseconds: 1500), () {
-      Navigator.pushAndRemoveUntil(
+      Navigator.pop(context);
+      Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => AuthorizationPage(),
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => AuthorizationPage(),
+          transitionDuration: Duration.zero,
         ),
-            (route) => false,
       );
     });
   }

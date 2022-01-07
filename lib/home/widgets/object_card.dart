@@ -48,21 +48,6 @@ class ObjectCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BoxIcon(
-              iconPath: 'assets/icons/home_white.svg',
-              gradientIcon: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xffACF155),
-                    Color(0xff39B354),
-                  ]
-              ),
-              backgroundColor: Colors.white,
-            ),
-            SizedBox(
-              width: 16.w,
-            ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

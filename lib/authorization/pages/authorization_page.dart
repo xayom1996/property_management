@@ -45,6 +45,17 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
     return login != '' && password != '';
   }
 
+  void logIn() {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => DashboardPage(),
+        transitionDuration: Duration.zero,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -128,10 +139,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                       if (login == 'admin' && password == '123456'){
                         isError = false;
                         isBusy = true;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DashboardPage()),
-                        );
+                        logIn();
                       } else {
                         isError = true;
                       }
