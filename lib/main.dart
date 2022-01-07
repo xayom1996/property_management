@@ -5,12 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/authorization/pages/authorization_page.dart';
 import 'package:property_management/authorization/pages/recovery_password_page.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
+import 'home/pages/create_object_page.dart';
 import 'package:property_management/splash_page.dart';
 import 'package:property_management/theme/box_ui.dart';
 
 void main() => runApp(
   DevicePreview(
     enabled: !kReleaseMode,
+    // enabled: false,
     builder: (context) => MyApp(), // Wrap your app
   ),
 );
@@ -24,13 +26,19 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: () => MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Управление недвижимостью',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          // primarySwatch: Colors.blue,
+          backgroundColor: kBackgroundColor,
+          appBarTheme: AppBarTheme(
+            backgroundColor: kBackgroundColor,
+            elevation: 0,
+          ),
         ),
-        useInheritedMediaQuery: true,
+        // useInheritedMediaQuery: true,
         locale: DevicePreview.locale(context),
         builder: DevicePreview.appBuilder,
+        // home: SplashPage(),
         home: SplashPage(),
       )
     );
