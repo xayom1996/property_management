@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/utils/utils.dart';
 import 'create_object_page.dart';
 import 'package:property_management/home/widgets/object_card.dart';
 import 'package:property_management/home/widgets/object_skeleton.dart';
@@ -91,79 +92,62 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                   ),
                 ],
               ),
-              // actions: [
-              //   BoxIcon(
-              //     iconPath: 'assets/icons/profile.svg',
-              //     iconColor: Colors.black,
-              //     backgroundColor: Colors.white,
-              //   ),
-              //   BoxIcon(
-              //     iconPath: 'assets/icons/settings.svg',
-              //     iconColor: Colors.black,
-              //     backgroundColor: Colors.white,
-              //   ),
-              // ],
-              expandedHeight: 138.h,
-              toolbarHeight: 68.h,
-              collapsedHeight: 68.h,
+              expandedHeight: 138,
+              toolbarHeight: 68,
+              collapsedHeight: 68,
               pinned: true,
               backgroundColor: Color(0xffF5F7F9),
               flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                 return FlexibleSpaceBar(
-                  centerTitle: constraints.biggest.height > 68.h ? false : true,
-                  titlePadding: constraints.biggest.height > 68.h
-                      ? EdgeInsets.symmetric(horizontal: 24.w)
-                      : EdgeInsets.all(16.sp),
+                  centerTitle: constraints.biggest.height > 68 ? false : true,
+                  titlePadding: constraints.biggest.height > 68
+                      ? EdgeInsets.symmetric(horizontal: horizontalPadding(44))
+                      : EdgeInsets.all(16),
                   title: AnimatedOpacity(
                     duration: Duration(milliseconds: 300),
-                    // opacity: constraints.biggest.height > 60.h ? 1.0 : 0.0,
                     opacity: 1.0,
                     child: Text('Объекты',
-                        style: constraints.biggest.height > 68.h
-                            ? heading1Style
+                        style: constraints.biggest.height > 68
+                            ? heading1Style.copyWith(fontSize: 24)
                             : body,
                     ),
                   ),
-                  // background: Container(
-                  //   color: Colors.black,
-                  // ),
                 );
               })
             ),
             SliverPersistentHeader(
               pinned: false,
               delegate: _SliverAppBarDelegate(
-                minHeight: 44.h,
-                maxHeight: 44.h,
+                minHeight: 44,
+                maxHeight: 44,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
                   child: TextField(
                     textInputAction: TextInputAction.search,
                     onTap: () {
                     },
-                    // autofocus: true,
                     onChanged: (text) {
                     },
                     style: TextStyle(
                       color: Color(0xff151515),
                       fontWeight: FontWeight.w500,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                     ),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
-                            Radius.circular(15.sp) //                 <--- border radius here
+                            Radius.circular(15) //                 <--- border radius here
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: new BorderSide(color: Color(0xffe9ecf1)),
                         borderRadius: BorderRadius.all(
-                            Radius.circular(15.sp) //                 <--- border radius here
+                            Radius.circular(15) //                 <--- border radius here
                         ),
                       ),
-                      // prefixIconConstraints: BoxConstraints(maxWidth: 32.sp),
+                      // prefixIconConstraints: BoxConstraints(maxWidth: 32),
                       hintText: 'Поиск',
                       hintStyle: body.copyWith(
                         color: Color(0xff3C3C43).withOpacity(0.6),
@@ -185,54 +169,36 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
             SliverPersistentHeader(
               pinned: false,
               delegate: _SliverAppBarDelegate(
-                minHeight: 24.h,
-                maxHeight: 24.h,
+                minHeight: 24,
+                maxHeight: 24,
                 child: Container(),
               ),
             ),
-            // SliverPersistentHeader(
-            //   pinned: true,
-            //   delegate: _SliverAppBarDelegate(
-            //     minHeight: 56.h,
-            //     maxHeight: 56.h,
-            //     child: Container(
-            //       padding: EdgeInsets.symmetric(horizontal: 24.sp),
-            //       color: Colors.white,
-            //       child: Row(
-            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         children: [
-            //           Text('asfasf'),
-            //           Text('asfasf'),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ];
         },
         body: Container(
           decoration: BoxDecoration(
               color: Color(0xffFCFCFC),
               borderRadius: BorderRadius.only(
-                topRight: Radius.circular(24.sp),
-                topLeft: Radius.circular(24.sp),
+                topRight: Radius.circular(24),
+                topLeft: Radius.circular(24),
               )
           ),
           child: CustomScrollView(
             slivers: [
               SliverPersistentHeader(
                 pinned: true,
+                floating: true,
                 delegate: _SliverAppBarDelegate(
-                  minHeight: 56.h,
-                  maxHeight: 56.h,
+                  minHeight: 56,
+                  maxHeight: 56,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 24.sp),
-                    // color: Color(0xffFCFCFC),
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
                     decoration: BoxDecoration(
                         color: Color(0xffFCFCFC),
                         borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(24.sp),
-                          topLeft: Radius.circular(24.sp),
+                          topRight: Radius.circular(24),
+                          topLeft: Radius.circular(24),
                         )
                     ),
                     child: Row(
@@ -243,14 +209,14 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                             SvgPicture.asset(
                               'assets/icons/filter.svg',
                               color: Colors.black,
-                              height: 12.h,
+                              height: 12,
                             ),
-                            SizedBox(width: 4.w),
+                            SizedBox(width: 4),
                             Text(
                               'По названию',
                               style: title2.copyWith(
                                 color: Colors.black,
-                                fontSize: 14.sp,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w400
                               ),
                             ),
@@ -268,14 +234,14 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                               SvgPicture.asset(
                                 'assets/icons/plus.svg',
                                 color: Color(0xff4B81EF),
-                                height: 16.h,
+                                height: 16,
                               ),
-                              SizedBox(width: 4.w),
+                              SizedBox(width: 4),
                               Text(
                                 'Добавить',
                                 style: title2.copyWith(
                                   color: Color(0xff4B81EF),
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w400
                                 ),
                               ),
@@ -291,7 +257,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                 delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                     return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
+                      padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
                       child: isLoading
                           ? ObjectSkeleton()
                           : ObjectCard(id: index),

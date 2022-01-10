@@ -48,32 +48,18 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 }
 
-class CharacteristicsPage extends StatefulWidget {
-  const CharacteristicsPage({Key? key}) : super(key: key);
+class AnalyticsPage extends StatefulWidget {
+  const AnalyticsPage({Key? key}) : super(key: key);
 
   @override
-  State<CharacteristicsPage> createState() => _CharacteristicsPageState();
+  State<AnalyticsPage> createState() => _AnalyticsPageState();
 }
 
-class _CharacteristicsPageState extends State<CharacteristicsPage> {
+class _AnalyticsPageState extends State<AnalyticsPage> {
   bool isLoading = true;
   int currentIndexTab = 0;
 
-  List<Map> firstTabObjectItems = [
-    {'title': 'Собственник', 'value': 'УК Смарт'},
-    {'title': 'Выделенная мощность (электричество)', 'value': '2'},
-    {'title': 'Выделенная мощность (тепло)', 'value': '2'},
-    {'title': 'Начальная стоимость', 'value': '1 000 000 ₽'},
-    {'title': 'Дата приобретения', 'value': '07.05.2021'},
-    {'title': 'Рыночная стоимость помещения', 'value': '900 000 ₽'},
-    {'title': 'Кадастровый номер', 'value': '53:35:091455:15'},
-    {'title': 'Кадастровая стоимость', 'value': '900 000 ₽'},
-    {'title': 'Договор водоснабжения', 'value': 'Договор от 12.04.14'},
-    {'title': 'Система налогообложения', 'value': 'Патент'},
-    {'title': 'Фактическая Налоговая нагрузка', 'value': '10 000 ₽'},
-    {'title': 'Арендная плата', 'value': '30 000 ₽'},
-    {'title': 'Коэффициент капитализации', 'value': '1,2'},
-  ];
+  List<Map> firstTabObjectItems = [];
 
   List<Map> secondTabObjectItems = [];
 
@@ -94,50 +80,32 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              centerTitle: true,
-              elevation: 0,
-              forceElevated: innerBoxIsScrolled,
-              title: Row(
-                children: [
-                  Spacer(),
-                  BoxIcon(
-                    iconPath: 'assets/icons/edit.svg',
-                    iconColor: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                  SizedBox(
-                    width: 12.w,
-                  ),
-                  BoxIcon(
-                    iconPath: 'assets/icons/trash.svg',
-                    iconColor: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                ],
-              ),
-              expandedHeight: 68,
-              toolbarHeight: 68,
-              collapsedHeight: 68,
-              pinned: true,
-              backgroundColor: kBackgroundColor,
-              flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-                return FlexibleSpaceBar(
-                  centerTitle: constraints.biggest.height > 68 ? false : true,
-                  titlePadding: constraints.biggest.height > 68
-                      ? EdgeInsets.symmetric(horizontal: 24)
-                      : EdgeInsets.all(16),
-                  title: AnimatedOpacity(
-                    duration: Duration(milliseconds: 300),
-                    // opacity: constraints.biggest.height > 60.h ? 1.0 : 0.0,
-                    opacity: 1.0,
-                    child: Text('Характеристики',
+                centerTitle: true,
+                elevation: 0,
+                forceElevated: innerBoxIsScrolled,
+                expandedHeight: 68,
+                toolbarHeight: 68,
+                collapsedHeight: 68,
+                pinned: true,
+                backgroundColor: kBackgroundColor,
+                flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+                  return FlexibleSpaceBar(
+                    centerTitle: constraints.biggest.height > 68 ? false : true,
+                    titlePadding: constraints.biggest.height > 68
+                        ? EdgeInsets.symmetric(horizontal: 24)
+                        : EdgeInsets.all(16),
+                    title: AnimatedOpacity(
+                      duration: Duration(milliseconds: 300),
+                      // opacity: constraints.biggest.height > 60.h ? 1.0 : 0.0,
+                      opacity: 1.0,
+                      child: Text('Аналитика',
                         style: constraints.biggest.height > 68
                             ? heading1Style
                             : body,
+                      ),
                     ),
-                  ),
-                );
-              })
+                  );
+                })
             ),
             SliverPersistentHeader(
               pinned: false,
@@ -148,11 +116,11 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                   options: CarouselOptions(
                     // aspectRatio: 2.0,
                     // enlargeCenterPage: true,
-                    height: 75,
-                    enableInfiniteScroll: true,
-                    onPageChanged: (int index, CarouselPageChangedReason reason) {
-                      print(index);
-                    }
+                      height: 75,
+                      enableInfiniteScroll: true,
+                      onPageChanged: (int index, CarouselPageChangedReason reason) {
+                        print(index);
+                      }
                   ),
                   items: [1,2,3,4,5].map((i) {
                     return Builder(
@@ -178,8 +146,8 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                 minHeight: 45,
                 maxHeight: 45,
                 child: CustomTabContainer(
-                  firstTab: 'Объект',
-                  secondTab: 'Арендатор',
+                  firstTab: 'План',
+                  secondTab: 'Факт',
                   currentIndex: currentIndexTab,
                   onChange: (int index) {
                     setState(() {
@@ -193,16 +161,43 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
         },
         body: currentIndexTab == 0
             ? CustomTabView(
-                objectItems: firstTabObjectItems
-              )
+                objectItems: firstTabObjectItems,
+                textButton: secondTabObjectItems.isEmpty
+                    ? GestureDetector(
+                  onTap: () {
+
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/plus.svg',
+                        color: Color(0xff4B81EF),
+                        height: 16,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Добавить план',
+                        style: title2.copyWith(
+                            color: Color(0xff4B81EF),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+                    : null,
+            )
             : CustomTabView(
                 objectItems: secondTabObjectItems,
                 textButton: secondTabObjectItems.isEmpty
                     ? GestureDetector(
-                      onTap: () {
+                        onTap: () {
 
-                      },
-                      child: Row(
+                        },
+                        child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -213,7 +208,7 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              'Добавить характеристики арендатора',
+                              'Добавить факт',
                               style: title2.copyWith(
                                   color: Color(0xff4B81EF),
                                   fontSize: 14,
@@ -222,7 +217,7 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                             ),
                           ],
                         ),
-                    )
+                      )
                     : null,
               ),
       ),

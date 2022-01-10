@@ -12,7 +12,9 @@ class BoxInputField extends StatefulWidget {
   final Widget? trailing;
   bool password;
   final bool isError;
+  final String? errorText;
   final bool? enabled;
+  final Color? backgroundColor;
   final void Function()? trailingTapped;
 
 
@@ -27,6 +29,8 @@ class BoxInputField extends StatefulWidget {
     this.trailingTapped,
     this.password = false,
     this.isError = false,
+    this.backgroundColor,
+    this.errorText,
   }) : super(key: key);
 
   @override
@@ -62,62 +66,77 @@ class _BoxInputFieldState extends State<BoxInputField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 23.h),
-      child: Container(
-        padding: EdgeInsets.all(16.sp),
-        decoration: BoxDecoration(
-            color: getBackgroundColor(),
-            borderRadius: BorderRadius.all(Radius.circular(12.sp)),
-            border: widget.isError
-                ? Border.all(color: Color.fromRGBO(255, 77, 109, 1))
-                : isFocused
-                  ? Border.all(color: Color.fromRGBO(233, 236, 238, 1))
-                  : null
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BoxText.caption(widget.title),
-                  TextField(
-                    enabled: widget.enabled,
-                    controller: widget.controller,
-                    style: body,
-                    focusNode: _focus,
-                    obscureText: widget.password,
-                    decoration: InputDecoration(
-                      hintText: widget.placeholder,
-                      hintStyle: body.copyWith(
-                          color: kcLightGreyColor
-                      ),
-                      contentPadding: const EdgeInsets.all(0),
-                      isDense: true,
-                      prefixIcon: widget.leading,
-                      border: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                    ),
-                  ),
-                ],
-              ),
+      padding: EdgeInsets.only(bottom: 23),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                color: widget.backgroundColor ?? getBackgroundColor(),
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                border: widget.isError
+                    ? Border.all(color: Color.fromRGBO(255, 77, 109, 1))
+                    : isFocused
+                      ? Border.all(color: Color.fromRGBO(233, 236, 238, 1))
+                      : null
             ),
-            // if (isFocused || widget.controller.text.isNotEmpty)
-              Column(
-                children: [
-                  SizedBox(
-                    height: 10.h,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BoxText.caption(widget.title),
+                      TextField(
+                        enabled: widget.enabled,
+                        controller: widget.controller,
+                        style: body,
+                        focusNode: _focus,
+                        obscureText: widget.password,
+                        decoration: InputDecoration(
+                          hintText: widget.placeholder,
+                          hintStyle: body.copyWith(
+                              color: kcLightGreyColor
+                          ),
+                          contentPadding: const EdgeInsets.all(0),
+                          isDense: true,
+                          prefixIcon: widget.leading,
+                          border: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    child: widget.trailing,
+                ),
+                // if (isFocused || widget.controller.text.isNotEmpty)
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        child: widget.trailing,
+                      )
+                    ],
                   )
-                ],
-              )
-          ],
-        ),
+              ],
+            ),
+          ),
+          if (widget.errorText != null && widget.errorText != '')
+            Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: Text(
+                  widget.errorText!,
+                  style: caption1.copyWith(
+                      color: const Color.fromRGBO(255, 77, 109, 1)
+                  )
+              ),
+            )
+        ],
       ),
     );
   }

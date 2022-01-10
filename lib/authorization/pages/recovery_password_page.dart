@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/theme/box_ui.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/utils/utils.dart';
 
 class RecoveryPasswordPage extends StatefulWidget {
   RecoveryPasswordPage({Key? key}) : super(key: key);
@@ -19,18 +20,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
   final TextEditingController emailController = TextEditingController();
 
   String email = '';
-
-  String validateEmail(String? value) {
-    String pattern =
-        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
-        r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
-        r"{0,253}[a-zA-Z0-9])?)*$";
-    RegExp regex = RegExp(pattern);
-    if (value == null || value.isEmpty || !regex.hasMatch(value))
-      return 'Enter a valid email address';
-    else
-      return '';
-  }
+  String emailErrorText = '';
 
   bool isDisabledButton() {
     return emailController.text != '';
@@ -52,10 +42,70 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(252, 252, 252, 1),
-        // resizeToAvoidBottomInset: false,
         body: !isSuccess
             ? Stack(
                 children: [
+                  CustomScrollView(
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 44,
+                              horizontal: horizontalPadding(0.24.sw),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Spacer(),
+                              BoxText.headingTwo('Восстановление пароля'),
+                              SizedBox(
+                                height: 24,
+                              ),
+                              Text(
+                                'Для восстановления пароля введите свой почтовый адрес, указанный при регистрации',
+                                textAlign: TextAlign.center,
+                                style: body.copyWith(
+                                    color: Color(0xffA3A7AE)
+                                ),
+                              ),
+                              SizedBox(
+                                height: 54,
+                              ),
+                              BoxInputField(
+                                controller: emailController,
+                                placeholder: 'Введите почтовый адрес',
+                                title: 'Почтовый адрес',
+                                isError: isError,
+                                errorText: emailErrorText,
+                              ),
+                              Spacer(),
+                              BoxButton(
+                                title: 'Восстановить',
+                                disabled: isDisabledButton() ? false : true,
+                                onTap: () {
+                                  setState(() {
+                                    if (validateEmail(email).isNotEmpty) {
+                                      isError = true;
+                                      emailErrorText = 'Введите корректный почтовый адрес';
+                                    }
+                                    else{
+                                      isError = false;
+                                      isBusy = true;
+                                      isSuccess = true;
+                                      emailErrorText = '';
+                                    }
+                                  });
+                                },
+                                busy: isBusy,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   if (!isSuccess)
                     Positioned(
                       child: Container(
@@ -81,122 +131,68 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                       top: 16,
                       left: 16,
                     ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).viewInsets.bottom == 0
-                            ? 44.h
-                            : 0,
-                        horizontal: 24.w
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Spacer(),
-                        BoxText.headingTwo('Восстановление пароля'),
-                        SizedBox(
-                          height: 24.h,
-                        ),
-                        Text(
-                          'Для восстановления пароля введите свой почтовый адрес, указанный при регистрации',
-                          textAlign: TextAlign.center,
-                          style: body.copyWith(
-                              color: Color(0xffA3A7AE)
+                ],
+              )
+            : CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 44,
+                        horizontal: horizontalPadding(0.24.sw),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Spacer(),
+                          SvgPicture.asset(
+                            'assets/icons/success_rounded.svg',
+                            height: 68,
                           ),
-                        ),
-                        SizedBox(
-                          height: 54.h,
-                        ),
-                        BoxInputField(
-                          controller: emailController,
-                          placeholder: 'Введите почтовый адрес',
-                          title: 'Почтовый адрес',
-                          isError: isError,
-                        ),
-                        SizedBox(
-                          height: 12.h,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            isError
-                                ? 'Введите корректный почтовый адрес'
-                                : '',
-                            style: caption1.copyWith(
-                                color: const Color.fromRGBO(255, 77, 109, 1)
-                            )
+                          SizedBox(
+                            height: 64,
                           ),
-                        ),
-                        Spacer(),
-                        BoxButton(
-                          title: 'Восстановить',
-                          disabled: isDisabledButton() ? false : true,
-                          onTap: () {
-                            setState(() {
-                              if (validateEmail(email).isNotEmpty) {
-                                isError = true;
-                              }
-                              else{
-                                isError = false;
-                                isBusy = true;
-                                isSuccess = true;
-                              }
-                            });
-                          },
-                          busy: isBusy,
-                        ),
-                      ],
+                          Text(
+                            'Успешно!',
+                            style: title2,
+                          ),
+                          SizedBox(
+                            height: 24,
+                          ),
+                          Text(
+                            'Для восстановления пароля введите свой почтовый адрес, указанный при регистрации',
+                            textAlign: TextAlign.center,
+                            style: body.copyWith(
+                                color: Color(0xff151515)
+                            ),
+                          ),
+                          SizedBox(
+                            height: 24,
+                          ),
+                          Text(
+                            emailController.text,
+                            style: body.copyWith(
+                              color: Color(0xff151515),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Spacer(),
+                          BoxButton(
+                            title: 'Понятно',
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
-              )
-            : Padding(
-                padding: EdgeInsets.symmetric(vertical: 44.h, horizontal: 24.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Spacer(),
-                    SvgPicture.asset(
-                      'assets/icons/success_rounded.svg',
-                      height: 68.h,
-                    ),
-                    SizedBox(
-                      height: 64.h,
-                    ),
-                    Text(
-                      'Успешно!',
-                      style: title2,
-                    ),
-                    SizedBox(
-                      height: 24.h,
-                    ),
-                    Text(
-                      'Для восстановления пароля введите свой почтовый адрес, указанный при регистрации',
-                      textAlign: TextAlign.center,
-                      style: body.copyWith(
-                          color: Color(0xff151515)
-                      ),
-                    ),
-                    SizedBox(
-                      height: 24.h,
-                    ),
-                    Text(
-                      emailController.text,
-                      style: body.copyWith(
-                        color: Color(0xff151515),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Spacer(),
-                    BoxButton(
-                      title: 'Понятно',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
               ),
       ),
     );

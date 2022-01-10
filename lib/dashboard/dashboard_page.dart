@@ -2,10 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:property_management/analytics/pages/analytics_page.dart';
 import 'package:property_management/authorization/pages/authorization_page.dart';
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
+import 'package:property_management/exploitation/pages/exploitation_page.dart';
 import 'package:property_management/home/pages/list_objects_page.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/total/pages/total_page.dart';
+import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 
 
@@ -26,9 +30,9 @@ class _DashboardPageState extends State<DashboardPage> {
   final List<Widget> pages = [
     ListObjectsPage(),
     CharacteristicsPage(),
-    Container(),
-    Container(),
-    Container(),
+    ExploitationPage(),
+    AnalyticsPage(),
+    TotalPage(),
   ];
 
   @override
@@ -89,7 +93,7 @@ class MyNavBar extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 80.h,
+        height: 80,
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -100,20 +104,20 @@ class MyNavBar extends StatelessWidget{
               ]
           )
         ),
-        padding: EdgeInsets.only(
-            left: 25.sp,
-            right: 25.sp
-        ),
+        // padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw)),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(items.length, (index) =>
               InkWell(
                 onTap: (){
                   onTap(index);
                 },
-                child: Column(
+                child: Flex(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
+                  direction: ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
+                      ? Axis.vertical
+                      : Axis.horizontal,
                   children: [
                     BoxIcon(
                       iconPath: items[index]['iconPath'],
@@ -130,9 +134,13 @@ class MyNavBar extends StatelessWidget{
                             )
                           : null,
                     ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
+                    ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
+                        ? SizedBox(
+                            height: 2,
+                          )
+                        : SizedBox(
+                            width: 8,
+                          ),
                     Text(
                       items[index]['title'],
                       style: caption2,
@@ -145,26 +153,4 @@ class MyNavBar extends StatelessWidget{
     );
   }
 
-}
-
-ListTile buildListTile(
-    BuildContext context, IconData icon, String title, Widget onPress) {
-  return ListTile(
-    contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-    onTap: () {
-      if(icon == Icons.supervised_user_circle_rounded)
-        Navigator.pop(context);
-      // Navigator.pop(context);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => onPress));
-    },
-    leading: Icon(
-      icon,
-      size: 22,
-      color: Theme.of(context).primaryColor,
-    ),
-    title: Text(
-      title,
-      style: TextStyle(letterSpacing: 2).copyWith(fontSize: 16),
-    ),
-  );
 }

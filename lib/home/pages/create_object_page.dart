@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/theme/box_ui.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 
 class CreateObjectPage extends StatelessWidget {
@@ -51,7 +52,7 @@ class CreateObjectPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.sp, vertical: 16.sp),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -66,29 +67,29 @@ class CreateObjectPage extends StatelessWidget {
                         },
                         child: Icon(
                           Icons.arrow_forward_ios,
+                          size: 14,
                           color: Color(0xff5589F1),
                         ),
                       ),
                       // isError: isError,
                     ),
                   SizedBox(
-                    height: 48.h,
+                    height: 48,
                   ),
                 ],
               ),
             ),
           ),
           Positioned(
-            bottom: 24.h,
+            bottom: 24,
             // left: 100,
             // child: Container(),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.sp, vertical: 16.sp),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw), vertical: 16),
               child: SizedBox(
-                width: 0.9.sw,
+                width: 1.sw - horizontalPadding(0.25.sw) * 2,
                 child: BoxButton(
                   title: 'Создать',
-                  // disabled: isDisabledButton() ? false : true,
                 ),
               ),
             ),

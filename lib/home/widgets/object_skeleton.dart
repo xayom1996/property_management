@@ -24,9 +24,9 @@ class ObjectSkeleton extends StatelessWidget {
                     Flexible(
                       child: Container(
                         width: double.infinity,
-                        height: 22.h,
+                        height: 22,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(22.sp)),
+                          borderRadius: BorderRadius.all(Radius.circular(22)),
                           color: Colors.white,
                         ),
                       ),
@@ -37,9 +37,9 @@ class ObjectSkeleton extends StatelessWidget {
                     Flexible(
                       child: Container(
                         width: double.infinity,
-                        height: 22.h,
+                        height: 22,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(22.sp)),
+                          borderRadius: BorderRadius.all(Radius.circular(22)),
                           color: Colors.white,
                         ),
                       ),
@@ -47,13 +47,13 @@ class ObjectSkeleton extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 4.h,
+                  height: 4,
                 ),
                 Container(
                   width: double.infinity,
-                  height: 22.h,
+                  height: 22,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(22.sp)),
+                    borderRadius: BorderRadius.all(Radius.circular(22)),
                     color: Colors.white,
                   ),
                 ),

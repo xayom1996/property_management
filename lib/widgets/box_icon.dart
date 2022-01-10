@@ -16,10 +16,10 @@ class BoxIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 44.h,
-      width: 44.h,
+      height: 44,
+      width: 44,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(22.sp)),
+        borderRadius: BorderRadius.all(Radius.circular(22)),
         color: backgroundColor,
         gradient: gradient,
         boxShadow: [
@@ -36,7 +36,7 @@ class BoxIcon extends StatelessWidget {
             ? SvgPicture.asset(
                 iconPath,
                 color: iconColor,
-                height: 20.h,
+                height: 16,
               )
             : ShaderMask(
                 blendMode: BlendMode.srcIn,
@@ -46,7 +46,7 @@ class BoxIcon extends StatelessWidget {
                 child: SvgPicture.asset(
                   iconPath,
                   color: iconColor,
-                  height: 20.h,
+                  height: 16,
                 )
               )
       ),

@@ -37,7 +37,7 @@ class BoxButton extends StatelessWidget {
         duration: const Duration(milliseconds: 350),
         width: double.infinity,
         // padding: EdgeInsets.all(16.sp),
-        height: 56.h,
+        height: 56,
         alignment: Alignment.center,
         decoration: !outline
             ? BoxDecoration(
@@ -46,11 +46,11 @@ class BoxButton extends StatelessWidget {
                 : !disabled 
                   ? kcPrimaryColor 
                   : kcLightGreyColor,
-          borderRadius: BorderRadius.circular(24.sp),
+          borderRadius: BorderRadius.circular(24),
         )
             : BoxDecoration(
                   color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(24.sp),
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(
                     color: kcPrimaryColor,
                     width: 1,
@@ -61,7 +61,7 @@ class BoxButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (leading != null) leading!,
-                  if (leading != null) SizedBox(width: 5.w),
+                  if (leading != null) SizedBox(width: 5),
                   Text(
                     title,
                     style: body.copyWith(

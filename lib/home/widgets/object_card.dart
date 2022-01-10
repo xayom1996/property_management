@@ -19,7 +19,7 @@ class ObjectCard extends StatelessWidget {
         motion: ScrollMotion(),
         children: [
           SizedBox(
-            width: 24.w,
+            width: 24,
           ),
           BoxIcon(
             iconPath: 'assets/icons/edit.svg',
@@ -34,7 +34,7 @@ class ObjectCard extends StatelessWidget {
             backgroundColor: Colors.white,
           ),
           SizedBox(
-            width: 24.w,
+            width: 24,
           ),
           BoxIcon(
             iconPath: 'assets/icons/trash.svg',
