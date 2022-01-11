@@ -5,10 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/objects/pages/search_objects_page.dart';
+import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/utils/utils.dart';
 import 'create_object_page.dart';
-import 'package:property_management/home/widgets/object_card.dart';
-import 'package:property_management/home/widgets/object_skeleton.dart';
+import 'package:property_management/objects/widgets/object_card.dart';
+import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/widgets/box_icon.dart';
@@ -122,45 +124,57 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                 maxHeight: 44,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
-                  child: TextField(
-                    textInputAction: TextInputAction.search,
+                  child: GestureDetector(
                     onTap: () {
-                    },
-                    onChanged: (text) {
-                    },
-                    style: TextStyle(
-                      color: Color(0xff151515),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(15) //                 <--- border radius here
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) => SearchObjectsPage(),
+                          transitionDuration: Duration.zero,
                         ),
+                      );
+                    },
+                    child: TextField(
+                      textInputAction: TextInputAction.search,
+                      enabled: false,
+                      onTap: () {
+                      },
+                      onChanged: (text) {
+                      },
+                      style: TextStyle(
+                        color: Color(0xff151515),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(color: Color(0xffe9ecf1)),
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(15) //                 <--- border radius here
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(15) //                 <--- border radius here
+                          ),
                         ),
-                      ),
-                      // prefixIconConstraints: BoxConstraints(maxWidth: 32),
-                      hintText: 'Поиск',
-                      hintStyle: body.copyWith(
-                        color: Color(0xff3C3C43).withOpacity(0.6),
-                      ),
-                      prefixIcon: IconButton(
-                        icon: Icon(
-                          Icons.search,
-                          size: 18,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: new BorderSide(color: Color(0xffe9ecf1)),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(15) //                 <--- border radius here
+                          ),
+                        ),
+                        // prefixIconConstraints: BoxConstraints(maxWidth: 32),
+                        hintText: 'Поиск',
+                        hintStyle: body.copyWith(
                           color: Color(0xff3C3C43).withOpacity(0.6),
                         ),
-                        onPressed: () {  },
+                        prefixIcon: IconButton(
+                          icon: Icon(
+                            Icons.search,
+                            size: 18,
+                            color: Color(0xff3C3C43).withOpacity(0.6),
+                          ),
+                          onPressed: () {  },
+                        ),
+                        contentPadding: EdgeInsets.all(0),
                       ),
-                      contentPadding: EdgeInsets.all(0),
                     ),
                   ),
                 ),
@@ -204,23 +218,34 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/filter.svg',
-                              color: Colors.black,
-                              height: 12,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'По названию',
-                              style: title2.copyWith(
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) {
+                                return FilterBottomSheet();
+                              }
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/filter.svg',
                                 color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400
+                                height: 12,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 4),
+                              Text(
+                                'По названию',
+                                style: title2.copyWith(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         GestureDetector(
                           onTap: (){

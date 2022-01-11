@@ -114,10 +114,12 @@ class _BoxInputFieldState extends State<BoxInputField> {
                 ),
                 // if (isFocused || widget.controller.text.isNotEmpty)
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        height: 10,
-                      ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
                       Container(
                         child: widget.trailing,
                       )

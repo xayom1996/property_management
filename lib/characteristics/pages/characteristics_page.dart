@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
-import 'package:property_management/home/widgets/object_card.dart';
-import 'package:property_management/home/widgets/object_skeleton.dart';
+import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
+import 'package:property_management/objects/widgets/object_card.dart';
+import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/widgets/box_button.dart';
 import 'package:property_management/widgets/box_icon.dart';
+import 'package:property_management/widgets/custom_alert_dialog.dart';
 import 'package:property_management/widgets/custom_tab_container.dart';
 import 'package:property_management/widgets/input_field.dart';
 import 'package:property_management/widgets/object_carousel_card.dart';
@@ -112,6 +114,12 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                     iconPath: 'assets/icons/trash.svg',
                     iconColor: Colors.black,
                     backgroundColor: Colors.white,
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => CustomAlertDialog()
+                      );
+                    },
                   ),
                 ],
               ),

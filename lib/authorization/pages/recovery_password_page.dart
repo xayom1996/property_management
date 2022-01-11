@@ -162,7 +162,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                             height: 24,
                           ),
                           Text(
-                            'Для восстановления пароля введите свой почтовый адрес, указанный при регистрации',
+                            'На ваш почтовый адрес выслан временный пароль для входа в систему',
                             textAlign: TextAlign.center,
                             style: body.copyWith(
                                 color: Color(0xff151515)

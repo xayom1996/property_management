@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/utils/utils.dart';
+import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/input_field.dart';
 
 class CustomTabView extends StatelessWidget {
@@ -19,10 +20,17 @@ class CustomTabView extends StatelessWidget {
               children: [
                 for (var item in objectItems)
                   BoxInputField(
-                      controller: TextEditingController(text: item['value']),
-                      title: item['title'],
-                      enabled: false,
-                      backgroundColor: Color(0xffF5F5F5).withOpacity(0.6)
+                    controller: TextEditingController(text: item['value']),
+                    title: item['title'],
+                    enabled: false,
+                    backgroundColor: Color(0xffF5F5F5).withOpacity(0.6),
+                    trailing: item['title'] == 'Договор водоснабжения'
+                        ? BoxIcon(
+                            iconPath: 'assets/icons/document.svg',
+                            iconColor: Color(0xff5589F1),
+                            backgroundColor: Colors.white,
+                          )
+                        : null,
                   ),
               ],
             ),

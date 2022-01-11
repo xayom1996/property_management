@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/widgets/box_icon.dart';
+import 'package:property_management/widgets/custom_alert_dialog.dart';
 
 class ObjectCard extends StatelessWidget {
   final int id;
@@ -40,6 +43,12 @@ class ObjectCard extends StatelessWidget {
             iconPath: 'assets/icons/trash.svg',
             iconColor: Colors.black,
             backgroundColor: Colors.white,
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => CustomAlertDialog()
+              );
+            },
           ),
         ],
       ),
@@ -55,11 +64,40 @@ class ObjectCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'ЖК Акваленд, 3-к',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: body,
+                      Row(
+                        children: [
+                          if (id % 2 == 0)
+                            Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child: Container(
+                                height: 20,
+                                width: 20,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(20) //                 <--- border radius here
+                                  ),
+                                  color: Random().nextInt(100) % 2 == 0
+                                      ? Color(0xffFF0000)
+                                      : Color(0xff40CD0F),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '!',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          Text(
+                            'ЖК Акваленд, 3-к',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: body,
+                          ),
+                        ],
                       ),
                       Text('96 кв.м.', style: body,),
                     ],
