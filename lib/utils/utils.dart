@@ -14,9 +14,9 @@ String validateEmail(String? value) {
     return '';
 }
 
-double horizontalPadding(double padding) {
+double horizontalPadding(double landscapePadding, {double portraitPadding = 24}) {
   if (ScreenUtil().orientation == Orientation.portrait){
-    return 24;
+    return portraitPadding;
   }
-  return padding;
+  return landscapePadding;
 }

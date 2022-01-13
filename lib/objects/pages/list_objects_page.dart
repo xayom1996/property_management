@@ -228,7 +228,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                           onTap: () {
                             showModalBottomSheet(
                               context: context,
-                              backgroundColor: Colors.transparent,
+                              backgroundColor: Colors.transparent, isScrollControlled: true,
                               builder: (context) {
                                 return FilterBottomSheet();
                               }
