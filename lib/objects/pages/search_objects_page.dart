@@ -28,11 +28,13 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
           // centerTitle: true,
           automaticallyImplyLeading: false,
           elevation: 0.0,
+          titleSpacing: 0,
           title: Container(
             padding: EdgeInsets.only(
-                // left: horizontalPadding(44),
+                left: horizontalPadding(44),
                 top: 16,
                 bottom: 8,
+                // right: 32,
             ),
             child: TextField(
               textInputAction: TextInputAction.search,
@@ -87,17 +89,42 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Отмена',
-                style: body.copyWith(
-                    color: Color(0xff5589F1)
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  right: horizontalPadding(44),
+                  left: horizontalPadding(24, portraitPadding: 16),
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Отмена',
+                    style: body.copyWith(
+                        color: Color(0xff5589F1)
+                    ),
+                  ),
                 ),
               ),
             ),
+            // Padding(
+            //   padding: EdgeInsets.only(
+            //     right: horizontalPadding(44),
+            //   ),
+            //   child: TextButton(
+            //     onPressed: () {
+            //       Navigator.of(context).pop();
+            //     },
+            //     child: Text(
+            //       'Отмена',
+            //       style: body.copyWith(
+            //           color: Color(0xff5589F1)
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
