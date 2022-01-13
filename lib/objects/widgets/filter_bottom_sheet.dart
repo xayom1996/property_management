@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/theme/box_ui.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
@@ -82,13 +83,19 @@ class FilterBottomSheet extends StatelessWidget {
                   SizedBox(
                     height: 24,
                   ),
-                  BoxButton(
-                    title: 'Применить',
-                    onTap: (){
-                      Navigator.of(context).pop();
-                    },
-                  ),
                 ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw)),
+              child: SizedBox(
+                width: 1.sw - horizontalPadding(0.25.sw) * 2,
+                child: BoxButton(
+                  title: 'Применить',
+                  onTap: (){
+                    Navigator.of(context).pop();
+                  },
+                ),
               ),
             ),
           ],

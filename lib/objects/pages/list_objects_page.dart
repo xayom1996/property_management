@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/objects/pages/search_objects_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
+import 'package:property_management/objects/widgets/search_text_field.dart';
 import 'package:property_management/utils/utils.dart';
 import 'create_object_page.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
@@ -55,9 +56,25 @@ class ListObjectsPage extends StatefulWidget {
 
 class _ListObjectsPageState extends State<ListObjectsPage> {
   bool isLoading = true;
+  bool isPinned = false;
+
+  ScrollController _controller = ScrollController();
+
+  _scrollListener() {
+    if (_controller.offset >= 138 + 50){
+      setState(() {
+        isPinned = true;
+      });
+    } else {
+      setState(() {
+        isPinned = false;
+      });
+    }
+  }
 
   @override
   void initState() {
+    _controller.addListener(_scrollListener);
     super.initState();
     Timer(const Duration(seconds: 2), () {
       setState(() {
@@ -70,30 +87,33 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
     return Scaffold(
       backgroundColor: Color(0xffF5F7F9),
       body:  NestedScrollView(
+        controller: _controller,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
               centerTitle: true,
               elevation: 0,
               forceElevated: innerBoxIsScrolled,
-              title: Row(
-                children: [
-                  Spacer(),
-                  BoxIcon(
-                    iconPath: 'assets/icons/profile.svg',
-                    iconColor: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                  SizedBox(
-                    width: 12.w,
-                  ),
-                  BoxIcon(
-                    iconPath: 'assets/icons/settings.svg',
-                    iconColor: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                ],
-              ),
+              title: true == true /// Зависимость от ориентации
+                  ? Row(
+                      children: [
+                        Spacer(),
+                        BoxIcon(
+                          iconPath: 'assets/icons/profile.svg',
+                          iconColor: Colors.black,
+                          backgroundColor: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        BoxIcon(
+                          iconPath: 'assets/icons/settings.svg',
+                          iconColor: Colors.black,
+                          backgroundColor: Colors.white,
+                        ),
+                      ],
+                    )
+                  : null,
               expandedHeight: 138,
               toolbarHeight: 68,
               collapsedHeight: 68,
@@ -124,65 +144,45 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                 maxHeight: 44,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation1, animation2) => SearchObjectsPage(),
-                          transitionDuration: Duration.zero,
+                  child: true == true
+                      ? SearchTextField()
+                      : Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation1, animation2) => SearchObjectsPage(),
+                                    transitionDuration: Duration.zero,
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: 327,
+                                child: SearchTextField(),
+                              ),
+                            ),
+                            Spacer(),
+                            Row(
+                              children: [
+                                BoxIcon(
+                                  iconPath: 'assets/icons/profile.svg',
+                                  iconColor: Colors.black,
+                                  backgroundColor: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 12,
+                                ),
+                                BoxIcon(
+                                  iconPath: 'assets/icons/settings.svg',
+                                  iconColor: Colors.black,
+                                  backgroundColor: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                    child: TextField(
-                      textInputAction: TextInputAction.search,
-                      enabled: false,
-                      onTap: () {
-                      },
-                      onChanged: (text) {
-                      },
-                      style: TextStyle(
-                        color: Color(0xff151515),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                      ),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(15) //                 <--- border radius here
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: new BorderSide(color: Color(0xffe9ecf1)),
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(15) //                 <--- border radius here
-                          ),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: new BorderSide(color: Color(0xffe9ecf1)),
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(15) //                 <--- border radius here
-                          ),
-                        ),
-                        // prefixIconConstraints: BoxConstraints(maxWidth: 32),
-                        hintText: 'Поиск',
-                        hintStyle: body.copyWith(
-                          color: Color(0xff3C3C43).withOpacity(0.6),
-                        ),
-                        prefixIcon: IconButton(
-                          icon: Icon(
-                            Icons.search,
-                            size: 18,
-                            color: Color(0xff3C3C43).withOpacity(0.6),
-                          ),
-                          onPressed: () {  },
-                        ),
-                        contentPadding: EdgeInsets.all(0),
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ),
@@ -196,6 +196,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
             ),
           ];
         },
+        // body: Container(),
         body: Container(
           decoration: BoxDecoration(
               color: Color(0xffFCFCFC),
@@ -204,22 +205,112 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                 topLeft: Radius.circular(24),
               )
           ),
-          child: CustomScrollView(
-            slivers: [
-              SliverPersistentHeader(
-                pinned: true,
-                floating: true,
-                delegate: _SliverAppBarDelegate(
-                  minHeight: 56,
-                  maxHeight: 56,
+          child: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverPersistentHeader(
+                    pinned: true,
+                    floating: true,
+                    delegate: _SliverAppBarDelegate(
+                      minHeight: 56,
+                      maxHeight: 56,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
+                        decoration: BoxDecoration(
+                            color: Color(0xffFCFCFC),
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(24),
+                              topLeft: Radius.circular(24),
+                            )
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: Colors.transparent, isScrollControlled: true,
+                                  builder: (context) {
+                                    return FilterBottomSheet();
+                                  }
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/filter.svg',
+                                    color: Colors.black,
+                                    height: 12,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'По названию',
+                                    style: title2.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/plus.svg',
+                                    color: Color(0xff4B81EF),
+                                    height: 16,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Добавить',
+                                    style: title2.copyWith(
+                                      color: Color(0xff4B81EF),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
+                          child: isLoading
+                              ? ObjectSkeleton()
+                              : ObjectCard(id: index),
+                        );
+                      },
+                      childCount: 20,
+                    ),
+                  ),
+                ],
+              ),
+              if (isPinned)
+                Positioned(
+                  top: 50,
                   child: Container(
+                    height: 56,
+                    width: 1.sw,
                     padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
                     decoration: BoxDecoration(
-                        color: Color(0xffFCFCFC),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(24),
-                          topLeft: Radius.circular(24),
-                        )
+                      color: Color(0xffF5F7F9),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,11 +318,11 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                         GestureDetector(
                           onTap: () {
                             showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Colors.transparent, isScrollControlled: true,
-                              builder: (context) {
-                                return FilterBottomSheet();
-                              }
+                                context: context,
+                                backgroundColor: Colors.transparent, isScrollControlled: true,
+                                builder: (context) {
+                                  return FilterBottomSheet();
+                                }
                             );
                           },
                           child: Row(
@@ -245,9 +336,9 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                               Text(
                                 'По названию',
                                 style: title2.copyWith(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400
                                 ),
                               ),
                             ],
@@ -271,9 +362,9 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                               Text(
                                 'Добавить',
                                 style: title2.copyWith(
-                                  color: Color(0xff4B81EF),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400
+                                    color: Color(0xff4B81EF),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400
                                 ),
                               ),
                             ],
@@ -283,20 +374,6 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                     ),
                   ),
                 ),
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
-                      child: isLoading
-                          ? ObjectSkeleton()
-                          : ObjectCard(id: index),
-                    );
-                  },
-                  childCount: 20,
-                ),
-              ),
             ],
           ),
         ),
