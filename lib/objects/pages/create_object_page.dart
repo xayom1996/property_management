@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:property_management/objects/pages/change_field_page.dart';
 import 'package:property_management/theme/box_ui.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
@@ -28,6 +29,7 @@ class CreateObjectPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         leading: null,
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Spacer(),
@@ -64,11 +66,21 @@ class CreateObjectPage extends StatelessWidget {
                       enabled: false,
                       trailing: GestureDetector(
                         onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ChangeFieldPage(
+                                title: item['title'],
+                                item: item,
+                            )),
+                          );
                         },
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 14,
-                          color: Color(0xff5589F1),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                            color: Color(0xff5589F1),
+                          ),
                         ),
                       ),
                       // isError: isError,

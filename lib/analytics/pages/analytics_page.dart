@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/analytics/models/model.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
@@ -159,67 +160,71 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             ),
           ];
         },
-        body: currentIndexTab == 0
-            ? CustomTabView(
-                objectItems: firstTabObjectItems,
-                textButton: secondTabObjectItems.isEmpty
-                    ? GestureDetector(
-                  onTap: () {
+        body: Column(
+          children: [
+            currentIndexTab == 0
+                ? CustomTabView(
+                    objectItems: firstTabObjectItems,
+                    textButton: secondTabObjectItems.isEmpty
+                        ? GestureDetector(
+                      onTap: () {
 
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/plus.svg',
-                        color: Color(0xff4B81EF),
-                        height: 16,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Добавить план',
-                        style: title2.copyWith(
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/plus.svg',
                             color: Color(0xff4B81EF),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400
-                        ),
+                            height: 16,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Добавить план',
+                            style: title2.copyWith(
+                                color: Color(0xff4B81EF),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    )
+                        : null,
                 )
-                    : null,
-            )
-            : CustomTabView(
-                objectItems: secondTabObjectItems,
-                textButton: secondTabObjectItems.isEmpty
-                    ? GestureDetector(
-                        onTap: () {
+                : CustomTabView(
+                    objectItems: secondTabObjectItems,
+                    textButton: secondTabObjectItems.isEmpty
+                        ? GestureDetector(
+                            onTap: () {
 
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/plus.svg',
-                              color: Color(0xff4B81EF),
-                              height: 16,
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              'Добавить факт',
-                              style: title2.copyWith(
+                            },
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icons/plus.svg',
                                   color: Color(0xff4B81EF),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400
-                              ),
+                                  height: 16,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Добавить факт',
+                                  style: title2.copyWith(
+                                      color: Color(0xff4B81EF),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
-                    : null,
-              ),
+                          )
+                        : null,
+                  ),
+          ],
+        ),
       ),
     );
   }

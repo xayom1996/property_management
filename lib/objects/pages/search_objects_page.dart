@@ -30,7 +30,7 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
           elevation: 0.0,
           title: Container(
             padding: EdgeInsets.only(
-                left: horizontalPadding(44),
+                // left: horizontalPadding(44),
                 top: 16,
                 bottom: 8,
             ),

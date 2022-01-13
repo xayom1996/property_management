@@ -101,11 +101,14 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                               isPassword = !isPassword;
                             });
                           },
-                          child: Icon(
-                              isPassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              color: Color(0xffA3A7AE),
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Icon(
+                                isPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: Color(0xffA3A7AE),
+                            ),
                           ),
                         ),
                         title: 'Пароль',

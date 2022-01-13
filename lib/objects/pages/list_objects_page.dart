@@ -160,6 +160,12 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                               Radius.circular(15) //                 <--- border radius here
                           ),
                         ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: new BorderSide(color: Color(0xffe9ecf1)),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(15) //                 <--- border radius here
+                          ),
+                        ),
                         // prefixIconConstraints: BoxConstraints(maxWidth: 32),
                         hintText: 'Поиск',
                         hintStyle: body.copyWith(

@@ -15,16 +15,16 @@ class CustomTabContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 1.sw,
       color: kBackgroundColor,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: (1.sw - 327) / 2),
+      child: Align(
+        alignment: Alignment.center,
         child: Container(
+          width: 325,
           // height: 32.h,
           padding: EdgeInsets.all(2),
           decoration: BoxDecoration(
             color: Color(0xffF5F7F9),
-            borderRadius: BorderRadius.all(Radius.circular(10.sp)),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Row(
             children: [
@@ -37,12 +37,11 @@ class CustomTabContainer extends StatelessWidget {
                   width: 160,
                   decoration: BoxDecoration(
                     color: currentIndex == 0 ? Color(0xffFFFFFF) : null,
-                    borderRadius: BorderRadius.all(Radius.circular(8.sp)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.white.withOpacity(0.05),
-                        // spreadRadius: 5,
-                        blurRadius: 20.sp,
+                        blurRadius: 20,
                         offset: Offset(0, 4), // changes position of shadow
                       ),
                     ],
@@ -63,7 +62,14 @@ class CustomTabContainer extends StatelessWidget {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: currentIndex == 1 ? Color(0xffFFFFFF) : null,
-                    borderRadius: BorderRadius.all(Radius.circular(8.sp)),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withOpacity(0.05),
+                        blurRadius: 20,
+                        offset: Offset(0, 4), // changes position of shadow
+                      ),
+                    ],
                   ),
                   child: Text(
                     secondTab,
