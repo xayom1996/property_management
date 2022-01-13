@@ -1,6 +1,7 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/authorization/pages/authorization_page.dart';
 import 'package:property_management/authorization/pages/recovery_password_page.dart';
@@ -9,13 +10,21 @@ import 'objects/pages/create_object_page.dart';
 import 'package:property_management/splash_page.dart';
 import 'package:property_management/theme/box_ui.dart';
 
-void main() => runApp(
-  DevicePreview(
-    // enabled: !kReleaseMode,
-    enabled: false,
-    builder: (context) => MyApp(), // Wrap your app
-  ),
-);
+void main() {
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: kBackgroundColor, // status bar color
+    statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+    statusBarBrightness: Brightness.light,
+  ));
+
+  return runApp(
+    DevicePreview(
+      enabled: !kReleaseMode,
+      // enabled: false,
+      builder: (context) => MyApp(), // Wrap your app
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
