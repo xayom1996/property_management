@@ -4,18 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:property_management/authorization/pages/authorization_page.dart';
-import 'package:property_management/authorization/pages/recovery_password_page.dart';
-import 'package:property_management/dashboard/dashboard_page.dart';
-import 'objects/pages/create_object_page.dart';
 import 'package:property_management/splash_page.dart';
 import 'package:property_management/theme/box_ui.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: kBackgroundColor, // status bar color
-    // statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
-    // statusBarBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+    statusBarBrightness: Brightness.light,
   ));
 
   return runApp(
@@ -47,8 +43,8 @@ class MyApp extends StatelessWidget {
         // useInheritedMediaQuery: true,
         locale: DevicePreview.locale(context),
         builder: DevicePreview.appBuilder,
-        // home: SplashPage(),
-        home: DashboardPage(),
+        home: SplashPage(),
+        // home: DashboardPage(),
       )
     );
   }
