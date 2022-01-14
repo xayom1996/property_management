@@ -25,6 +25,7 @@ class Tenant {
   final String? percentageTurnover; /// % от товарооборота
   final String? comment; /// Комментарий к подразделу Арендатор
   final bool? markedClient; /// Отмеченный клиент
+  final String? color; /// выбранный цвет
 
   Tenant({
     required this.nameCompany,
@@ -37,6 +38,8 @@ class Tenant {
     this.requisites,
     this.turnover,
     this.percentageTurnover,
-    this.comment, this.markedClient,
+    this.comment,
+    this.markedClient,
+    this.color,
   });
 }

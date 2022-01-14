@@ -8,8 +8,8 @@ import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 
-class CreateObjectPage extends StatelessWidget {
-  CreateObjectPage({Key? key}) : super(key: key);
+class EditObjectPage extends StatelessWidget {
+  EditObjectPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class CreateObjectPage extends StatelessWidget {
           children: [
             Spacer(),
             Text(
-              'Новый объект',
+              'Редактирование объекта',
               style: body,
             ),
             Spacer(),
@@ -49,9 +49,9 @@ class CreateObjectPage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (var item in objectItems)
+                  for (var item in objectItemsFilled)
                     BoxInputField(
-                      controller: TextEditingController(),
+                      controller: TextEditingController(text: item['value'] ?? ''),
                       placeholder: item['placeholder'],
                       title: item['title'],
                       enabled: false,
@@ -88,7 +88,10 @@ class CreateObjectPage extends StatelessWidget {
               child: SizedBox(
                 width: 1.sw - horizontalPadding(0.25.sw) * 2,
                 child: BoxButton(
-                  title: 'Создать',
+                  title: 'Сохранить',
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
               ),
             ),

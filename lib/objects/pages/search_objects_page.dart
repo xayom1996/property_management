@@ -25,7 +25,6 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(68),
         child: AppBar(
-          // centerTitle: true,
           automaticallyImplyLeading: false,
           elevation: 0.0,
           titleSpacing: 0,
@@ -109,27 +108,15 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
                 ),
               ),
             ),
-            // Padding(
-            //   padding: EdgeInsets.only(
-            //     right: horizontalPadding(44),
-            //   ),
-            //   child: TextButton(
-            //     onPressed: () {
-            //       Navigator.of(context).pop();
-            //     },
-            //     child: Text(
-            //       'Отмена',
-            //       style: body.copyWith(
-            //           color: Color(0xff5589F1)
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
       body: searchText == ''
-          ? Column(
+          ? CustomScrollView(
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -149,7 +136,10 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
                   ),
                 )
               ],
-            )
+            ),
+          ),
+        ],
+      )
           : ListView.builder(
                 itemCount: 5,
                 itemBuilder: (BuildContext context, int index) {

@@ -16,6 +16,7 @@ class BoxInputField extends StatefulWidget {
   final bool? enabled;
   final Color? backgroundColor;
   final void Function()? trailingTapped;
+  final Function()? onTap;
 
 
   BoxInputField({
@@ -30,7 +31,7 @@ class BoxInputField extends StatefulWidget {
     this.password = false,
     this.isError = false,
     this.backgroundColor,
-    this.errorText,
+    this.errorText, this.onTap,
   }) : super(key: key);
 
   @override
@@ -67,78 +68,78 @@ class _BoxInputFieldState extends State<BoxInputField> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: 23),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                color: widget.backgroundColor ?? getBackgroundColor(),
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-                border: widget.isError
-                    ? Border.all(color: Color.fromRGBO(255, 77, 109, 1))
-                    : isFocused
-                      ? Border.all(color: Color.fromRGBO(233, 236, 238, 1))
-                      : null
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BoxText.caption(widget.title),
-                      TextField(
-                        enabled: widget.enabled,
-                        controller: widget.controller,
-                        style: body,
-                        focusNode: _focus,
-                        obscureText: widget.password,
-                        decoration: InputDecoration(
-                          hintText: widget.placeholder,
-                          hintStyle: body.copyWith(
-                              color: kcLightGreyColor
-                          ),
-                          contentPadding: const EdgeInsets.all(0),
-                          isDense: true,
-                          prefixIcon: widget.leading,
-                          border: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // if (isFocused || widget.controller.text.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // SizedBox(
-                      //   height: 10,
-                      // ),
-                      Container(
-                        child: widget.trailing,
-                      )
-                    ],
-                  )
-              ],
-            ),
-          ),
-          if (widget.errorText != null && widget.errorText != '')
-            Padding(
-              padding: EdgeInsets.only(top: 12),
-              child: Text(
-                  widget.errorText!,
-                  style: caption1.copyWith(
-                      color: const Color.fromRGBO(255, 77, 109, 1)
-                  )
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: widget.backgroundColor ?? getBackgroundColor(),
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  border: widget.isError
+                      ? Border.all(color: Color.fromRGBO(255, 77, 109, 1))
+                      : isFocused
+                        ? Border.all(color: Color.fromRGBO(233, 236, 238, 1))
+                        : null
               ),
-            )
-        ],
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BoxText.caption(widget.title),
+                        TextField(
+                          enabled: widget.enabled,
+                          controller: widget.controller,
+                          style: body,
+                          focusNode: _focus,
+                          obscureText: widget.password,
+                          decoration: InputDecoration(
+                            hintText: widget.placeholder,
+                            hintStyle: body.copyWith(
+                                color: kcLightGreyColor
+                            ),
+                            contentPadding: const EdgeInsets.all(0),
+                            isDense: true,
+                            prefixIcon: widget.leading,
+                            border: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // if (isFocused || widget.controller.text.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: widget.trailing,
+                        )
+                      ],
+                    )
+                ],
+              ),
+            ),
+            if (widget.errorText != null && widget.errorText != '')
+              Padding(
+                padding: EdgeInsets.only(top: 12),
+                child: Text(
+                    widget.errorText!,
+                    style: caption1.copyWith(
+                        color: const Color.fromRGBO(255, 77, 109, 1)
+                    )
+                ),
+              )
+          ],
+        ),
       ),
     );
   }

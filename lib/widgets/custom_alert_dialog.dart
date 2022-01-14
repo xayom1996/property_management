@@ -14,7 +14,6 @@ class CustomAlertDialog extends StatelessWidget {
           color: Color(0xff151515)
         ),
       ),
-      // content: new Text("This is my content"),
       actions: <Widget>[
         CupertinoDialogAction(
           onPressed: () {

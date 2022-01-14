@@ -8,8 +8,8 @@ import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 
-class CreateObjectPage extends StatelessWidget {
-  CreateObjectPage({Key? key}) : super(key: key);
+class CreateTenantPage extends StatelessWidget {
+  CreateTenantPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class CreateObjectPage extends StatelessWidget {
           children: [
             Spacer(),
             Text(
-              'Новый объект',
+              'Новый арендатор',
               style: body,
             ),
             Spacer(),
@@ -49,7 +49,7 @@ class CreateObjectPage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (var item in objectItems)
+                  for (var item in tenantItems)
                     BoxInputField(
                       controller: TextEditingController(),
                       placeholder: item['placeholder'],

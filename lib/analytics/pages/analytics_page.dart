@@ -7,13 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/analytics/models/model.dart';
+import 'package:property_management/analytics/pages/charts.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_button.dart';
 import 'package:property_management/widgets/box_icon.dart';
+import 'package:property_management/widgets/container_for_transition.dart';
 import 'package:property_management/widgets/custom_tab_container.dart';
 import 'package:property_management/widgets/input_field.dart';
 import 'package:property_management/widgets/object_carousel_card.dart';
@@ -160,70 +163,97 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             ),
           ];
         },
-        body: Column(
-          children: [
-            currentIndexTab == 0
-                ? CustomTabView(
-                    objectItems: firstTabObjectItems,
-                    textButton: secondTabObjectItems.isEmpty
-                        ? GestureDetector(
-                      onTap: () {
-
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/plus.svg',
-                            color: Color(0xff4B81EF),
-                            height: 16,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            'Добавить план',
-                            style: title2.copyWith(
-                                color: Color(0xff4B81EF),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                        : null,
-                )
-                : CustomTabView(
-                    objectItems: secondTabObjectItems,
-                    textButton: secondTabObjectItems.isEmpty
-                        ? GestureDetector(
-                            onTap: () {
-
-                            },
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/plus.svg',
-                                  color: Color(0xff4B81EF),
-                                  height: 16,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Добавить факт',
-                                  style: title2.copyWith(
-                                      color: Color(0xff4B81EF),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : null,
+        body: currentIndexTab == 0
+            ? CustomTabView(
+          objectItems: firstTabObjectItems,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+              child: Column(
+                children: [
+                  ContainerForTransition(
+                    title: 'План первый',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AnalyticCharts(
+                          title: 'План первый',
+                        )),
+                      );
+                    },
                   ),
-          ],
+                  ContainerForTransition(
+                    title: 'План второй',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AnalyticCharts(
+                          title: 'План второй',
+                        )),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          textButton: secondTabObjectItems.isEmpty
+              ? GestureDetector(
+            onTap: () {
+
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/icons/plus.svg',
+                  color: Color(0xff4B81EF),
+                  height: 16,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Добавить план',
+                  style: title2.copyWith(
+                      color: Color(0xff4B81EF),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400
+                  ),
+                ),
+              ],
+            ),
+          )
+              : null,
+        )
+            : CustomTabView(
+          objectItems: secondTabObjectItems,
+          textButton: secondTabObjectItems.isEmpty
+              ? GestureDetector(
+            onTap: () {
+
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/icons/plus.svg',
+                  color: Color(0xff4B81EF),
+                  height: 16,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Добавить факт',
+                  style: title2.copyWith(
+                      color: Color(0xff4B81EF),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400
+                  ),
+                ),
+              ],
+            ),
+          )
+              : null,
         ),
       ),
     );

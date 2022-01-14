@@ -5,9 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/account/pages/account_page.dart';
 import 'package:property_management/objects/pages/search_objects_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/objects/widgets/search_text_field.dart';
+import 'package:property_management/settings/pages/settings_page.dart';
 import 'package:property_management/utils/utils.dart';
 import 'create_object_page.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
@@ -48,7 +50,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class ListObjectsPage extends StatefulWidget {
-  const ListObjectsPage({Key? key}) : super(key: key);
+  final Function() goToCharacteristicsPage;
+  const ListObjectsPage({Key? key, required this.goToCharacteristicsPage}) : super(key: key);
 
   @override
   State<ListObjectsPage> createState() => _ListObjectsPageState();
@@ -102,6 +105,12 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                           iconPath: 'assets/icons/profile.svg',
                           iconColor: Colors.black,
                           backgroundColor: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => AccountPage()),
+                            );
+                          },
                         ),
                         SizedBox(
                           width: 12,
@@ -110,6 +119,12 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                           iconPath: 'assets/icons/settings.svg',
                           iconColor: Colors.black,
                           backgroundColor: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SettingsPage()),
+                            );
+                          },
                         ),
                       ],
                     )
@@ -294,10 +309,16 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                           padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
                           child: isLoading
                               ? ObjectSkeleton()
-                              : ObjectCard(id: index),
+                              : GestureDetector(
+                                  onTap: () {
+                                    print(1);
+                                    widget.goToCharacteristicsPage();
+                                  },
+                                  child: ObjectCard(id: index)
+                                ),
                         );
                       },
-                      childCount: 20,
+                      childCount: objects.length,
                     ),
                   ),
                 ],

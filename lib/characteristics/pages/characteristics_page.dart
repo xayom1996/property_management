@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
+import 'package:property_management/objects/pages/create_tenant_page.dart';
+import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
@@ -106,6 +108,12 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                     iconPath: 'assets/icons/edit.svg',
                     iconColor: Colors.black,
                     backgroundColor: Colors.white,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => EditObjectPage()),
+                      );
+                    },
                   ),
                   SizedBox(
                     width: 12.w,
@@ -156,6 +164,7 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                   options: CarouselOptions(
                     // aspectRatio: 2.0,
                     // enlargeCenterPage: true,
+                    viewportFraction: 0.72,
                     height: 75,
                     enableInfiniteScroll: true,
                     onPageChanged: (int index, CarouselPageChangedReason reason) {
@@ -208,7 +217,10 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                 textButton: secondTabObjectItems.isEmpty
                     ? GestureDetector(
                       onTap: () {
-
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CreateTenantPage()),
+                        );
                       },
                       child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,

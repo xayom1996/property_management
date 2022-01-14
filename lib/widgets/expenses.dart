@@ -46,7 +46,7 @@ class ExpensesContainer extends StatelessWidget {
                       );
                   },
                   child: Container(
-                    // padding: EdgeInsets.only(top: 16),
+                    padding: EdgeInsets.symmetric(horizontal: title.contains('Комментарий') ? 8: 0),
                     decoration: BoxDecoration(
                         color: Color(0xffF5F5F5).withOpacity(0.6),
                         borderRadius: BorderRadius.all(Radius.circular(12))

@@ -20,7 +20,6 @@ class ObjectCarouselCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.white.withOpacity(0.05),
-            // spreadRadius: 5,
             blurRadius: 20,
             offset: Offset(0, 4), // changes position of shadow
           ),

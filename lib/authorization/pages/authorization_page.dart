@@ -127,27 +127,32 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                         )
                       ),
                       Spacer(),
-                      BoxButton(
-                        title: 'Войти',
-                        disabled: isDisabledButton() ? false : true,
-                        onTap: () {
-                          setState(() {
-                            if (login == 'admin@admin.com' && password == '123456'){
-                              isError = false;
-                              isBusy = true;
-                              logIn();
-                            } else {
-                              if (validateEmail(login).isNotEmpty){
-                                loginErrorText = 'Введите корректный почтовый адрес';
-                              }
-                              else {
-                                loginErrorText = '';
-                              }
-                              isError = true;
-                            }
-                          });
+                      GestureDetector(
+                        onDoubleTap: () { /// Двойное нажатие чтобы войти. НАДО ПОТОМ УДАЛИТЬ ЭТУ ФУНКЦИЮ
+                          logIn();
                         },
-                        busy: isBusy,
+                        child: BoxButton(
+                          title: 'Войти',
+                          disabled: isDisabledButton() ? false : true,
+                          onTap: () {
+                            setState(() {
+                              if (login.replaceAll(' ', '') == 'admin@admin.com' && password == '123456'){
+                                isError = false;
+                                isBusy = true;
+                                logIn();
+                              } else {
+                                if (validateEmail(login).isNotEmpty){
+                                  loginErrorText = 'Введите корректный почтовый адрес';
+                                }
+                                else {
+                                  loginErrorText = '';
+                                }
+                                isError = true;
+                              }
+                            });
+                          },
+                          busy: isBusy,
+                        ),
                       ),
                       SizedBox(
                         height: 40,

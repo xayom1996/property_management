@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -27,13 +29,42 @@ class _DashboardPageState extends State<DashboardPage> {
 
   int currentIndex = 0;
 
-  final List<Widget> pages = [
-    ListObjectsPage(),
-    CharacteristicsPage(),
-    ExploitationPage(),
-    AnalyticsPage(),
-    TotalPage(),
-  ];
+  late List<Widget> pages;
+  // [
+  //   ListObjectsPage(
+  //     goToCharacteristicsPage: () {
+  //       setState(() {
+  //         currentIndex = 0;
+  //       });
+  //     },
+  //   ),
+  //   CharacteristicsPage(),
+  //   ExploitationPage(),
+  //   AnalyticsPage(),
+  //   TotalPage(),
+  // ];
+
+  @override
+  void initState() {
+    pages = [
+      ListObjectsPage(
+        goToCharacteristicsPage: () {
+          onChangeIndex(1);
+        },
+      ),
+      CharacteristicsPage(),
+      ExploitationPage(),
+      AnalyticsPage(),
+      TotalPage(),
+    ];
+    super.initState();
+  }
+
+  void onChangeIndex(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +80,7 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       bottomNavigationBar: MyNavBar(
         currentIndex: currentIndex,
-        onTap: (int index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
+        onTap: onChangeIndex,
         items: const [
           {
             'iconPath': 'assets/icons/home.svg',
@@ -105,6 +132,7 @@ class MyNavBar extends StatelessWidget{
           )
         ),
         // padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw)),
+        padding: EdgeInsets.only(bottom: Platform.isIOS ? 16 : 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(items.length, (index) =>

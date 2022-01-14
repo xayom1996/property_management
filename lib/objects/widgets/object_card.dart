@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/custom_alert_dialog.dart';
 
@@ -34,6 +36,12 @@ class ObjectCard extends StatelessWidget {
                   Color(0xff0940CD),
                 ]
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditObjectPage()),
+              );
+            },
             backgroundColor: Colors.white,
           ),
           SizedBox(
@@ -66,7 +74,7 @@ class ObjectCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          if (id % 2 == 0)
+                          if (objects[id]['color'] != null)
                             Padding(
                               padding: EdgeInsets.only(right: 8),
                               child: Container(
@@ -76,9 +84,7 @@ class ObjectCard extends StatelessWidget {
                                   borderRadius: BorderRadius.all(
                                       Radius.circular(20) //                 <--- border radius here
                                   ),
-                                  color: Random().nextInt(100) % 2 == 0
-                                      ? Color(0xffFF0000)
-                                      : Color(0xff40CD0F),
+                                  color: Color(objects[id]['color']),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -92,18 +98,18 @@ class ObjectCard extends StatelessWidget {
                               ),
                             ),
                           Text(
-                            'ЖК Акваленд, 3-к',
+                            objects[id]['name'],
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: body,
                           ),
                         ],
                       ),
-                      Text('96 кв.м.', style: body,),
+                      Text(objects[id]['area'], style: body,),
                     ],
                   ),
                   Text(
-                    'г. Новосибирск, Ленинградский пр-т, 124',
+                    objects[id]['address'],
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: body.copyWith(color: Color(0xffC7C9CC)),

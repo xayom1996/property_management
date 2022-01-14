@@ -6,13 +6,22 @@ import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/input_field.dart';
 
-class ChangeFieldPage extends StatelessWidget {
+class ChangeFieldPage extends StatefulWidget {
   final String title;
   final Map item;
-  const ChangeFieldPage({Key? key, required this.title, required this.item}) : super(key: key);
+  ChangeFieldPage({Key? key, required this.title, required this.item}) : super(key: key);
+
+  @override
+  State<ChangeFieldPage> createState() => _ChangeFieldPageState();
+}
+
+class _ChangeFieldPageState extends State<ChangeFieldPage> {
+  final TextEditingController textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    // textController.text = widget.item['value'] ?? '';
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -33,7 +42,7 @@ class ChangeFieldPage extends StatelessWidget {
             ),
             Spacer(),
             Text(
-              title,
+              widget.title,
               overflow: TextOverflow.ellipsis,
               style: body,
             ),
@@ -54,13 +63,11 @@ class ChangeFieldPage extends StatelessWidget {
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
         child: BoxInputField(
-          controller: TextEditingController(text: item['value'] ?? ''),
-          placeholder: item['placeholder'],
-          title: item['title'],
+          controller: textController,
+          placeholder: widget.item['placeholder'],
+          title: widget.item['title'],
         ),
       ),
     );
   }
-
-
 }

@@ -1,10 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:property_management/theme/colors.dart';
+import 'package:property_management/theme/styles.dart';
+import 'package:property_management/utils/utils.dart';
+import 'package:property_management/widgets/box_icon.dart';
 
-class AnalyticCharts extends StatelessWidget {
-  AnalyticCharts({Key? key}) : super(key: key);
+class AnalyticCharts extends StatefulWidget {
+  final String title;
+  const AnalyticCharts({Key? key, required this.title}) : super(key: key);
+
+  @override
+  State<AnalyticCharts> createState() => _AnalyticChartsState();
+}
+
+class _AnalyticChartsState extends State<AnalyticCharts> {
+  int currentIndexTab = 0;
 
   final List<DeveloperSeries> data = [
     DeveloperSeries(
@@ -110,26 +123,125 @@ class AnalyticCharts extends StatelessWidget {
       // ),
     ];
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        height: 300,
-        // width: 1.sw,
-        padding: EdgeInsets.all(25),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(9.0),
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                    child: _getBarChart()
+      appBar: AppBar(
+        centerTitle: true,
+        leading: null,
+        automaticallyImplyLeading: false,
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BoxIcon(
+              iconPath: 'assets/icons/back.svg',
+              iconColor: Colors.black,
+              backgroundColor: Colors.white,
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            Spacer(),
+            Text(
+              widget.title,
+              style: body,
+            ),
+            Spacer(),
+            BoxIcon(
+              iconPath: 'assets/icons/total.svg',
+              iconColor: Colors.black,
+              backgroundColor: Colors.white,
+            ),
+          ],
+        ),
+        elevation: 0,
+        toolbarHeight: 68,
+        backgroundColor: kBackgroundColor,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+            child: Wrap(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      currentIndexTab = 0;
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: currentIndexTab == 0
+                            ? Color(0xff5589F1)
+                            : Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(22))
+                      ),
+                      child: Text(
+                        'Распределение прибыли по годам',
+                        style: caption1.copyWith(
+                          color: currentIndexTab == 0
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                Expanded(
-                  child: _getPieChart()
+                SizedBox(
+                  width: 8,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      currentIndexTab = 1;
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    decoration: BoxDecoration(
+                        color: currentIndexTab == 1
+                            ? Color(0xff5589F1)
+                            : Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(22))
+                    ),
+                    child: Text(
+                      'Вклад аренды и роста стоимости в прибыль',
+                      style: caption1.copyWith(
+                        color: currentIndexTab == 1
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-        ),
+          Container(
+            height: MediaQuery.of(context).size.height / 2,
+            // width: 1.sw,
+            padding: EdgeInsets.all(25),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(9.0),
+                child: Column(
+                  children: <Widget>[
+                    currentIndexTab == 0
+                        ? Expanded(
+                            child: _getBarChart()
+                        )
+                        : Expanded(
+                            child: _getPieChart()
+                          ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -196,5 +308,4 @@ class AnalyticCharts extends StatelessWidget {
       //     groupingType: charts.BarGroupingType.stacked, strokeWidthPx: 1.0),
     );
   }
-
 }
