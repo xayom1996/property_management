@@ -14,8 +14,8 @@ import 'package:property_management/theme/box_ui.dart';
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: kBackgroundColor, // status bar color
-    statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
-    statusBarBrightness: Brightness.light,
+    // statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+    // statusBarBrightness: Brightness.light,
   ));
 
   return runApp(
