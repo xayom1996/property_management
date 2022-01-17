@@ -1,5 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/account/pages/change_password_page.dart';
+import 'package:property_management/account/pages/personal_information_page.dart';
+import 'package:property_management/account/widgets/change_profile_bottom_sheet.dart';
+import 'package:property_management/account/widgets/logout_alert_dialog.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
@@ -38,6 +43,9 @@ class AccountPage extends StatelessWidget {
               iconPath: 'assets/icons/chat.svg',
               iconColor: Colors.black,
               backgroundColor: Colors.white,
+              onTap: () {
+
+              },
             ),
           ],
         ),
@@ -45,20 +53,101 @@ class AccountPage extends StatelessWidget {
         toolbarHeight: 68,
         backgroundColor: kBackgroundColor,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
-        child: Column(
-          children: [
-            ContainerForTransition(
-              title: 'Личная информация',
-              onTap: () {  },
+      body: CustomScrollView(
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+              child: Column(
+                children: [
+                  Text(
+                    'Фамилия Имя Отчество',
+                    textAlign: TextAlign.center,
+                    style: title2.copyWith(
+                      color: Color(0xffC7C9CC),
+                      fontSize: 22,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  ContainerForTransition(
+                    title: 'Личная информация',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PersonalInformationPage()),
+                      );
+                    },
+                  ),
+                  ContainerForTransition(
+                    title: 'Изменить пароль',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+                      );
+                    },
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent, isScrollControlled: true,
+                          builder: (context) {
+                            return ChangeProfileBottomSheet();
+                          }
+                      );
+                    },
+                    child: Text(
+                      'Сменить аккаунт',
+                      textAlign: TextAlign.center,
+                      style: body,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 49,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => LogoutAlertDialog()
+                      );
+                    },
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/logout.svg',
+                            color: Color(0xff5589F1),
+                            height: 16,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'Выйти',
+                            textAlign: TextAlign.center,
+                            style: body.copyWith(
+                                color: Color(0xff5589F1)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                ],
+              ),
             ),
-            ContainerForTransition(
-              title: 'Изменить пароль',
-              onTap: () {  },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

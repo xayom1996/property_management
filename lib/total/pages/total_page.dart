@@ -162,34 +162,41 @@ class _TotalPageState extends State<TotalPage> {
             // ),
           ];
         },
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
-          child: Column(
-            children: [
-              ContainerForTransition(
-                title: 'Объекты спекулятивного типа',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AnalyticCharts(
+        body: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+                child: Column(
+                  children: [
+                    ContainerForTransition(
                       title: 'Объекты спекулятивного типа',
-                    )),
-                  );
-                },
-              ),
-              ContainerForTransition(
-                title: 'Объекты в эксплуатации',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AnalyticCharts(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnalyticCharts(
+                            title: 'Объекты спекулятивного типа',
+                          )),
+                        );
+                      },
+                    ),
+                    ContainerForTransition(
                       title: 'Объекты в эксплуатации',
-                    )),
-                  );
-                },
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnalyticCharts(
+                            title: 'Объекты в эксплуатации',
+                          )),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

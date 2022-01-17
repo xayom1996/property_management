@@ -14,6 +14,7 @@ import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_button.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/custom_alert_dialog.dart';
@@ -139,9 +140,7 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
               flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                 return FlexibleSpaceBar(
                   centerTitle: constraints.biggest.height > 68 ? false : true,
-                  titlePadding: constraints.biggest.height > 68
-                      ? EdgeInsets.symmetric(horizontal: 24)
-                      : EdgeInsets.all(16),
+                  titlePadding: EdgeInsets.all(24),
                   title: AnimatedOpacity(
                     duration: Duration(milliseconds: 300),
                     // opacity: constraints.biggest.height > 60.h ? 1.0 : 0.0,
@@ -164,7 +163,7 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                   options: CarouselOptions(
                     // aspectRatio: 2.0,
                     // enlargeCenterPage: true,
-                    viewportFraction: 0.72,
+                    viewportFraction: 0.7,
                     height: 75,
                     enableInfiniteScroll: true,
                     onPageChanged: (int index, CarouselPageChangedReason reason) {
@@ -210,40 +209,41 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
         },
         body: currentIndexTab == 0
             ? CustomTabView(
-                objectItems: firstTabObjectItems
+                objectItems: objectItemsFilled
               )
             : CustomTabView(
-                objectItems: secondTabObjectItems,
-                textButton: secondTabObjectItems.isEmpty
-                    ? GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CreateTenantPage()),
-                        );
-                      },
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/plus.svg',
-                              color: Color(0xff4B81EF),
-                              height: 16,
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              'Добавить характеристики арендатора',
-                              style: title2.copyWith(
-                                  color: Color(0xff4B81EF),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400
-                              ),
-                            ),
-                          ],
-                        ),
-                    )
-                    : null,
+                objectItems: tenantItemsFilled,
+                checkbox: true,
+                // textButton: secondTabObjectItems.isEmpty
+                //     ? GestureDetector(
+                //       onTap: () {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(builder: (context) => CreateTenantPage()),
+                //         );
+                //       },
+                //       child: Row(
+                //           crossAxisAlignment: CrossAxisAlignment.center,
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           children: [
+                //             SvgPicture.asset(
+                //               'assets/icons/plus.svg',
+                //               color: Color(0xff4B81EF),
+                //               height: 16,
+                //             ),
+                //             SizedBox(width: 10),
+                //             Text(
+                //               'Добавить характеристики арендатора',
+                //               style: title2.copyWith(
+                //                   color: Color(0xff4B81EF),
+                //                   fontSize: 14,
+                //                   fontWeight: FontWeight.w400
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //     )
+                //     : null,
               ),
       ),
     );

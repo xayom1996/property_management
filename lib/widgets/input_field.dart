@@ -10,7 +10,7 @@ class BoxInputField extends StatefulWidget {
   final String title;
   final Widget? leading;
   final Widget? trailing;
-  bool password;
+  final bool password;
   final bool isError;
   final String? errorText;
   final bool? enabled;
@@ -43,6 +43,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
     borderRadius: BorderRadius.circular(8),
   );
   bool isFocused = false;
+  bool showPassword = false;
   final FocusNode _focus = new FocusNode();
 
   @override
@@ -93,11 +94,13 @@ class _BoxInputFieldState extends State<BoxInputField> {
                       children: [
                         BoxText.caption(widget.title),
                         TextField(
+                          keyboardType: widget.enabled == true ? null : TextInputType.multiline,
+                          maxLines: widget.enabled == true ? 1 : null,
                           enabled: widget.enabled,
                           controller: widget.controller,
                           style: body,
                           focusNode: _focus,
-                          obscureText: widget.password,
+                          obscureText: widget.password ? !showPassword : false,
                           decoration: InputDecoration(
                             hintText: widget.placeholder,
                             hintStyle: body.copyWith(
@@ -121,7 +124,24 @@ class _BoxInputFieldState extends State<BoxInputField> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          child: widget.trailing,
+                          child: widget.password
+                              ? GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      showPassword = !showPassword;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Icon(
+                                      !showPassword
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                      color: Color(0xffA3A7AE),
+                                    ),
+                                  ),
+                                )
+                              : widget.trailing,
                         )
                       ],
                     )

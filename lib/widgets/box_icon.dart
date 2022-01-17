@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class BoxIcon extends StatelessWidget {
   const BoxIcon({Key? key, required this.backgroundColor, this.iconColor,
-    required this.iconPath, this.gradient, this.gradientIcon, this.onTap}) : super(key: key);
+    required this.iconPath, this.gradient, this.gradientIcon, this.onTap, this.size, this.iconSize}) : super(key: key);
 
   final Color backgroundColor;
   final Color? iconColor;
@@ -13,14 +13,16 @@ class BoxIcon extends StatelessWidget {
   final Gradient? gradient;
   final Gradient? gradientIcon;
   final Function()? onTap;
+  final double? size;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 44,
-        width: 44,
+        height: size ?? 44,
+        width: size ?? 44,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(22)),
           color: backgroundColor,
@@ -39,7 +41,7 @@ class BoxIcon extends StatelessWidget {
               ? SvgPicture.asset(
                   iconPath,
                   color: iconColor,
-                  height: 16,
+                  height: iconSize ?? 16,
                 )
               : ShaderMask(
                   blendMode: BlendMode.srcIn,
@@ -49,7 +51,7 @@ class BoxIcon extends StatelessWidget {
                   child: SvgPicture.asset(
                     iconPath,
                     color: iconColor,
-                    height: 16,
+                    height: iconSize ?? 16,
                   )
                 )
         ),

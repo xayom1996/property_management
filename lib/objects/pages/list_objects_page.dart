@@ -139,7 +139,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                   centerTitle: constraints.biggest.height > 68 ? false : true,
                   titlePadding: constraints.biggest.height > 68
                       ? EdgeInsets.symmetric(horizontal: horizontalPadding(44))
-                      : EdgeInsets.all(16),
+                      : EdgeInsets.all(24),
                   title: AnimatedOpacity(
                     duration: Duration(milliseconds: 300),
                     opacity: 1.0,
@@ -225,8 +225,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
               CustomScrollView(
                 slivers: [
                   SliverPersistentHeader(
-                    pinned: true,
-                    floating: true,
+                    pinned: false,
                     delegate: _SliverAppBarDelegate(
                       minHeight: 56,
                       maxHeight: 56,
@@ -302,11 +301,19 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                       ),
                     ),
                   ),
+                  SliverPersistentHeader(
+                    pinned: false,
+                    delegate: _SliverAppBarDelegate(
+                      minHeight: 16,
+                      maxHeight: 16,
+                      child: Container(),
+                      ),
+                  ),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
                         return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
                           child: isLoading
                               ? ObjectSkeleton()
                               : GestureDetector(
@@ -328,7 +335,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                   top: 50,
                   child: Container(
                     height: 56,
-                    width: 1.sw,
+                    constraints: BoxConstraints(maxWidth: 1.sw),
                     padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
                     decoration: BoxDecoration(
                       color: Color(0xffF5F7F9),

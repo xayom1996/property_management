@@ -57,6 +57,9 @@ class ObjectSkeleton extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
+                SizedBox(
+                  height: 12,
+                ),
               ],
             ),
           )

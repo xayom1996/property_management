@@ -144,7 +144,7 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
                 itemCount: 5,
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
                     child: isLoading
                             ? ObjectSkeleton()
                             : ObjectCard(id: index),

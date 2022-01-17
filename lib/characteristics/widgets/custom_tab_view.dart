@@ -5,14 +5,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
+import 'package:property_management/widgets/custom_checkbox.dart';
 import 'package:property_management/widgets/input_field.dart';
 
 class CustomTabView extends StatelessWidget {
   final List<Map> objectItems;
   final Widget? textButton;
   final Widget? child;
-  const CustomTabView({Key? key, required this.objectItems, this.textButton, this.child}) : super(key: key);
-
+  final bool? checkbox;
+  const CustomTabView({Key? key, required this.objectItems, this.textButton, this.child, this.checkbox = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +68,11 @@ class CustomTabView extends StatelessWidget {
                                 )
                                 : null,
                         ),
+                      if (checkbox != false)
+                        CustomCheckBox(),
+                      SizedBox(
+                        height: 30,
+                      ),
                     ],
                   ),
                 ),

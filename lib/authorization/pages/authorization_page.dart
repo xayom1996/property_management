@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -59,123 +60,110 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: kBackgroundColor,
-        body: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 24,
-                      horizontal: horizontalPadding(0.24.sw),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/logos/logo.svg',
-                      ),
-                      Spacer(),
-                      BoxText.headingTwo('Вход в систему'),
-                      SizedBox(
-                        height: 24,
-                      ),
-                      BoxInputField(
-                        controller: loginController,
-                        placeholder: 'Введите логин',
-                        title: 'Логин',
-                        errorText: loginErrorText,
-                        isError: isError,
-                      ),
-                      BoxInputField(
-                        controller: passwordController,
-                        placeholder: 'Введите пароль',
-                        trailing: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isPassword = !isPassword;
-                            });
+    return Container(
+      color: kBackgroundColor,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: kBackgroundColor,
+          body: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Container(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 24,
+                        horizontal: horizontalPadding(0.24.sw),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/logos/logo.svg',
+                        ),
+                        Spacer(),
+                        BoxText.headingTwo('Вход в систему'),
+                        SizedBox(
+                          height: 24,
+                        ),
+                        BoxInputField(
+                          controller: loginController,
+                          placeholder: 'Введите логин',
+                          title: 'Логин',
+                          errorText: loginErrorText,
+                          isError: isError,
+                        ),
+                        BoxInputField(
+                          controller: passwordController,
+                          placeholder: 'Введите пароль',
+                          title: 'Пароль',
+                          password: isPassword,
+                          isError: isError,
+                        ),
+                        SizedBox(
+                          height: 32,
+                        ),
+                        Text(
+                            isError && loginErrorText == ''
+                              ? 'Неверный логин и пароль'
+                              : '',
+                          style: body.copyWith(
+                            color: const Color.fromRGBO(255, 77, 109, 1)
+                          )
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                          onDoubleTap: () { /// Двойное нажатие чтобы войти. НАДО ПОТОМ УДАЛИТЬ ЭТУ ФУНКЦИЮ
+                            logIn();
                           },
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child: Icon(
-                                isPassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                                color: Color(0xffA3A7AE),
-                            ),
+                          child: BoxButton(
+                            title: 'Войти',
+                            disabled: isDisabledButton() ? false : true,
+                            onTap: () {
+                              setState(() {
+                                if (login.replaceAll(' ', '') == 'admin@admin.com' && password == '123456'){
+                                  isError = false;
+                                  isBusy = true;
+                                  logIn();
+                                } else {
+                                  if (validateEmail(login).isNotEmpty){
+                                    loginErrorText = 'Введите корректный почтовый адрес';
+                                  }
+                                  else {
+                                    loginErrorText = '';
+                                  }
+                                  isError = true;
+                                }
+                              });
+                            },
+                            busy: isBusy,
                           ),
                         ),
-                        title: 'Пароль',
-                        password: isPassword,
-                        isError: isError,
-                      ),
-                      SizedBox(
-                        height: 32,
-                      ),
-                      Text(
-                          isError && loginErrorText == ''
-                            ? 'Неверный логин и пароль'
-                            : '',
-                        style: body.copyWith(
-                          color: const Color.fromRGBO(255, 77, 109, 1)
-                        )
-                      ),
-                      Spacer(),
-                      GestureDetector(
-                        onDoubleTap: () { /// Двойное нажатие чтобы войти. НАДО ПОТОМ УДАЛИТЬ ЭТУ ФУНКЦИЮ
-                          logIn();
-                        },
-                        child: BoxButton(
-                          title: 'Войти',
-                          disabled: isDisabledButton() ? false : true,
-                          onTap: () {
-                            setState(() {
-                              if (login.replaceAll(' ', '') == 'admin@admin.com' && password == '123456'){
-                                isError = false;
-                                isBusy = true;
-                                logIn();
-                              } else {
-                                if (validateEmail(login).isNotEmpty){
-                                  loginErrorText = 'Введите корректный почтовый адрес';
-                                }
-                                else {
-                                  loginErrorText = '';
-                                }
-                                isError = true;
-                              }
-                            });
+                        SizedBox(
+                          height: 40,
+                        ),
+                        TextButton(
+                          onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => RecoveryPasswordPage()),
+                            );
                           },
-                          busy: isBusy,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      TextButton(
-                        onPressed: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => RecoveryPasswordPage()),
-                          );
-                        },
-                        child: Text(
-                            'Забыли пароль?',
-                            style: body.copyWith(
-                                color: Color.fromRGBO(21, 21, 21, 1)
-                            )
-                        ),
-                      )
-                    ],
+                          child: Text(
+                              'Забыли пароль?',
+                              style: body.copyWith(
+                                  color: Color.fromRGBO(21, 21, 21, 1)
+                              )
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

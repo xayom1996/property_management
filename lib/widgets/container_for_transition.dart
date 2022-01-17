@@ -4,10 +4,11 @@ import 'package:property_management/theme/styles.dart';
 
 class ContainerForTransition extends StatelessWidget {
   final String title;
-  final Function() onTap;
+  final Function()? onTap;
+  final IconData? icon;
 
   const ContainerForTransition({Key? key, required this.title,
-    required this.onTap}) : super(key: key);
+    this.onTap, this.icon = Icons.arrow_forward_ios}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +26,14 @@ class ContainerForTransition extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: body,
+              Expanded(
+                child: Text(
+                  title,
+                  style: body,
+                ),
               ),
               Icon(
-                Icons.arrow_forward_ios,
+                icon,
                 size: 16,
                 color: Color(0xff5589F1),
               ),

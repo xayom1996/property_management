@@ -120,6 +120,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                   options: CarouselOptions(
                     // aspectRatio: 2.0,
                     // enlargeCenterPage: true,
+                      viewportFraction: 0.7,
                       height: 75,
                       enableInfiniteScroll: true,
                       onPageChanged: (int index, CarouselPageChangedReason reason) {

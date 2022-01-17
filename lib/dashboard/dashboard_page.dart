@@ -133,49 +133,64 @@ class MyNavBar extends StatelessWidget{
         ),
         // padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw)),
         padding: EdgeInsets.only(bottom: Platform.isIOS ? 16 : 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(items.length, (index) =>
-              InkWell(
-                onTap: (){
-                  onTap(index);
-                },
-                child: Flex(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  direction: ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
-                      ? Axis.vertical
-                      : Axis.horizontal,
-                  children: [
-                    BoxIcon(
-                      iconPath: items[index]['iconPath'],
-                      iconColor: index == currentIndex ? Colors.white : Colors.black,
-                      backgroundColor: Colors.white,
-                      gradient: index == currentIndex
-                          ? LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xff6395F9),
-                                  Color(0xff0940CD),
-                                ]
-                            )
-                          : null,
-                    ),
-                    ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
-                        ? SizedBox(
-                            height: 2,
-                          )
-                        : SizedBox(
-                            width: 8,
+        child: Expanded(
+          child: Align(
+            alignment: Alignment.center,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(items.length, (index) =>
+                  InkWell(
+                    onTap: (){
+                      onTap(index);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: index != items.length - 1
+                          ? ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
+                            ? 16
+                            : 32
+                          : 0,
+                      ),
+                      child: Flex(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        direction: ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
+                            ? Axis.vertical
+                            : Axis.horizontal,
+                        children: [
+                          BoxIcon(
+                            iconPath: items[index]['iconPath'],
+                            iconColor: index == currentIndex ? Colors.white : Colors.black,
+                            backgroundColor: Colors.white,
+                            gradient: index == currentIndex
+                                ? LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color(0xff6395F9),
+                                        Color(0xff0940CD),
+                                      ]
+                                  )
+                                : null,
                           ),
-                    Text(
-                      items[index]['title'],
-                      style: caption2,
-                    )
-                  ],
-                ),
+                          ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
+                              ? SizedBox(
+                                  height: 2,
+                                )
+                              : SizedBox(
+                                  width: 8,
+                                ),
+                          Text(
+                            items[index]['title'],
+                            style: caption2,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
               ),
+            ),
           ),
         )
     );

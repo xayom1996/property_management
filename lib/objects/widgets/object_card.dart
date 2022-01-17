@@ -108,13 +108,22 @@ class ObjectCard extends StatelessWidget {
                       Text(objects[id]['area'], style: body,),
                     ],
                   ),
+                  SizedBox(
+                    height: 4,
+                  ),
                   Text(
                     objects[id]['address'],
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: body.copyWith(color: Color(0xffC7C9CC)),
                   ),
+                  SizedBox(
+                    height: 16,
+                  ),
                   Divider(),
+                  SizedBox(
+                    height: 12,
+                  ),
                 ],
               ),
             )

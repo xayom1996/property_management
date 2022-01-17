@@ -15,6 +15,12 @@ TextStyle title2 = GoogleFonts.openSans(
   color: const Color.fromRGBO(0, 0, 0, 1),
 );
 
+TextStyle caption = GoogleFonts.ptSans(
+  fontSize: 11,
+  fontWeight: FontWeight.w400,
+  color: const Color(0xffC7C9CC),
+);
+
 TextStyle caption1 = GoogleFonts.ptSans(
   fontSize: 14,
   fontWeight: FontWeight.w700,
