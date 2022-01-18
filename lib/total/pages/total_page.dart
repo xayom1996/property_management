@@ -12,6 +12,7 @@ import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/total/pages/total_charts.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_button.dart';
 import 'package:property_management/widgets/box_icon.dart';
@@ -175,7 +176,7 @@ class _TotalPageState extends State<TotalPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AnalyticCharts(
+                          MaterialPageRoute(builder: (context) => TotalCharts(
                             title: 'Объекты спекулятивного типа',
                           )),
                         );
@@ -186,7 +187,7 @@ class _TotalPageState extends State<TotalPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AnalyticCharts(
+                          MaterialPageRoute(builder: (context) => TotalCharts(
                             title: 'Объекты в эксплуатации',
                           )),
                         );

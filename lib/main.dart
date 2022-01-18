@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
 import 'package:property_management/splash_page.dart';
 import 'package:property_management/theme/box_ui.dart';
+import 'package:property_management/total/pages/total_charts.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         builder: DevicePreview.appBuilder,
         home: SplashPage(),
         // home: DashboardPage(),
+        // home: TotalCharts(title: ''),
       )
     );
   }

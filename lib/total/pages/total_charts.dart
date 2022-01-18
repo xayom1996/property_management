@@ -10,15 +10,15 @@ import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/expenses.dart';
 
-class AnalyticCharts extends StatefulWidget {
+class TotalCharts extends StatefulWidget {
   final String title;
-  const AnalyticCharts({Key? key, required this.title}) : super(key: key);
+  const TotalCharts({Key? key, required this.title}) : super(key: key);
 
   @override
-  State<AnalyticCharts> createState() => _AnalyticChartsState();
+  State<TotalCharts> createState() => _TotalChartsState();
 }
 
-class _AnalyticChartsState extends State<AnalyticCharts> {
+class _TotalChartsState extends State<TotalCharts> {
   int currentIndexTab = 0;
   bool isTable = true;
 
@@ -91,6 +91,8 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
     ),
   ];
 
+  List headerTitles = ['ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'Всего'];
+
   @override
   Widget build(BuildContext context) {
     List<charts.Series<DeveloperSeries, String>> series = [
@@ -150,7 +152,7 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                   style: body,
                 ),
                 Text(
-                  'ЖК Акваленд, 3-к',
+                  'с 07.2018 по 12.2020',
                   style: caption,
                 ),
               ],
@@ -198,20 +200,31 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Text(
+                        'Объекты',
+                        style: body.copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       Container(
                         child: Padding(
                           padding: EdgeInsets.only(left: horizontalPadding(44), right: horizontalPadding(44), top: 16),
                           child: Row(
                             children: [
-                              for (var i = 0; i < 6; i++)
-                                Expanded(
+                              for (var i = 0; i < headerTitles.length; i++)
+                                Container(
+                                  width: 128,
                                   child: Padding(
                                     padding: EdgeInsets.only(right: i == 5 ? 0 : 9),
                                     child: Center(
                                       child: Text(
-                                        i.toString(),
+                                        headerTitles[i],
                                         style: body.copyWith(
-                                          fontSize: 14
+                                          fontSize: 14,
+                                          fontWeight: i == headerTitles.length - 1
+                                              ? FontWeight.w700
+                                              : FontWeight.w400,
                                         ),
                                         textAlign: TextAlign.center,
                                       ),
@@ -222,12 +235,13 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                           ),
                         ),
                       ),
-                      for (var item in planTableItems)
+                      for (var item in totalTableItems)
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
                           child: ExpensesContainer(
                             title: item['title'],
                             expenses: item['objects'],
+                            width: 128,
                           ),
                         )
                     ],
@@ -317,10 +331,9 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                             ),
                           ),
                         ),
-                        // SizedBox(
-                        //   height: 40,
-                        // ),
-                        Spacer(),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
                           child: Column(
@@ -397,7 +410,6 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
         domainFn: (DeveloperSeries series, _) => series.year,
         measureFn: (DeveloperSeries series, _) => series.money,
         colorFn: (DeveloperSeries series, _) => series.barColor,
-        labelAccessorFn: (DeveloperSeries sales, _) => '${NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: 0).format(sales.money)}',
         // labelAccessorFn: (DeveloperSeries row, _) => '${row.year}: ${row.money}',
       ),
     ];
@@ -430,11 +442,11 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
       ),
     ];
     return charts.PieChart<String>(series,
-        animate: true,
-        // barRendererDecorator: new charts.BarLabelDecorator<String>(),
-        // domainAxis: new charts.OrdinalAxisSpec(),
-        // defaultRenderer: new charts.BarRendererConfig(
-        //     groupingType: charts.BarGroupingType.stacked, strokeWidthPx: 1.0),
+      animate: true,
+      // barRendererDecorator: new charts.BarLabelDecorator<String>(),
+      // domainAxis: new charts.OrdinalAxisSpec(),
+      // defaultRenderer: new charts.BarRendererConfig(
+      //     groupingType: charts.BarGroupingType.stacked, strokeWidthPx: 1.0),
         defaultRenderer: new charts.ArcRendererConfig(
             arcWidth: 60,
             arcRendererDecorators: [new charts.ArcLabelDecorator()])
