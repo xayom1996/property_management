@@ -76,14 +76,11 @@ class NewCharacteristicPage extends StatelessWidget {
                             }
                           : null,
                       trailing: item['items'] != null
-                          ? Padding(
-                              padding: EdgeInsets.only(top: 10),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 14,
-                                color: Color(0xff5589F1),
-                              ),
-                            )
+                          ? Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                            color: Color(0xff5589F1),
+                          )
                           : null,
                       // isError: isError,
                     ),

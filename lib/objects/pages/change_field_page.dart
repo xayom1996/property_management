@@ -93,13 +93,14 @@ class _ChangeFieldPageState extends State<ChangeFieldPage> {
               ),
             if (widget.item != null)
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   BoxInputField(
                     controller: textController,
                     placeholder: widget.item!['placeholder'],
                     title: widget.item!['title'],
                   ),
-                  if (widget.item!['title'] == 'Площадь объекта')
+                  if (widget.item!['title'] == 'Площадь объекта' || widget.item!['title'] == 'Банковское обслуживание')
                     hasDocument == false
                         ? GestureDetector(
                       onTap: (){

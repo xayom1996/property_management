@@ -8,8 +8,8 @@ import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 
-class EditObjectPage extends StatelessWidget {
-  EditObjectPage({Key? key}) : super(key: key);
+class EditTenantPage extends StatelessWidget {
+  EditTenantPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class EditObjectPage extends StatelessWidget {
           children: [
             Spacer(),
             Text(
-              'Редактирование объекта',
+              'Редактирование арендатора',
               style: body,
             ),
             Spacer(),
@@ -49,10 +49,10 @@ class EditObjectPage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (var item in objectItemsFilled)
+                  for (var item in tenantItemsFilled)
                     BoxInputField(
                       controller: TextEditingController(text: item['value'] ?? ''),
-                      placeholder: item['placeholder'],
+                      placeholder: 'Данные не заполнены',
                       title: item['title'],
                       enabled: false,
                       onTap: () {

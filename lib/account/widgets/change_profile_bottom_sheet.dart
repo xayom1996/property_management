@@ -6,8 +6,15 @@ import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 
-class ChangeProfileBottomSheet extends StatelessWidget {
+class ChangeProfileBottomSheet extends StatefulWidget {
   const ChangeProfileBottomSheet({Key? key}) : super(key: key);
+
+  @override
+  State<ChangeProfileBottomSheet> createState() => _ChangeProfileBottomSheetState();
+}
+
+class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
+  String currentProfile = 'Квытько Елена Владимировна';
 
   @override
   Widget build(BuildContext context) {
@@ -52,32 +59,53 @@ class ChangeProfileBottomSheet extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Пошукай Михайл Иванович',
-                          style: body,
-                        ),
-                      ],
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          currentProfile = 'Пошукай Михайл Иванович';
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Пошукай Михайл Иванович',
+                            style: body,
+                          ),
+                          if (currentProfile == 'Пошукай Михайл Иванович')
+                            Icon(
+                              Icons.check,
+                              size: 22,
+                              color: Color(0xff5589F1),
+                            )
+                        ],
+                      ),
                     ),
                   ),
                   Divider(),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Квытько Елена Владимировна',
-                          style: body,
-                        ),
-                        Icon(
-                          Icons.check,
-                          size: 22,
-                          color: Color(0xff5589F1),
-                        )
-                      ],
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          currentProfile = 'Квытько Елена Владимировна';
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Квытько Елена Владимировна',
+                            style: body,
+                          ),
+                          if (currentProfile == 'Квытько Елена Владимировна')
+                            Icon(
+                              Icons.check,
+                              size: 22,
+                              color: Color(0xff5589F1),
+                            )
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -103,5 +131,4 @@ class ChangeProfileBottomSheet extends StatelessWidget {
       ),
     );
   }
-
 }

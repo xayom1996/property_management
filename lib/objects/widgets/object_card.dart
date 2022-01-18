@@ -23,9 +23,10 @@ class ObjectCard extends StatelessWidget {
       endActionPane: ActionPane(
         motion: ScrollMotion(),
         children: [
-          SizedBox(
-            width: 24,
-          ),
+          Spacer(),
+          // SizedBox(
+          //   width: 50,
+          // ),
           BoxIcon(
             iconPath: 'assets/icons/edit.svg',
             gradient: LinearGradient(

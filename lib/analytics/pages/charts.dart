@@ -7,6 +7,7 @@ import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
+import 'package:property_management/widgets/expenses.dart';
 
 class AnalyticCharts extends StatefulWidget {
   final String title;
@@ -18,6 +19,7 @@ class AnalyticCharts extends StatefulWidget {
 
 class _AnalyticChartsState extends State<AnalyticCharts> {
   int currentIndexTab = 0;
+  bool isTable = true;
 
   final List<DeveloperSeries> data = [
     DeveloperSeries(
@@ -140,15 +142,30 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
               },
             ),
             Spacer(),
-            Text(
-              widget.title,
-              style: body,
+            Column(
+              children: [
+                Text(
+                  widget.title,
+                  style: body,
+                ),
+                Text(
+                  'ЖК Акваленд, 3-к',
+                  style: caption,
+                ),
+              ],
             ),
             Spacer(),
             BoxIcon(
-              iconPath: 'assets/icons/total.svg',
+              iconPath: isTable
+                  ? 'assets/icons/graph.svg'
+                  : 'assets/icons/table.svg',
               iconColor: Colors.black,
               backgroundColor: Colors.white,
+              onTap: () {
+                setState(() {
+                  isTable = !isTable;
+                });
+              },
             ),
           ],
         ),
@@ -160,93 +177,175 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
-                  child: Wrap(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            currentIndexTab = 0;
-                          });
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: 8),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: currentIndexTab == 0
-                                  ? Color(0xff5589F1)
-                                  : Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(22))
-                            ),
-                            child: Text(
-                              'Распределение прибыли по годам',
-                              style: caption1.copyWith(
-                                color: currentIndexTab == 0
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            currentIndexTab = 1;
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          decoration: BoxDecoration(
-                              color: currentIndexTab == 1
-                                  ? Color(0xff5589F1)
-                                  : Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(22))
-                          ),
-                          child: Text(
-                            'Вклад аренды и роста стоимости в прибыль',
-                            style: caption1.copyWith(
-                              color: currentIndexTab == 1
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height / 2,
-                  // width: 1.sw,
-                  padding: EdgeInsets.all(25),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(9.0),
-                      child: Column(
-                        children: <Widget>[
-                          currentIndexTab == 0
-                              ? Expanded(
-                                  child: _getBarChart()
-                              )
-                              : Expanded(
-                                  child: _getPieChart()
+            child: isTable
+                ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: horizontalPadding(44), right: horizontalPadding(44), top: 16),
+                        child: Row(
+                          children: [
+                            for (var i = 0; i < 6; i++)
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: i == 5 ? 0 : 9),
+                                  child: Center(
+                                    child: Text(
+                                      i.toString(),
+                                      style: body.copyWith(
+                                        fontSize: 14
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                 ),
-                        ],
+                              ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
+                    for (var item in planTableItems)
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
+                        child: ExpensesContainer(
+                          title: item['title'],
+                          expenses: item['objects'],
+                        ),
+                      )
+                  ],
+                )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+                        child: Wrap(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  currentIndexTab = 0;
+                                });
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(bottom: 8),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    color: currentIndexTab == 0
+                                        ? Color(0xff5589F1)
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(22))
+                                  ),
+                                  child: Text(
+                                    'Распределение прибыли по годам',
+                                    style: caption1.copyWith(
+                                      color: currentIndexTab == 0
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  currentIndexTab = 1;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                decoration: BoxDecoration(
+                                    color: currentIndexTab == 1
+                                        ? Color(0xff5589F1)
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(22))
+                                ),
+                                child: Text(
+                                  'Вклад аренды и роста стоимости в прибыль',
+                                  style: caption1.copyWith(
+                                    color: currentIndexTab == 1
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height / 2,
+                        // width: 1.sw,
+                        padding: EdgeInsets.all(25),
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(9.0),
+                            child: Column(
+                              children: <Widget>[
+                                currentIndexTab == 0
+                                    ? Expanded(
+                                        child: _getBarChart()
+                                    )
+                                    : Expanded(
+                                        child: _getPieChart()
+                                      ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // SizedBox(
+                      //   height: 40,
+                      // ),
+                      Spacer(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  height: 16,
+                                  width: 16,
+                                  color: Color(0xff7DD390),
+                                ),
+                                SizedBox(
+                                  width: 12,
+                                ),
+                                Text(
+                                  'Прирост рыночной стоимости, руб.',
+                                  style: body,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  height: 16,
+                                  width: 16,
+                                  color: Color(0xff7EB6EA),
+                                ),
+                                SizedBox(
+                                  width: 12,
+                                ),
+                                Text(
+                                  'Чистый арендный доход, руб.',
+                                  style: body,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  )
           ),
         ],
       ),

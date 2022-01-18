@@ -78,7 +78,7 @@ class SettingsPage extends StatelessWidget {
                 return FlexibleSpaceBar(
                   centerTitle: true,
                   titlePadding: EdgeInsets.all(24),
-                  title: Text('Характеристики',
+                  title: Text('Настройки',
                     style: body,
                   ),
                 );

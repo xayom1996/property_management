@@ -81,9 +81,7 @@ class CharacteristicItemsPage extends StatelessWidget {
                       endActionPane: ActionPane(
                         motion: ScrollMotion(),
                         children: [
-                          SizedBox(
-                            width: 24,
-                          ),
+                          Spacer(),
                           BoxIcon(
                             iconPath: 'assets/icons/eye.svg',
                             iconColor: Colors.black,

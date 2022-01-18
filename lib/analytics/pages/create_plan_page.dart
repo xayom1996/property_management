@@ -8,8 +8,8 @@ import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 
-class EditObjectPage extends StatelessWidget {
-  EditObjectPage({Key? key}) : super(key: key);
+class CreatePlanPage extends StatelessWidget {
+  CreatePlanPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +18,13 @@ class EditObjectPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         leading: null,
-        // automaticallyImplyLeading: false,
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Spacer(),
             Text(
-              'Редактирование объекта',
+              'Новый план',
               style: body,
             ),
             Spacer(),
@@ -49,9 +48,9 @@ class EditObjectPage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (var item in objectItemsFilled)
+                  for (var item in planItems)
                     BoxInputField(
-                      controller: TextEditingController(text: item['value'] ?? ''),
+                      controller: TextEditingController(),
                       placeholder: item['placeholder'],
                       title: item['title'],
                       enabled: false,
@@ -85,10 +84,7 @@ class EditObjectPage extends StatelessWidget {
               child: SizedBox(
                 width: 1.sw - horizontalPadding(0.25.sw) * 2,
                 child: BoxButton(
-                  title: 'Сохранить',
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                  title: 'Создать',
                 ),
               ),
             ),

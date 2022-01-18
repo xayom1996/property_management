@@ -64,13 +64,10 @@ class CreateObjectPage extends StatelessWidget {
                           )),
                         );
                       },
-                      trailing: Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 14,
-                          color: Color(0xff5589F1),
-                        ),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: Color(0xff5589F1),
                       ),
                       // isError: isError,
                     ),

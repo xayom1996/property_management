@@ -41,7 +41,7 @@ class BoxIcon extends StatelessWidget {
               ? SvgPicture.asset(
                   iconPath,
                   color: iconColor,
-                  height: iconSize ?? 16,
+                  height: iconSize ?? 17,
                 )
               : ShaderMask(
                   blendMode: BlendMode.srcIn,
@@ -51,7 +51,7 @@ class BoxIcon extends StatelessWidget {
                   child: SvgPicture.asset(
                     iconPath,
                     color: iconColor,
-                    height: iconSize ?? 16,
+                    height: iconSize ?? 17,
                   )
                 )
         ),

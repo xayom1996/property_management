@@ -76,6 +76,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
           children: [
             Container(
               padding: EdgeInsets.all(16),
+              constraints: BoxConstraints(minHeight: 50),
               decoration: BoxDecoration(
                   color: widget.backgroundColor ?? getBackgroundColor(),
                   borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -86,7 +87,8 @@ class _BoxInputFieldState extends State<BoxInputField> {
                         : null
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Flexible(
                     child: Column(
@@ -131,14 +133,11 @@ class _BoxInputFieldState extends State<BoxInputField> {
                                       showPassword = !showPassword;
                                     });
                                   },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 10),
-                                    child: Icon(
-                                      !showPassword
-                                          ? Icons.visibility_off_outlined
-                                          : Icons.visibility_outlined,
-                                      color: Color(0xffA3A7AE),
-                                    ),
+                                  child: Icon(
+                                    !showPassword
+                                        ? Icons.visibility_off_outlined
+                                        : Icons.visibility_outlined,
+                                    color: Color(0xffA3A7AE),
                                   ),
                                 )
                               : widget.trailing,

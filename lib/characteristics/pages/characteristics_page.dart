@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
+import 'package:property_management/exploitation/pages/edit_exploitation_page.dart';
 import 'package:property_management/objects/pages/create_tenant_page.dart';
 import 'package:property_management/objects/pages/edit_object_page.dart';
+import 'package:property_management/objects/pages/edit_tenant_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
@@ -112,7 +114,10 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => EditObjectPage()),
+                        MaterialPageRoute(builder: (context) => currentIndexTab == 0
+                            ? EditObjectPage()
+                            : EditTenantPage(),
+                        ),
                       );
                     },
                   ),

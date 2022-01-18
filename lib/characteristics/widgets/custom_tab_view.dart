@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/characteristics/widgets/document_page.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
@@ -19,7 +20,7 @@ class CustomTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     return child == null
         ? Container(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+            padding: EdgeInsets.only(left: horizontalPadding(44), right:horizontalPadding(44), top: 16),
             child: textButton ?? SingleChildScrollView(
                   child: Column(
                     children: [
@@ -35,10 +36,16 @@ class CustomTabView extends StatelessWidget {
                                   iconPath: 'assets/icons/document.svg',
                                   iconColor: Color(0xff5589F1),
                                   backgroundColor: Colors.white,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => DocumentPage()),
+                                    );
+                                  },
                                 )
                               : item['value'] == ''
                                 ? Padding(
-                                  padding: EdgeInsets.only(top: 10, right: 16),
+                                  padding: EdgeInsets.only(right: 16),
                                   child: Tooltip(
                                       padding: EdgeInsets.all(16),
                                       margin: EdgeInsets.all(16),

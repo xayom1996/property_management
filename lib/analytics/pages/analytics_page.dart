@@ -5,9 +5,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:property_management/analytics/pages/charts.dart';
+import 'package:property_management/analytics/pages/create_plan_page.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
@@ -172,27 +174,98 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
               child: Column(
                 children: [
-                  ContainerForTransition(
-                    title: 'План первый',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AnalyticCharts(
-                          title: 'План первый',
-                        )),
-                      );
-                    },
+                  Slidable(
+                    key: ValueKey(0),
+                    endActionPane: ActionPane(
+                      motion: ScrollMotion(),
+                      children: [
+                        Spacer(),
+                        BoxIcon(
+                          iconPath: 'assets/icons/trash.svg',
+                          iconColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          onTap: () {
+                            // showDialog(
+                            //     context: context,
+                            //     builder: (context) => CustomAlertDialog()
+                            // );
+                          },
+                        ),
+                      ],
+                    ),
+                    child: ContainerForTransition(
+                      title: 'План первый',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnalyticCharts(
+                            title: 'План первый',
+                          )),
+                        );
+                      },
+                    ),
                   ),
-                  ContainerForTransition(
-                    title: 'План второй',
+                  Slidable(
+                    key: ValueKey(1),
+                    endActionPane: ActionPane(
+                      motion: ScrollMotion(),
+                      children: [
+                        Spacer(),
+                        BoxIcon(
+                          iconPath: 'assets/icons/trash.svg',
+                          iconColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          onTap: () {
+                            // showDialog(
+                            //     context: context,
+                            //     builder: (context) => CustomAlertDialog()
+                            // );
+                          },
+                        ),
+                      ],
+                    ),
+                    child: ContainerForTransition(
+                      title: 'План второй',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnalyticCharts(
+                            title: 'План второй',
+                          )),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 48,
+                  ),
+                  GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => AnalyticCharts(
-                          title: 'План второй',
-                        )),
+                        MaterialPageRoute(builder: (context) => CreatePlanPage()),
                       );
                     },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/plus.svg',
+                          color: Color(0xff4B81EF),
+                          height: 16,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Добавить план',
+                          style: title2.copyWith(
+                              color: Color(0xff4B81EF),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -228,6 +301,26 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
         )
             : CustomTabView(
           objectItems: secondTabObjectItems,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+              child: Column(
+                children: [
+                  ContainerForTransition(
+                    title: 'Таблица “Факт”',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AnalyticCharts(
+                          title: 'Таблица “Факт”',
+                        )),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
           textButton: secondTabObjectItems.isEmpty
               ? GestureDetector(
             onTap: () {
