@@ -20,7 +20,7 @@ class CustomTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     return child == null
         ? Container(
-            padding: EdgeInsets.only(left: horizontalPadding(44), right:horizontalPadding(44), top: 16),
+            padding: EdgeInsets.only(left: horizontalPadding(context, 44), right:horizontalPadding(context, 44), top: 16),
             child: textButton ?? SingleChildScrollView(
                   child: Column(
                     children: [
@@ -53,6 +53,7 @@ class CustomTabView extends StatelessWidget {
                                         fontStyle: FontStyle.italic,
                                         color: Colors.black,
                                       ),
+                                      triggerMode: TooltipTriggerMode.tap,
                                       preferBelow: false,
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.9),

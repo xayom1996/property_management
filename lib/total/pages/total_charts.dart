@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -91,7 +92,7 @@ class _TotalChartsState extends State<TotalCharts> {
     ),
   ];
 
-  List headerTitles = ['ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'Всего'];
+  List headerTitles = ['ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'Всего'];
 
   @override
   Widget build(BuildContext context) {
@@ -180,17 +181,24 @@ class _TotalChartsState extends State<TotalCharts> {
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,
-            child: ScreenUtil().orientation == Orientation.portrait && 1.sw <= 800
+            child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Таблица и графики на телефоне только в альбомной ориентации',
-                        textAlign: TextAlign.center,
-                        style: body.copyWith(
-                          color: Colors.red,
-                          fontSize: 24,
+                      SvgPicture.asset(
+                        'assets/icons/table.svg',
+                        color: Color(0xffC4C4C4),
+                        height: 72,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(30),
+                        child: Text(
+                          'Для просмотра таблиц и графиков поверните телефон',
+                          textAlign: TextAlign.center,
+                          style: body.copyWith(
+                            color: Color(0xffC7C9CC),
+                          ),
                         ),
                       ),
                     ],
@@ -207,174 +215,175 @@ class _TotalChartsState extends State<TotalCharts> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      Container(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: horizontalPadding(44), right: horizontalPadding(44), top: 16),
-                          child: Row(
-                            children: [
-                              for (var i = 0; i < headerTitles.length; i++)
-                                Container(
-                                  width: 128,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(right: i == 5 ? 0 : 9),
-                                    child: Center(
-                                      child: Text(
-                                        headerTitles[i],
-                                        style: body.copyWith(
-                                          fontSize: 14,
-                                          fontWeight: i == headerTitles.length - 1
-                                              ? FontWeight.w700
-                                              : FontWeight.w400,
-                                        ),
-                                        textAlign: TextAlign.center,
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                        child: Container(
+                          height: 32,
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: headerTitles.length,
+                              itemBuilder: (BuildContext context, int index) => Container(
+                                width: 128,
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: index == 5 ? 0 : 9),
+                                  child: Center(
+                                    child: Text(
+                                      headerTitles[index],
+                                      style: body.copyWith(
+                                        fontSize: 14,
+                                        fontWeight: index == headerTitles.length - 1
+                                            ? FontWeight.w700
+                                            : FontWeight.w400,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                 ),
-                            ],
+                              ),
                           ),
                         ),
                       ),
                       for (var item in totalTableItems)
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                           child: ExpensesContainer(
                             title: item['title'],
                             expenses: item['objects'],
                             width: 128,
+                            height: 32,
+                            isLastElementBold: true,
                           ),
                         )
                     ],
                   )
                   : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
-                          child: Wrap(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    currentIndexTab = 0;
-                                  });
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.only(bottom: 8),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                                    decoration: BoxDecoration(
-                                      color: currentIndexTab == 0
-                                          ? Color(0xff5589F1)
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(22))
-                                    ),
-                                    child: Text(
-                                      'Распределение прибыли по годам',
-                                      style: caption1.copyWith(
-                                        color: currentIndexTab == 0
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    currentIndexTab = 1;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                                  decoration: BoxDecoration(
-                                      color: currentIndexTab == 1
-                                          ? Color(0xff5589F1)
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(22))
-                                  ),
-                                  child: Text(
-                                    'Вклад аренды и роста стоимости в прибыль',
-                                    style: caption1.copyWith(
-                                      color: currentIndexTab == 1
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height / 2,
-                          // width: 1.sw,
-                          padding: EdgeInsets.all(25),
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(9.0),
-                              child: Column(
-                                children: <Widget>[
-                                  currentIndexTab == 0
-                                      ? Expanded(
-                                          child: _getBarChart()
-                                      )
-                                      : Expanded(
-                                          child: _getPieChart()
-                                        ),
-                                ],
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Wrap(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentIndexTab = 0;
+                          });
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            decoration: BoxDecoration(
+                                color: currentIndexTab == 0
+                                    ? Color(0xff5589F1)
+                                    : Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(22))
+                            ),
+                            child: Text(
+                              'Распределение прибыли по годам',
+                              style: caption1.copyWith(
+                                color: currentIndexTab == 0
+                                    ? Colors.white
+                                    : Colors.black,
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    height: 16,
-                                    width: 16,
-                                    color: Color(0xff7DD390),
-                                  ),
-                                  SizedBox(
-                                    width: 12,
-                                  ),
-                                  Text(
-                                    'Прирост рыночной стоимости, руб.',
-                                    style: body,
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    height: 16,
-                                    width: 16,
-                                    color: Color(0xff7EB6EA),
-                                  ),
-                                  SizedBox(
-                                    width: 12,
-                                  ),
-                                  Text(
-                                    'Чистый арендный доход, руб.',
-                                    style: body,
-                                  ),
-                                ],
-                              ),
-                            ],
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentIndexTab = 1;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          decoration: BoxDecoration(
+                              color: currentIndexTab == 1
+                                  ? Color(0xff5589F1)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(22))
                           ),
-                        )
-                      ],
-                    )
+                          child: Text(
+                            'Вклад аренды и роста стоимости в прибыль',
+                            style: caption1.copyWith(
+                              color: currentIndexTab == 1
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height / 2,
+                  // width: 1.sw,
+                  // padding: EdgeInsets.all(25),
+                  child: Container(
+                    color: Color(0xffF5F7F9),
+                    child: Padding(
+                      padding: const EdgeInsets.all(9.0),
+                      child: Column(
+                        children: <Widget>[
+                          currentIndexTab == 0
+                              ? Expanded(
+                              child: _getBarChart()
+                          )
+                              : Expanded(
+                              child: _getPieChart()
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            height: 16,
+                            width: 16,
+                            color: Color(0xff7DD390),
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Text(
+                            'Прирост рыночной стоимости, руб.',
+                            style: body,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            height: 16,
+                            width: 16,
+                            color: Color(0xff7EB6EA),
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Text(
+                            'Чистый арендный доход, руб.',
+                            style: body,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )
           ),
         ],
       ),

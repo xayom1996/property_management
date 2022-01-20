@@ -80,7 +80,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
                   child: Column(
                     children: [
                       BoxInputField(
@@ -100,7 +100,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
                 Spacer(),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.24.sw),),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.24.sw),),
                   child: BoxButton(
                     title: 'Изменить пароль',
                     disabled: isDisabledButton() ? false : true,

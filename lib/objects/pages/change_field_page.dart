@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/objects/pages/upload_document_page.dart';
 import 'package:property_management/objects/widgets/action_bottom_sheet.dart';
 import 'package:property_management/settings/pages/characteristic_items_page.dart';
 import 'package:property_management/theme/colors.dart';
@@ -72,7 +73,7 @@ class _ChangeFieldPageState extends State<ChangeFieldPage> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -107,11 +108,18 @@ class _ChangeFieldPageState extends State<ChangeFieldPage> {
                         showCupertinoModalPopup<void>(
                           context: context,
                           builder: (BuildContext context) => ActionBottomSheet(
-                            onFunc: () {
+                            onUploadFromDevice: () {
                               setState(() {
                                 hasDocument = true;
                               });
                               Navigator.pop(context);
+                            },
+                            onUploadFromUrl: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => UploadDocumentPage()),
+                              );
                             },
                           ),
                         );
@@ -136,42 +144,50 @@ class _ChangeFieldPageState extends State<ChangeFieldPage> {
                       ),
                     )
                         : Stack(
-                      children: [
-                        Container(
-                          height: 128,
-                          width: 128,
-                          decoration: BoxDecoration(
-                            color: Color(0xffF5F7F9),
-                            borderRadius: BorderRadius.all(Radius.circular(16)),
-                          ),
-                          child: Center(
-                            child: SvgPicture.asset(
-                              'assets/icons/document.svg',
-                              color: Color(0xffE9ECEE),
-                              height: 40,
+                          children: [
+                            Container(
+                              width: 138,
+                              height: 138,
                             ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child:  GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                hasDocument = false;
-                              });
-                            },
-                            child: BoxIcon(
-                              size: 24,
-                              iconSize: 12,
-                              iconPath: 'assets/icons/clear.svg',
-                              backgroundColor: Color(0xffE9ECEE),
-                              iconColor: Color(0xffC7C9CC),
+                            Positioned(
+                              top: 10,
+                              left: 0,
+                              child: Container(
+                                height: 128,
+                                width: 128,
+                                decoration: BoxDecoration(
+                                  color: Color(0xffF5F7F9),
+                                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/icons/document.svg',
+                                    color: Color(0xffE9ECEE),
+                                    height: 40,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child:  GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    hasDocument = false;
+                                  });
+                                },
+                                child: BoxIcon(
+                                  size: 24,
+                                  iconSize: 12,
+                                  iconPath: 'assets/icons/clear.svg',
+                                  backgroundColor: Color(0xffE9ECEE),
+                                  iconColor: Color(0xffC7C9CC),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
                 ],
               ),
           ],

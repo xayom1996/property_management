@@ -23,7 +23,7 @@ class SuccessfullPage extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: 44,
-                  horizontal: horizontalPadding(0.24.sw),
+                  horizontal: horizontalPadding(context, 0.24.sw),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

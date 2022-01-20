@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:property_management/analytics/pages/edit_plan_page.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
@@ -142,20 +144,41 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                 Navigator.pop(context);
               },
             ),
-            Spacer(),
-            Column(
-              children: [
-                Text(
-                  widget.title,
-                  style: body,
-                ),
-                Text(
-                  'ЖК Акваленд, 3-к',
-                  style: caption,
-                ),
-              ],
+            // Spacer(),
+            SizedBox(
+              width: 44,
             ),
-            Spacer(),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.title,
+                    style: body,
+                  ),
+                  Text(
+                    'ЖК Акваленд, 3-к',
+                    style: caption,
+                  ),
+                ],
+              ),
+            ),
+            // Spacer(),
+            BoxIcon(
+              iconPath: 'assets/icons/edit.svg',
+              iconColor: Colors.black,
+              backgroundColor: Colors.white,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditPlanPage()),
+                );
+              },
+            ),
+            SizedBox(
+              width: 12,
+            ),
             BoxIcon(
               iconPath: isTable
                   ? 'assets/icons/graph.svg'
@@ -178,17 +201,24 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,
-            child: ScreenUtil().orientation == Orientation.portrait && 1.sw <= 800
+            child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Таблица и графики на телефоне только в альбомной ориентации',
-                        textAlign: TextAlign.center,
-                        style: body.copyWith(
-                          color: Colors.red,
-                          fontSize: 24,
+                      SvgPicture.asset(
+                        'assets/icons/table.svg',
+                        color: Color(0xffC4C4C4),
+                        height: 72,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(30),
+                        child: Text(
+                          'Для просмотра таблиц и графиков поверните телефон',
+                          textAlign: TextAlign.center,
+                          style: body.copyWith(
+                            color: Color(0xffC7C9CC),
+                          ),
                         ),
                       ),
                     ],
@@ -198,9 +228,16 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Text(
+                        'Год эксплуатации',
+                        style: body.copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       Container(
                         child: Padding(
-                          padding: EdgeInsets.only(left: horizontalPadding(44), right: horizontalPadding(44), top: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                           child: Row(
                             children: [
                               for (var i = 0; i < 6; i++)
@@ -224,10 +261,11 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                       ),
                       for (var item in planTableItems)
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: horizontalPadding(44)),
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                           child: ExpensesContainer(
                             title: item['title'],
                             expenses: item['objects'],
+                            height: 32,
                           ),
                         )
                     ],
@@ -236,7 +274,7 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                           child: Wrap(
                             children: [
                               GestureDetector(
@@ -299,8 +337,9 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                         Container(
                           height: MediaQuery.of(context).size.height / 2,
                           // width: 1.sw,
-                          padding: EdgeInsets.all(25),
-                          child: Card(
+                          // padding: EdgeInsets.all(25),
+                          child: Container(
+                            color: Color(0xffF5F7F9),
                             child: Padding(
                               padding: const EdgeInsets.all(9.0),
                               child: Column(
@@ -317,12 +356,8 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                             ),
                           ),
                         ),
-                        // SizedBox(
-                        //   height: 40,
-                        // ),
-                        Spacer(),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                           child: Column(
                             children: [
                               Row(

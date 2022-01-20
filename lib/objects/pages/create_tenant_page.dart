@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:property_management/exploitation/pages/create_details_tenant_page.dart';
 import 'package:property_management/objects/pages/change_field_page.dart';
 import 'package:property_management/theme/box_ui.dart';
 import 'package:property_management/theme/colors.dart';
@@ -45,7 +46,7 @@ class CreateTenantPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -56,7 +57,13 @@ class CreateTenantPage extends StatelessWidget {
                       title: item['title'],
                       enabled: false,
                       onTap: () {
-                        Navigator.push(
+                        item['title'] == 'Реквизиты арендатора'
+                            ? Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CreateDetailsTenantPage()
+                          ),
+                        )
+                            : Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => ChangeFieldPage(
                             title: item['title'],
@@ -81,9 +88,9 @@ class CreateTenantPage extends StatelessWidget {
           Positioned(
             bottom: 24,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw), vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.25.sw), vertical: 16),
               child: SizedBox(
-                width: 1.sw - horizontalPadding(0.25.sw) * 2,
+                width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
                 child: BoxButton(
                   title: 'Создать',
                 ),

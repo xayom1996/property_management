@@ -32,6 +32,11 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
       setState(() {
         login = loginController.text;
       });
+      if (login.contains(' ')) {
+        loginController.text = login.replaceAll(' ', '');
+        loginController.selection = TextSelection.fromPosition(
+            TextPosition(offset: loginController.text.length));
+      }
     });
 
     passwordController.addListener(() {
@@ -73,7 +78,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                         vertical: 24,
-                        horizontal: horizontalPadding(0.24.sw),
+                        horizontal: horizontalPadding(context, 0.24.sw),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -122,7 +127,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                             disabled: isDisabledButton() ? false : true,
                             onTap: () {
                               setState(() {
-                                if (login.replaceAll(' ', '') == 'admin@admin.com' && password == '123456'){
+                                if (login == 'admin@admin.com' && password == '123456'){
                                   isError = false;
                                   isBusy = true;
                                   logIn();

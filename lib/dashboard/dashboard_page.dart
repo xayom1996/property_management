@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/analytics/pages/analytics_page.dart';
@@ -120,7 +121,7 @@ class MyNavBar extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 80,
+        height: Platform.isIOS ? 90 : 80,
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -131,8 +132,9 @@ class MyNavBar extends StatelessWidget{
               ]
           )
         ),
-        // padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw)),
-        padding: EdgeInsets.only(bottom: Platform.isIOS ? 16 : 0),
+        // padding: EdgeInsets.only(left: horizontalPadding(context, 0.20.sw, portraitPadding: 0),
+        //     right: horizontalPadding(context, 0.20.sw, portraitPadding: 0), bottom: Platform.isIOS ? 16 : 0),
+        padding: EdgeInsets.only(top: 5, bottom: Platform.isIOS ? 16 : 0),
         child: Align(
           alignment: Alignment.center,
           child: Row(
@@ -140,51 +142,57 @@ class MyNavBar extends StatelessWidget{
             mainAxisAlignment: MainAxisAlignment.center,
             // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(items.length, (index) =>
-                InkWell(
-                  onTap: (){
-                    onTap(index);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(right: index != items.length - 1
-                        ? ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
-                          ? 16
-                          : 32
-                        : 0,
-                    ),
-                    child: Flex(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      direction: ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
-                          ? Axis.vertical
-                          : Axis.horizontal,
-                      children: [
-                        BoxIcon(
-                          iconPath: items[index]['iconPath'],
-                          iconColor: index == currentIndex ? Colors.white : Colors.black,
-                          backgroundColor: Colors.white,
-                          gradient: index == currentIndex
-                              ? LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Color(0xff6395F9),
-                                      Color(0xff0940CD),
-                                    ]
+                Expanded(
+                  flex: ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
+                      ? 1
+                      : 0,
+                  child: InkWell(
+                    onTap: (){
+                      onTap(index);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: index == items.length - 1
+                          || ScreenUtil().orientation == Orientation.portrait && 1.sw <= 700
+                          ? 0
+                          : 1.sw <= 700
+                            ? 16
+                            : 32,
+                      ),
+                      child: Flex(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        direction: ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
+                            ? Axis.vertical
+                            : Axis.horizontal,
+                        children: [
+                          BoxIcon(
+                            iconPath: items[index]['iconPath'],
+                            iconColor: index == currentIndex ? Colors.white : Colors.black,
+                            backgroundColor: Colors.white,
+                            gradient: index == currentIndex
+                                ? LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color(0xff6395F9),
+                                        Color(0xff0940CD),
+                                      ]
+                                  )
+                                : null,
+                          ),
+                          ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
+                              ? SizedBox(
+                                  height: 2,
                                 )
-                              : null,
-                        ),
-                        ScreenUtil().orientation == Orientation.portrait && 1.sw <= 750
-                            ? SizedBox(
-                                height: 2,
-                              )
-                            : SizedBox(
-                                width: 8,
-                              ),
-                        Text(
-                          items[index]['title'],
-                          style: caption2,
-                        )
-                      ],
+                              : SizedBox(
+                                  width: 8,
+                                ),
+                          Text(
+                            items[index]['title'],
+                            style: caption2,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -194,4 +202,43 @@ class MyNavBar extends StatelessWidget{
     );
   }
 
+}
+
+class WidgetSize extends StatefulWidget {
+  final Widget child;
+  final Function onChange;
+
+  const WidgetSize({
+    Key? key,
+    required this.onChange,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  _WidgetSizeState createState() => _WidgetSizeState();
+}
+
+class _WidgetSizeState extends State<WidgetSize> {
+  @override
+  Widget build(BuildContext context) {
+    SchedulerBinding.instance!.addPostFrameCallback(postFrameCallback);
+    return Container(
+      key: widgetKey,
+      child: widget.child,
+    );
+  }
+
+  var widgetKey = GlobalKey();
+  var oldSize;
+
+  void postFrameCallback(_) {
+    var context = widgetKey.currentContext;
+    if (context == null) return;
+
+    var newSize = context.size;
+    if (oldSize == newSize) return;
+
+    oldSize = newSize;
+    widget.onChange(newSize);
+  }
 }

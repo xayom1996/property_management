@@ -12,18 +12,18 @@ class ObjectCarouselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(right: 16),
+      padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
       child: Container(
         height: 75,
-        width: 1.sw / 1.4,
+        width: 300,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(22)),
           boxShadow: [
             BoxShadow(
-              color: Colors.white.withOpacity(0.05),
-              blurRadius: 20,
-              offset: Offset(0, 4), // changes position of shadow
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: Offset(0, 0), // changes position of shadow
             ),
           ],
         ),

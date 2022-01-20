@@ -19,7 +19,7 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44, portraitPadding: 0)),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44, portraitPadding: 0)),
       child: Container(
         height: 335,
         decoration: BoxDecoration(
@@ -115,9 +115,9 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw)),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.25.sw)),
               child: SizedBox(
-                width: 1.sw - horizontalPadding(0.25.sw) * 2,
+                width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
                 child: BoxButton(
                   title: 'Добавить новый аккаунт',
                   onTap: (){

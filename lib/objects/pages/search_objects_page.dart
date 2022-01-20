@@ -9,7 +9,8 @@ import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 
 class SearchObjectsPage extends StatefulWidget {
-  const SearchObjectsPage({Key? key}) : super(key: key);
+  final Function() goToCharacteristicsPage;
+  const SearchObjectsPage({Key? key, required this.goToCharacteristicsPage}) : super(key: key);
 
   @override
   State<SearchObjectsPage> createState() => _SearchObjectsPageState();
@@ -18,6 +19,19 @@ class SearchObjectsPage extends StatefulWidget {
 class _SearchObjectsPageState extends State<SearchObjectsPage> {
   bool isLoading = false;
   String searchText = '';
+  final searchedController = TextEditingController();
+
+  void changedSearchText(String text) {
+    setState(() {
+      searchText = text;
+      isLoading = true;
+    });
+    Timer(const Duration(milliseconds: 300), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +44,7 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
           titleSpacing: 0,
           title: Container(
             padding: EdgeInsets.only(
-                left: horizontalPadding(44),
+                left: horizontalPadding(context, 44),
                 top: 16,
                 bottom: 8,
                 // right: 32,
@@ -38,18 +52,9 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
             child: TextField(
               textInputAction: TextInputAction.search,
               autofocus: true,
-              onTap: () {
-              },
+              controller: searchedController,
               onChanged: (text) {
-                setState(() {
-                  searchText = text;
-                  isLoading = true;
-                });
-                Timer(const Duration(milliseconds: 300), () {
-                  setState(() {
-                    isLoading = false;
-                  });
-                });
+                changedSearchText(text);
               },
               style: TextStyle(
                 color: Color(0xff151515),
@@ -83,6 +88,17 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
                   ),
                   onPressed: () {  },
                 ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    size: 18,
+                    color: Color(0xff3C3C43).withOpacity(0.6),
+                  ),
+                  onPressed: () {
+                    searchedController.text = '';
+                    changedSearchText('');
+                  },
+                ),
                 contentPadding: EdgeInsets.all(0),
               ),
             ),
@@ -92,8 +108,8 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
               alignment: Alignment.center,
               child: Padding(
                 padding: EdgeInsets.only(
-                  right: horizontalPadding(44),
-                  left: horizontalPadding(24, portraitPadding: 16),
+                  right: horizontalPadding(context, 44),
+                  left: horizontalPadding(context, 24, portraitPadding: 16),
                 ),
                 child: GestureDetector(
                   onTap: () {
@@ -126,7 +142,7 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
                   height: 72,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24, horizontal: horizontalPadding(44)),
+                  padding: EdgeInsets.symmetric(vertical: 24, horizontal: horizontalPadding(context, 44)),
                   child: Text(
                     'Ничего не найдено, попробуйте изменить запрос',
                     textAlign: TextAlign.center,
@@ -144,10 +160,16 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
                 itemCount: 5,
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
                     child: isLoading
                             ? ObjectSkeleton()
-                            : ObjectCard(id: index),
+                            : GestureDetector(
+                                onTap: () {
+                                  widget.goToCharacteristicsPage();
+                                  Navigator.pop(context);
+                                },
+                                child: ObjectCard(id: index)
+                              ),
                   );
                 }
             ),

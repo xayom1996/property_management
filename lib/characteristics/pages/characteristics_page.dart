@@ -20,6 +20,7 @@ import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_button.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/custom_alert_dialog.dart';
+import 'package:property_management/widgets/custom_carousel_slider.dart';
 import 'package:property_management/widgets/custom_tab_container.dart';
 import 'package:property_management/widgets/input_field.dart';
 import 'package:property_management/widgets/object_carousel_card.dart';
@@ -137,24 +138,17 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                   ),
                 ],
               ),
-              expandedHeight: 68,
-              toolbarHeight: 68,
-              collapsedHeight: 68,
+              expandedHeight: 70,
+              toolbarHeight: 70,
+              collapsedHeight: 70,
               pinned: true,
               backgroundColor: kBackgroundColor,
               flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                 return FlexibleSpaceBar(
-                  centerTitle: constraints.biggest.height > 68 ? false : true,
-                  titlePadding: EdgeInsets.all(24),
-                  title: AnimatedOpacity(
-                    duration: Duration(milliseconds: 300),
-                    // opacity: constraints.biggest.height > 60.h ? 1.0 : 0.0,
-                    opacity: 1.0,
-                    child: Text('Характеристики',
-                        style: constraints.biggest.height > 68
-                            ? heading1Style
-                            : body,
-                    ),
+                  centerTitle: true,
+                  titlePadding: EdgeInsets.symmetric(vertical: 24),
+                  title: Text('Характеристики',
+                      style: body,
                   ),
                 );
               })
@@ -162,27 +156,9 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
             SliverPersistentHeader(
               pinned: false,
               delegate: _SliverAppBarDelegate(
-                minHeight: 75,
-                maxHeight: 75,
-                child: CarouselSlider(
-                  options: CarouselOptions(
-                    // aspectRatio: 2.0,
-                    // enlargeCenterPage: true,
-                    viewportFraction: 0.7,
-                    height: 75,
-                    enableInfiniteScroll: true,
-                    onPageChanged: (int index, CarouselPageChangedReason reason) {
-                      print(index);
-                    }
-                  ),
-                  items: [1,2,3,4,5].map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return ObjectCarouselCard(id: i);
-                      },
-                    );
-                  }).toList(),
-                ),
+                minHeight: 83,
+                maxHeight: 83,
+                child: CustomCarouselSlider(),
               ),
             ),
             SliverPersistentHeader(
@@ -190,14 +166,16 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
               delegate: _SliverAppBarDelegate(
                 minHeight: 24,
                 maxHeight: 24,
-                child: Container(),
+                child: Container(
+                  color: kBackgroundColor,
+                ),
               ),
             ),
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverAppBarDelegate(
-                minHeight: 45,
-                maxHeight: 45,
+                minHeight: 53,
+                maxHeight: 53,
                 child: CustomTabContainer(
                   firstTab: 'Объект',
                   secondTab: 'Арендатор',

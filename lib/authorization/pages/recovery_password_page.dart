@@ -33,6 +33,11 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
       setState(() {
         email = emailController.text;
       });
+      if (email.contains(' ')) {
+        emailController.text = email.replaceAll(' ', '');
+        emailController.selection = TextSelection.fromPosition(
+            TextPosition(offset: emailController.text.length));
+      }
     });
 
     super.initState();
@@ -54,7 +59,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         vertical: 44,
-                        horizontal: horizontalPadding(0.24.sw),
+                        horizontal: horizontalPadding(context, 0.24.sw),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +115,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                                               height: 24,
                                             ),
                                             Text(
-                                              emailController.text.replaceAll(' ', ''),
+                                              emailController.text,
                                               style: body.copyWith(
                                                 color: Color(0xff151515),
                                                 fontWeight: FontWeight.w700,

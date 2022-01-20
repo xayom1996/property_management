@@ -44,7 +44,7 @@ class CreatePlanPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -80,9 +80,9 @@ class CreatePlanPage extends StatelessWidget {
           Positioned(
             bottom: 24,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(0.25.sw), vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.25.sw), vertical: 16),
               child: SizedBox(
-                width: 1.sw - horizontalPadding(0.25.sw) * 2,
+                width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
                 child: BoxButton(
                   title: 'Создать',
                 ),

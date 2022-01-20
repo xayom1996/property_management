@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:property_management/analytics/pages/charts.dart';
+import 'package:property_management/analytics/pages/analytics_charts.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
@@ -87,26 +87,17 @@ class _TotalPageState extends State<TotalPage> {
                 centerTitle: true,
                 elevation: 0,
                 forceElevated: innerBoxIsScrolled,
-                expandedHeight: 68,
-                toolbarHeight: 68,
-                collapsedHeight: 68,
+                expandedHeight: 70,
+                toolbarHeight: 70,
+                collapsedHeight: 70,
                 pinned: true,
                 backgroundColor: kBackgroundColor,
                 flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                   return FlexibleSpaceBar(
-                    centerTitle: constraints.biggest.height > 68 ? false : true,
-                    titlePadding: constraints.biggest.height > 68
-                        ? EdgeInsets.symmetric(horizontal: 24)
-                        : EdgeInsets.all(16),
-                    title: AnimatedOpacity(
-                      duration: Duration(milliseconds: 300),
-                      // opacity: constraints.biggest.height > 60.h ? 1.0 : 0.0,
-                      opacity: 1.0,
-                      child: Text('Итоги',
-                        style: constraints.biggest.height > 68
-                            ? heading1Style
-                            : body,
-                      ),
+                    centerTitle: true,
+                    titlePadding: EdgeInsets.symmetric(vertical: 24),
+                    title: Text('Итоги',
+                      style: body,
                     ),
                   );
                 })
@@ -168,7 +159,7 @@ class _TotalPageState extends State<TotalPage> {
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
                 child: Column(
                   children: [
                     ContainerForTransition(

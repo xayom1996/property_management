@@ -59,6 +59,9 @@ class ObjectCard extends StatelessWidget {
               );
             },
           ),
+          SizedBox(
+            width: 10,
+          ),
         ],
       ),
       child: Container(

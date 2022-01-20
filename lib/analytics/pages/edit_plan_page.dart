@@ -8,9 +8,8 @@ import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 
-class CreateExploitationPage extends StatelessWidget {
-  final String title;
-  CreateExploitationPage({Key? key, required this.title}) : super(key: key);
+class EditPlanPage extends StatelessWidget {
+  EditPlanPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,26 +18,23 @@ class CreateExploitationPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         leading: null,
-        // automaticallyImplyLeading: false,
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Spacer(),
             Text(
-              title,
+              'План первый',
               style: body,
             ),
             Spacer(),
-            GestureDetector(
+            BoxIcon(
+              iconPath: 'assets/icons/clear.svg',
+              iconColor: Colors.black,
+              backgroundColor: Colors.white,
               onTap: () {
                 Navigator.pop(context);
               },
-              child: BoxIcon(
-                iconPath: 'assets/icons/clear.svg',
-                iconColor: Colors.black,
-                backgroundColor: Colors.white,
-              ),
             ),
           ],
         ),
@@ -50,9 +46,9 @@ class CreateExploitationPage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (var item in expensesItems)
+                  for (var item in planItems)
                     BoxInputField(
-                      controller: TextEditingController(),
+                      controller: TextEditingController(text: item['value'] ?? ''),
                       placeholder: item['placeholder'],
                       title: item['title'],
                       enabled: false,
@@ -86,7 +82,10 @@ class CreateExploitationPage extends StatelessWidget {
               child: SizedBox(
                 width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
                 child: BoxButton(
-                  title: 'Создать',
+                  title: 'Сохранить',
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
               ),
             ),

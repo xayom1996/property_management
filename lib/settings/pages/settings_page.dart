@@ -87,7 +87,7 @@ class SettingsPage extends StatelessWidget {
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44), vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
               child: Column(
                 children: [
                   ContainerForTransition(

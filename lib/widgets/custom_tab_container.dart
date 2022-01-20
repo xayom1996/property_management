@@ -17,7 +17,7 @@ class CustomTabContainer extends StatelessWidget {
     return Container(
       color: kBackgroundColor,
       child: Align(
-        alignment: Alignment.center,
+        alignment: Alignment.topCenter,
         child: Container(
           width: 325,
           // height: 32.h,

@@ -130,21 +130,21 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                     )
                   : null,
               expandedHeight: 110,
-              toolbarHeight: 68,
-              collapsedHeight: 68,
+              toolbarHeight: 70,
+              collapsedHeight: 70,
               pinned: true,
               backgroundColor: Color(0xffF5F7F9),
               flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                 return FlexibleSpaceBar(
-                  centerTitle: constraints.biggest.height > 68 ? false : true,
-                  titlePadding: constraints.biggest.height > 68
-                      ? EdgeInsets.symmetric(horizontal: horizontalPadding(44))
-                      : EdgeInsets.all(24),
+                  centerTitle: constraints.biggest.height > 70 ? false : true,
+                  titlePadding: constraints.biggest.height > 70
+                      ? EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44))
+                      : EdgeInsets.symmetric(vertical: 24),
                   title: AnimatedOpacity(
                     duration: Duration(milliseconds: 300),
                     opacity: 1.0,
                     child: Text('Объекты',
-                        style: constraints.biggest.height > 68
+                        style: constraints.biggest.height > 70
                             ? heading1Style.copyWith(fontSize: 24)
                             : body,
                     ),
@@ -158,9 +158,22 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                 minHeight: 44,
                 maxHeight: 44,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
                   child: true == true
-                      ? SearchTextField()
+                      ? GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
+                                  goToCharacteristicsPage: widget.goToCharacteristicsPage,
+                                ),
+                                transitionDuration: Duration.zero,
+                              ),
+                            );
+                          },
+                          child: SearchTextField()
+                      )
                       : Row(
                           children: [
                             GestureDetector(
@@ -168,7 +181,9 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
-                                    pageBuilder: (context, animation1, animation2) => SearchObjectsPage(),
+                                    pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
+                                      goToCharacteristicsPage: widget.goToCharacteristicsPage,
+                                    ),
                                     transitionDuration: Duration.zero,
                                   ),
                                 );
@@ -218,7 +233,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                   child: Container(
                     height: 56,
                     constraints: BoxConstraints(maxWidth: 1.sw),
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
                     decoration: BoxDecoration(
                       color: Color(0xffF5F7F9),
                     ),
@@ -304,7 +319,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                   minHeight: 56,
                   maxHeight: 56,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
                     decoration: BoxDecoration(
                         color: Color(0xffFCFCFC),
                         borderRadius: BorderRadius.only(
@@ -387,12 +402,11 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                 delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                     return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding(44)),
+                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
                       child: isLoading
                           ? ObjectSkeleton()
                           : GestureDetector(
                               onTap: () {
-                                print(1);
                                 widget.goToCharacteristicsPage();
                               },
                               child: ObjectCard(id: index)

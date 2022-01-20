@@ -7,9 +7,11 @@ import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 
 class ActionBottomSheet extends StatelessWidget {
-  final Function() onFunc;
+  final Function() onUploadFromDevice;
+  final Function() onUploadFromUrl;
 
-  const ActionBottomSheet({Key? key, required this.onFunc}) : super(key: key);
+  const ActionBottomSheet({Key? key, required this.onUploadFromDevice,
+    required this.onUploadFromUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +21,11 @@ class ActionBottomSheet extends StatelessWidget {
           child: Text(
             'Загрузить с устройства',
           ),
-          onPressed: onFunc,
+          onPressed: onUploadFromDevice,
         ),
         CupertinoActionSheetAction(
           child: const Text('Загрузить по ссылке'),
-          onPressed: onFunc,
+          onPressed: onUploadFromUrl,
         )
       ],
       cancelButton: CupertinoActionSheetAction(
