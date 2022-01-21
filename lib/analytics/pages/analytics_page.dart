@@ -19,6 +19,7 @@ import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_button.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/container_for_transition.dart';
+import 'package:property_management/widgets/custom_alert_dialog.dart';
 import 'package:property_management/widgets/custom_carousel_slider.dart';
 import 'package:property_management/widgets/custom_tab_container.dart';
 import 'package:property_management/widgets/input_field.dart';
@@ -159,11 +160,16 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                           iconColor: Colors.black,
                           backgroundColor: Colors.white,
                           onTap: () {
-                            // showDialog(
-                            //     context: context,
-                            //     builder: (context) => CustomAlertDialog()
-                            // );
+                            showDialog(
+                                context: context,
+                                builder: (context) => CustomAlertDialog(
+                                  title: 'Вы действительно хотите удалить план?',
+                                )
+                            );
                           },
+                        ),
+                        SizedBox(
+                          width: 10,
                         ),
                       ],
                     ),
@@ -174,6 +180,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                           context,
                           MaterialPageRoute(builder: (context) => AnalyticCharts(
                             title: 'План первый',
+                            hasEditIcon: true,
                           )),
                         );
                       },
@@ -185,16 +192,28 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                       motion: ScrollMotion(),
                       children: [
                         Spacer(),
-                        BoxIcon(
-                          iconPath: 'assets/icons/trash.svg',
-                          iconColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          onTap: () {
-                            // showDialog(
-                            //     context: context,
-                            //     builder: (context) => CustomAlertDialog()
-                            // );
-                          },
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 8),
+                            child: BoxIcon(
+                              iconPath: 'assets/icons/trash.svg',
+                              iconColor: Colors.black,
+                              backgroundColor: Colors.white,
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => CustomAlertDialog(
+                                      title: 'Вы действительно хотите удалить план?',
+                                    )
+                                );
+                              },
+
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
                         ),
                       ],
                     ),
@@ -205,6 +224,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                           context,
                           MaterialPageRoute(builder: (context) => AnalyticCharts(
                             title: 'План второй',
+                            hasEditIcon: true,
                           )),
                         );
                       },

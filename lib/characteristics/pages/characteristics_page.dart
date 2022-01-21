@@ -132,7 +132,9 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
                     onTap: () {
                       showDialog(
                           context: context,
-                          builder: (context) => CustomAlertDialog()
+                          builder: (context) => CustomAlertDialog(
+                            title: 'Вы действительно хотите удалить карточку объекта?',
+                          )
                       );
                     },
                   ),

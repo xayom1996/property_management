@@ -48,7 +48,9 @@ class CustomTabView extends StatelessWidget {
                                   padding: EdgeInsets.only(right: 16),
                                   child: Tooltip(
                                       padding: EdgeInsets.all(16),
-                                      margin: EdgeInsets.all(16),
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: horizontalPadding(context, 60, portraitPadding: 40)
+                                      ),
                                       textStyle: body.copyWith(
                                         fontStyle: FontStyle.italic,
                                         color: Colors.black,

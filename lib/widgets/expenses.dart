@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/exploitation/widgets/comment_bottom_sheet.dart';
 import 'package:property_management/theme/styles.dart';
@@ -38,7 +39,7 @@ class ExpensesContainer extends StatelessWidget {
                         child: Container(
                           width: width,
                           child: Padding(
-                            padding: EdgeInsets.only(right: index != expenses.length - 1 ? 9 : 0),
+                            padding: EdgeInsets.only(right: 9),
                             child: GestureDetector(
                               onTap: () {
                                 if (title.contains('Комментарий'))

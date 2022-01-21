@@ -120,6 +120,7 @@ class MyNavBar extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.width);
     return Container(
         height: Platform.isIOS ? 90 : 80,
         decoration: BoxDecoration(
@@ -189,7 +190,11 @@ class MyNavBar extends StatelessWidget{
                                 ),
                           Text(
                             items[index]['title'],
-                            style: caption2,
+                            style: caption2.copyWith(
+                              fontSize: MediaQuery.of(context).size.width < 800
+                                  ? 10
+                                  : 12,
+                            ),
                           )
                         ],
                       ),
@@ -202,43 +207,4 @@ class MyNavBar extends StatelessWidget{
     );
   }
 
-}
-
-class WidgetSize extends StatefulWidget {
-  final Widget child;
-  final Function onChange;
-
-  const WidgetSize({
-    Key? key,
-    required this.onChange,
-    required this.child,
-  }) : super(key: key);
-
-  @override
-  _WidgetSizeState createState() => _WidgetSizeState();
-}
-
-class _WidgetSizeState extends State<WidgetSize> {
-  @override
-  Widget build(BuildContext context) {
-    SchedulerBinding.instance!.addPostFrameCallback(postFrameCallback);
-    return Container(
-      key: widgetKey,
-      child: widget.child,
-    );
-  }
-
-  var widgetKey = GlobalKey();
-  var oldSize;
-
-  void postFrameCallback(_) {
-    var context = widgetKey.currentContext;
-    if (context == null) return;
-
-    var newSize = context.size;
-    if (oldSize == newSize) return;
-
-    oldSize = newSize;
-    widget.onChange(newSize);
-  }
 }

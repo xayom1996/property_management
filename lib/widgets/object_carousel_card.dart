@@ -7,18 +7,22 @@ import 'package:property_management/widgets/box_icon.dart';
 
 class ObjectCarouselCard extends StatelessWidget {
   final int id;
-  const ObjectCarouselCard({Key? key, required this.id}) : super(key: key);
+  final bool bordered;
+  const ObjectCarouselCard({Key? key, required this.id, this.bordered = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Container(
         height: 75,
         width: 300,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(22)),
+          border: bordered
+              ? Border.all(color: Color(0xff5589F1), width: 0.5)
+              : null,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -33,7 +37,7 @@ class ObjectCarouselCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'ЖК Акваленд, 3-к $id',
+              'ЖК Акваленд, 3-к • 96 кв.м.',
               style: body,
               textAlign: TextAlign.center,
             ),

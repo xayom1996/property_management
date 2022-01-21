@@ -11,10 +11,23 @@ import 'package:property_management/widgets/container_for_transition.dart';
 import 'package:property_management/widgets/custom_alert_dialog.dart';
 import 'package:property_management/widgets/input_field.dart';
 
-class CharacteristicItemsPage extends StatelessWidget {
+class CharacteristicItemsPage extends StatefulWidget {
   final String title;
   final List<Map> items;
   const CharacteristicItemsPage({Key? key, required this.title, required this.items}) : super(key: key);
+
+  @override
+  State<CharacteristicItemsPage> createState() => _CharacteristicItemsPageState();
+}
+
+class _CharacteristicItemsPageState extends State<CharacteristicItemsPage> {
+  List<Map> items = [];
+
+  @override
+  void initState() {
+    items = widget.items;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +57,7 @@ class CharacteristicItemsPage extends StatelessWidget {
                   style: body,
                 ),
                 Text(
-                  title,
+                  widget.title,
                   style: caption,
                 ),
               ],
@@ -82,36 +95,64 @@ class CharacteristicItemsPage extends StatelessWidget {
                         motion: ScrollMotion(),
                         children: [
                           Spacer(),
-                          BoxIcon(
-                            iconPath: 'assets/icons/eye.svg',
-                            iconColor: Colors.black,
-                            backgroundColor: Colors.white,
-                            onTap: () {
-                            },
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: BoxIcon(
+                                iconPath: items[i]['visible'] == false
+                                    ? 'assets/icons/eye_invisible.svg'
+                                    : 'assets/icons/eye_visible.svg',
+                                iconColor: Colors.black,
+                                backgroundColor: Colors.white,
+                                onTap: () {
+                                  setState(() {
+                                    if (items[i]['visible'] == null) {
+                                      items[i]['visible'] = false;
+                                    } else {
+                                      items[i]['visible'] = !items[i]['visible'];
+                                    }
+                                  });
+                                  print(items[i]['visible']);
+                                },
+                              ),
+                            ),
                           ),
                           SizedBox(
                             width: 24,
                           ),
-                          BoxIcon(
-                            iconPath: 'assets/icons/trash.svg',
-                            iconColor: Colors.black,
-                            backgroundColor: Colors.white,
-                            onTap: () {
-                              // showDialog(
-                              //     context: context,
-                              //     builder: (context) => CustomAlertDialog()
-                              // );
-                            },
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: BoxIcon(
+                                iconPath: 'assets/icons/trash.svg',
+                                iconColor: Colors.black,
+                                backgroundColor: Colors.white,
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => CustomAlertDialog(
+                                        title: 'Вы действительно хотите удалить характеристику?',
+                                      )
+                                  );
+                                },
+
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
                           ),
                         ],
                       ),
                       child: ContainerForTransition(
-                        title: items[i]['title'],
+                        title: widget.items[i]['title'],
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => EditCharacteristicPage(
-                              title: items[i]['title'],
+                              title: widget.items[i]['title'],
                             )),
                           );
                         },
@@ -125,5 +166,4 @@ class CharacteristicItemsPage extends StatelessWidget {
       ),
     );
   }
-
 }

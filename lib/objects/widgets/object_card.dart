@@ -27,37 +27,51 @@ class ObjectCard extends StatelessWidget {
           // SizedBox(
           //   width: 50,
           // ),
-          BoxIcon(
-            iconPath: 'assets/icons/edit.svg',
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xff6395F9),
-                  Color(0xff0940CD),
-                ]
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: BoxIcon(
+                iconPath: 'assets/icons/edit.svg',
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xff6395F9),
+                      Color(0xff0940CD),
+                    ]
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditObjectPage()),
+                  );
+                },
+                backgroundColor: Colors.white,
+              ),
             ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EditObjectPage()),
-              );
-            },
-            backgroundColor: Colors.white,
           ),
           SizedBox(
             width: 24,
           ),
-          BoxIcon(
-            iconPath: 'assets/icons/trash.svg',
-            iconColor: Colors.black,
-            backgroundColor: Colors.white,
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) => CustomAlertDialog()
-              );
-            },
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: BoxIcon(
+                iconPath: 'assets/icons/trash.svg',
+                iconColor: Colors.black,
+                backgroundColor: Colors.white,
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                        title: 'Вы действительно хотите удалить карточку объекта?',
+                      )
+                  );
+                },
+              ),
+            ),
           ),
           SizedBox(
             width: 10,

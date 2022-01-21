@@ -42,23 +42,39 @@ class UploadDocumentPage extends StatelessWidget {
           ],
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
+      body: Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                BoxInputField(
-                  controller: textController,
-                  placeholder: 'site.com/doc.pdf',
-                  title: 'Ссылка на документ',
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    BoxInputField(
+                      controller: textController,
+                      placeholder: 'site.com/doc.pdf',
+                      title: 'Ссылка на документ',
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            bottom: 24,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.25.sw), vertical: 16),
+              child: SizedBox(
+                width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
+                child: BoxButton(
+                  title: 'Загрузить',
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
