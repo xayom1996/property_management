@@ -128,283 +128,286 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
       //   labelAccessorFn: (DeveloperSeries row, _) => '${row.year}: ${row.money}',
       // ),
     ];
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          leading: null,
-          automaticallyImplyLeading: false,
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BoxIcon(
-                iconPath: 'assets/icons/back.svg',
-                iconColor: Colors.black,
-                backgroundColor: Colors.white,
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              // Spacer(),
-              SizedBox(
-                width: 44,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.title,
-                      style: body,
-                    ),
-                    Text(
-                      'ЖК Акваленд, 3-к',
-                      style: caption,
-                    ),
-                  ],
-                ),
-              ),
-              // Spacer(),
-              widget.hasEditIcon
-              ? BoxIcon(
-                  iconPath: 'assets/icons/edit.svg',
+    return Container(
+      color: kBackgroundColor,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            leading: null,
+            automaticallyImplyLeading: false,
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                BoxIcon(
+                  iconPath: 'assets/icons/back.svg',
                   iconColor: Colors.black,
                   backgroundColor: Colors.white,
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => EditPlanPage()),
-                    );
+                    Navigator.pop(context);
                   },
-                )
-              : SizedBox(
+                ),
+                // Spacer(),
+                SizedBox(
                   width: 44,
                 ),
-              SizedBox(
-                width: 12,
-              ),
-              BoxIcon(
-                iconPath: isTable
-                    ? 'assets/icons/graph.svg'
-                    : 'assets/icons/table.svg',
-                iconColor: Colors.black,
-                backgroundColor: Colors.white,
-                onTap: () {
-                  setState(() {
-                    isTable = !isTable;
-                  });
-                },
-              ),
-            ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.title,
+                        style: body,
+                      ),
+                      Text(
+                        'ЖК Акваленд, 3-к',
+                        style: caption,
+                      ),
+                    ],
+                  ),
+                ),
+                // Spacer(),
+                widget.hasEditIcon
+                ? BoxIcon(
+                    iconPath: 'assets/icons/edit.svg',
+                    iconColor: Colors.black,
+                    backgroundColor: Colors.white,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => EditPlanPage()),
+                      );
+                    },
+                  )
+                : SizedBox(
+                    width: 44,
+                  ),
+                SizedBox(
+                  width: 12,
+                ),
+                BoxIcon(
+                  iconPath: isTable
+                      ? 'assets/icons/graph.svg'
+                      : 'assets/icons/table.svg',
+                  iconColor: Colors.black,
+                  backgroundColor: Colors.white,
+                  onTap: () {
+                    setState(() {
+                      isTable = !isTable;
+                    });
+                  },
+                ),
+              ],
+            ),
+            elevation: 0,
+            toolbarHeight: 68,
+            backgroundColor: kBackgroundColor,
           ),
-          elevation: 0,
-          toolbarHeight: 68,
-          backgroundColor: kBackgroundColor,
-        ),
-        body: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/table.svg',
-                          color: Color(0xffC4C4C4),
-                          height: 72,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(30),
-                          child: Text(
-                            'Для просмотра таблиц и графиков поверните телефон',
-                            textAlign: TextAlign.center,
-                            style: body.copyWith(
-                              color: Color(0xffC7C9CC),
+          body: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/table.svg',
+                            color: Color(0xffC4C4C4),
+                            height: 72,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(30),
+                            child: Text(
+                              'Для просмотра таблиц и графиков поверните телефон',
+                              textAlign: TextAlign.center,
+                              style: body.copyWith(
+                                color: Color(0xffC7C9CC),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  : isTable
-                    ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Год эксплуатации',
-                          style: body.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
+                        ],
+                      )
+                    : isTable
+                      ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Год эксплуатации',
+                            style: body.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
-                        Container(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                            child: Row(
-                              children: [
-                                for (var i = 0; i < 6; i++)
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(right: i == 5 ? 0 : 9),
-                                      child: Center(
-                                        child: Text(
-                                          i.toString(),
-                                          style: body.copyWith(
-                                            fontSize: 14
+                          Container(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              child: Row(
+                                children: [
+                                  for (var i = 0; i < 6; i++)
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(right: i == 5 ? 0 : 9),
+                                        child: Center(
+                                          child: Text(
+                                            i.toString(),
+                                            style: body.copyWith(
+                                              fontSize: 14
+                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
-                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          for (var item in planTableItems)
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                              child: ExpensesContainer(
+                                title: item['title'],
+                                expenses: item['objects'],
+                                height: 32,
+                              ),
+                            )
+                        ],
+                      )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              child: Wrap(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        currentIndexTab = 0;
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(bottom: 8),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                        decoration: BoxDecoration(
+                                          color: currentIndexTab == 0
+                                              ? Color(0xff5589F1)
+                                              : Colors.white,
+                                          borderRadius: BorderRadius.all(Radius.circular(22))
+                                        ),
+                                        child: Text(
+                                          'Распределение прибыли по годам',
+                                          style: caption1.copyWith(
+                                            color: currentIndexTab == 0
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        for (var item in planTableItems)
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                            child: ExpensesContainer(
-                              title: item['title'],
-                              expenses: item['objects'],
-                              height: 32,
-                            ),
-                          )
-                      ],
-                    )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                            child: Wrap(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      currentIndexTab = 0;
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(bottom: 8),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        currentIndexTab = 1;
+                                      });
+                                    },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                                       decoration: BoxDecoration(
-                                        color: currentIndexTab == 0
-                                            ? Color(0xff5589F1)
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.all(Radius.circular(22))
+                                          color: currentIndexTab == 1
+                                              ? Color(0xff5589F1)
+                                              : Colors.white,
+                                          borderRadius: BorderRadius.all(Radius.circular(22))
                                       ),
                                       child: Text(
-                                        'Распределение прибыли по годам',
+                                        'Вклад аренды и роста стоимости в прибыль',
                                         style: caption1.copyWith(
-                                          color: currentIndexTab == 0
+                                          color: currentIndexTab == 1
                                               ? Colors.white
                                               : Colors.black,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      currentIndexTab = 1;
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                                    decoration: BoxDecoration(
-                                        color: currentIndexTab == 1
-                                            ? Color(0xff5589F1)
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.all(Radius.circular(22))
-                                    ),
-                                    child: Text(
-                                      'Вклад аренды и роста стоимости в прибыль',
-                                      style: caption1.copyWith(
-                                        color: currentIndexTab == 1
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            height: MediaQuery.of(context).size.height / 2,
-                            // width: 1.sw,
-                            // padding: EdgeInsets.all(25),
-                            child: Container(
-                              color: Color(0xffF5F7F9),
-                              child: Padding(
-                                padding: const EdgeInsets.all(9.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    currentIndexTab == 0
-                                        ? Expanded(
-                                            child: _getBarChart()
-                                        )
-                                        : Expanded(
-                                            child: _getPieChart()
-                                          ),
-                                  ],
+                            Container(
+                              height: MediaQuery.of(context).size.height / 2,
+                              // width: 1.sw,
+                              // padding: EdgeInsets.all(25),
+                              child: Container(
+                                color: Color(0xffF5F7F9),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(9.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      currentIndexTab == 0
+                                          ? Expanded(
+                                              child: _getBarChart()
+                                          )
+                                          : Expanded(
+                                              child: _getPieChart()
+                                            ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      height: 16,
-                                      width: 16,
-                                      color: Color(0xff7DD390),
-                                    ),
-                                    SizedBox(
-                                      width: 12,
-                                    ),
-                                    Text(
-                                      'Прирост рыночной стоимости, руб.',
-                                      style: body,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      height: 16,
-                                      width: 16,
-                                      color: Color(0xff7EB6EA),
-                                    ),
-                                    SizedBox(
-                                      width: 12,
-                                    ),
-                                    Text(
-                                      'Чистый арендный доход, руб.',
-                                      style: body,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      )
-            ),
-          ],
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        height: 16,
+                                        width: 16,
+                                        color: Color(0xff7DD390),
+                                      ),
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      Text(
+                                        'Прирост рыночной стоимости, руб.',
+                                        style: body,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        height: 16,
+                                        width: 16,
+                                        color: Color(0xff7EB6EA),
+                                      ),
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      Text(
+                                        'Чистый арендный доход, руб.',
+                                        style: body,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+              ),
+            ],
+          ),
         ),
       ),
     );

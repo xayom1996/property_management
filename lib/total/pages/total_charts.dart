@@ -128,277 +128,280 @@ class _TotalChartsState extends State<TotalCharts> {
       //   labelAccessorFn: (DeveloperSeries row, _) => '${row.year}: ${row.money}',
       // ),
     ];
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          leading: null,
-          automaticallyImplyLeading: false,
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BoxIcon(
-                iconPath: 'assets/icons/back.svg',
-                iconColor: Colors.black,
-                backgroundColor: Colors.white,
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              Spacer(),
-              Column(
-                children: [
-                  Text(
-                    widget.title,
-                    style: body,
-                  ),
-                  Text(
-                    'с 07.2018 по 12.2020',
-                    style: caption,
-                  ),
-                ],
-              ),
-              Spacer(),
-              BoxIcon(
-                iconPath: isTable
-                    ? 'assets/icons/graph.svg'
-                    : 'assets/icons/table.svg',
-                iconColor: Colors.black,
-                backgroundColor: Colors.white,
-                onTap: () {
-                  setState(() {
-                    isTable = !isTable;
-                  });
-                },
-              ),
-            ],
+    return Container(
+      color: kBackgroundColor,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            leading: null,
+            automaticallyImplyLeading: false,
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                BoxIcon(
+                  iconPath: 'assets/icons/back.svg',
+                  iconColor: Colors.black,
+                  backgroundColor: Colors.white,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                Spacer(),
+                Column(
+                  children: [
+                    Text(
+                      widget.title,
+                      style: body,
+                    ),
+                    Text(
+                      'с 07.2018 по 12.2020',
+                      style: caption,
+                    ),
+                  ],
+                ),
+                Spacer(),
+                BoxIcon(
+                  iconPath: isTable
+                      ? 'assets/icons/graph.svg'
+                      : 'assets/icons/table.svg',
+                  iconColor: Colors.black,
+                  backgroundColor: Colors.white,
+                  onTap: () {
+                    setState(() {
+                      isTable = !isTable;
+                    });
+                  },
+                ),
+              ],
+            ),
+            elevation: 0,
+            toolbarHeight: 68,
+            backgroundColor: kBackgroundColor,
           ),
-          elevation: 0,
-          toolbarHeight: 68,
-          backgroundColor: kBackgroundColor,
-        ),
-        body: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/table.svg',
-                          color: Color(0xffC4C4C4),
-                          height: 72,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(30),
-                          child: Text(
-                            'Для просмотра таблиц и графиков поверните телефон',
-                            textAlign: TextAlign.center,
-                            style: body.copyWith(
-                              color: Color(0xffC7C9CC),
+          body: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/table.svg',
+                            color: Color(0xffC4C4C4),
+                            height: 72,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(30),
+                            child: Text(
+                              'Для просмотра таблиц и графиков поверните телефон',
+                              textAlign: TextAlign.center,
+                              style: body.copyWith(
+                                color: Color(0xffC7C9CC),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  : isTable
-                    ? Stack(
-                      children: [
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 12, left: 24, right: 24, top: 24),
-                                child: Container(
-                                  height: 32,
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: headerTitles.length,
-                                      itemBuilder: (BuildContext context, int index) => Container(
-                                        width: 128,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(right: index == 5 ? 0 : 9),
-                                          child: Center(
-                                            child: Text(
-                                              headerTitles[index],
-                                              style: body.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: index == headerTitles.length - 1
-                                                    ? FontWeight.w700
-                                                    : FontWeight.w400,
+                        ],
+                      )
+                    : isTable
+                      ? Stack(
+                        children: [
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 12, left: 24, right: 24, top: 24),
+                                  child: Container(
+                                    height: 32,
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: headerTitles.length,
+                                        itemBuilder: (BuildContext context, int index) => Container(
+                                          width: 128,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(right: index == 5 ? 0 : 9),
+                                            child: Center(
+                                              child: Text(
+                                                headerTitles[index],
+                                                style: body.copyWith(
+                                                  fontSize: 14,
+                                                  fontWeight: index == headerTitles.length - 1
+                                                      ? FontWeight.w700
+                                                      : FontWeight.w400,
+                                                ),
+                                                textAlign: TextAlign.center,
                                               ),
-                                              textAlign: TextAlign.center,
                                             ),
                                           ),
                                         ),
-                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              for (var item in totalTableItems)
-                                Padding(
-                                  padding: EdgeInsets.only(left: 24, right: 24, bottom: 8),
-                                  child: ExpensesContainer(
-                                    title: item['title'],
-                                    expenses: item['objects'],
-                                    width: 128,
-                                    height: 32,
-                                    isLastElementBold: false,
-                                  ),
-                                )
-                            ],
+                                for (var item in totalTableItems)
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 24, right: 24, bottom: 8),
+                                    child: ExpensesContainer(
+                                      title: item['title'],
+                                      expenses: item['objects'],
+                                      width: 128,
+                                      height: 32,
+                                      isLastElementBold: false,
+                                    ),
+                                  )
+                              ],
+                            ),
                           ),
-                        ),
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              'Объекты',
-                              style: body.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w700,
+                          Positioned.fill(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                'Объекты',
+                                style: body.copyWith(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                    : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    child: Wrap(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              currentIndexTab = 0;
-                            });
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: 8),
+                        ],
+                      )
+                      : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      child: Wrap(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                currentIndexTab = 0;
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 8),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                decoration: BoxDecoration(
+                                    color: currentIndexTab == 0
+                                        ? Color(0xff5589F1)
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(22))
+                                ),
+                                child: Text(
+                                  'Распределение прибыли по годам',
+                                  style: caption1.copyWith(
+                                    color: currentIndexTab == 0
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                currentIndexTab = 1;
+                              });
+                            },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                               decoration: BoxDecoration(
-                                  color: currentIndexTab == 0
+                                  color: currentIndexTab == 1
                                       ? Color(0xff5589F1)
                                       : Colors.white,
                                   borderRadius: BorderRadius.all(Radius.circular(22))
                               ),
                               child: Text(
-                                'Распределение прибыли по годам',
+                                'Вклад аренды и роста стоимости в прибыль',
                                 style: caption1.copyWith(
-                                  color: currentIndexTab == 0
+                                  color: currentIndexTab == 1
                                       ? Colors.white
                                       : Colors.black,
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              currentIndexTab = 1;
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                            decoration: BoxDecoration(
-                                color: currentIndexTab == 1
-                                    ? Color(0xff5589F1)
-                                    : Colors.white,
-                                borderRadius: BorderRadius.all(Radius.circular(22))
-                            ),
-                            child: Text(
-                              'Вклад аренды и роста стоимости в прибыль',
-                              style: caption1.copyWith(
-                                color: currentIndexTab == 1
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height / 2,
-                    // width: 1.sw,
-                    // padding: EdgeInsets.all(25),
-                    child: Container(
-                      color: Color(0xffF5F7F9),
-                      child: Padding(
-                        padding: const EdgeInsets.all(9.0),
-                        child: Column(
-                          children: <Widget>[
-                            currentIndexTab == 0
-                                ? Expanded(
-                                child: _getBarChart()
-                            )
-                                : Expanded(
-                                child: _getPieChart()
-                            ),
-                          ],
+                    Container(
+                      height: MediaQuery.of(context).size.height / 2,
+                      // width: 1.sw,
+                      // padding: EdgeInsets.all(25),
+                      child: Container(
+                        color: Color(0xffF5F7F9),
+                        child: Padding(
+                          padding: const EdgeInsets.all(9.0),
+                          child: Column(
+                            children: <Widget>[
+                              currentIndexTab == 0
+                                  ? Expanded(
+                                  child: _getBarChart()
+                              )
+                                  : Expanded(
+                                  child: _getPieChart()
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              height: 16,
-                              width: 16,
-                              color: Color(0xff7DD390),
-                            ),
-                            SizedBox(
-                              width: 12,
-                            ),
-                            Text(
-                              'Прирост рыночной стоимости, руб.',
-                              style: body,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              height: 16,
-                              width: 16,
-                              color: Color(0xff7EB6EA),
-                            ),
-                            SizedBox(
-                              width: 12,
-                            ),
-                            Text(
-                              'Чистый арендный доход, руб.',
-                              style: body,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              )
-            ),
-          ],
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                height: 16,
+                                width: 16,
+                                color: Color(0xff7DD390),
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Text(
+                                'Прирост рыночной стоимости, руб.',
+                                style: body,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                height: 16,
+                                width: 16,
+                                color: Color(0xff7EB6EA),
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Text(
+                                'Чистый арендный доход, руб.',
+                                style: body,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ),
+            ],
+          ),
         ),
       ),
     );
