@@ -252,7 +252,7 @@ class _TotalChartsState extends State<TotalCharts> {
                                       expenses: item['objects'],
                                       width: 128,
                                       height: 32,
-                                      isLastElementBold: false,
+                                      isLastElementBold: true,
                                     ),
                                   )
                               ],

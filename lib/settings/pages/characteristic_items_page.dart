@@ -98,13 +98,16 @@ class _CharacteristicItemsPageState extends State<CharacteristicItemsPage> {
                           Align(
                             alignment: Alignment.topCenter,
                             child: Padding(
-                              padding: EdgeInsets.only(top: 8),
+                              padding: EdgeInsets.only(top: 5),
                               child: BoxIcon(
                                 iconPath: items[i]['visible'] == false
                                     ? 'assets/icons/eye_invisible.svg'
                                     : 'assets/icons/eye_visible.svg',
                                 iconColor: Colors.black,
                                 backgroundColor: Colors.white,
+                                // iconSize: items[i]['visible'] == false
+                                //   ? 17
+                                //   : 17.5,
                                 onTap: () {
                                   setState(() {
                                     if (items[i]['visible'] == null) {
@@ -124,7 +127,7 @@ class _CharacteristicItemsPageState extends State<CharacteristicItemsPage> {
                           Align(
                             alignment: Alignment.topCenter,
                             child: Padding(
-                              padding: EdgeInsets.only(top: 8),
+                              padding: EdgeInsets.only(top: 5),
                               child: BoxIcon(
                                 iconPath: 'assets/icons/trash.svg',
                                 iconColor: Colors.black,

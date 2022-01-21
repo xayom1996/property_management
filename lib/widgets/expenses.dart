@@ -30,65 +30,15 @@ class ExpensesContainer extends StatelessWidget {
         ),
         Container(
           height: height ?? 54,
-          child: !isLastElementBold
-              ? Row(
-                  children: [
-                    for (var index = 0; index < expenses.length; index++)
-                      Expanded(
-                        flex: width != null ? 0 : 1,
-                        child: Container(
-                          width: width,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 9),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (title.contains('Комментарий'))
-                                  showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (context) {
-                                        return CommentBottomSheet(
-                                          comment: expenses[index],
-                                        );
-                                      }
-                                  );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: title.contains('Комментарий') ? 8: 0),
-                                decoration: BoxDecoration(
-                                    color: Color(0xffF5F5F5).withOpacity(0.6),
-                                    borderRadius: BorderRadius.all(Radius.circular(12))
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    expenses[index],
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: body.copyWith(
-                                      color: Color(0xff151515),
-                                      fontSize: 15,
-                                      fontWeight: index == expenses.length - 1 && isLastElementBold
-                                          ? FontWeight.w700
-                                          : FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                  ],
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: expenses.length,
-                  itemBuilder: (BuildContext context, int index) => Container(
+          child: Row(
+            children: [
+              for (var index = 0; index < expenses.length; index++)
+                Expanded(
+                  flex: width != null ? 0 : 1,
+                  child: Container(
                     width: width,
                     child: Padding(
-                      padding: EdgeInsets.only(right: index != expenses.length - 1 ? 9 : 0),
+                      padding: EdgeInsets.only(right: 9),
                       child: GestureDetector(
                         onTap: () {
                           if (title.contains('Комментарий'))
@@ -127,7 +77,9 @@ class ExpensesContainer extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
+                )
+            ],
+          ),
         ),
       ],
     );

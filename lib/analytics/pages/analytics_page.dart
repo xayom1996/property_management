@@ -195,7 +195,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                         Align(
                           alignment: Alignment.topCenter,
                           child: Padding(
-                            padding: EdgeInsets.only(top: 8),
+                            padding: EdgeInsets.only(top: 5),
                             child: BoxIcon(
                               iconPath: 'assets/icons/trash.svg',
                               iconColor: Colors.black,
