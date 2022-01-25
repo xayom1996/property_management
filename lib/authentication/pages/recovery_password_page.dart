@@ -5,7 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/theme/box_ui.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/utils/user_repository.dart';
 import 'package:property_management/utils/utils.dart';
+import 'package:provider/src/provider.dart';
 
 class RecoveryPasswordPage extends StatefulWidget {
   RecoveryPasswordPage({Key? key}) : super(key: key);
@@ -98,6 +100,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                                   emailErrorText = 'Введите корректный почтовый адрес';
                                 }
                                 else{
+                                  context.read<UserRepository>().resetPassword(emailController.text);
                                   Navigator.pop(context);
                                   Navigator.push(
                                     context,

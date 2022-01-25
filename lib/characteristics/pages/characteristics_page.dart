@@ -1,29 +1,21 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/authentication/bloc/authentication_bloc.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
-import 'package:property_management/exploitation/pages/edit_exploitation_page.dart';
-import 'package:property_management/objects/pages/create_tenant_page.dart';
 import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/objects/pages/edit_tenant_page.dart';
-import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
-import 'package:property_management/objects/widgets/object_card.dart';
-import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_button.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/custom_alert_dialog.dart';
 import 'package:property_management/widgets/custom_carousel_slider.dart';
 import 'package:property_management/widgets/custom_tab_container.dart';
-import 'package:property_management/widgets/input_field.dart';
-import 'package:property_management/widgets/object_carousel_card.dart';
+import 'package:provider/src/provider.dart';
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate({
@@ -105,41 +97,43 @@ class _CharacteristicsPageState extends State<CharacteristicsPage> {
               centerTitle: true,
               elevation: 0,
               forceElevated: innerBoxIsScrolled,
-              title: Row(
-                children: [
-                  Spacer(),
-                  BoxIcon(
-                    iconPath: 'assets/icons/edit.svg',
-                    iconColor: Colors.black,
-                    backgroundColor: Colors.white,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => currentIndexTab == 0
-                            ? EditObjectPage()
-                            : EditTenantPage(),
+              title: context.read<AppBloc>().state.user.role != 'user'
+                  ? Row(
+                      children: [
+                        Spacer(),
+                        BoxIcon(
+                          iconPath: 'assets/icons/edit.svg',
+                          iconColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => currentIndexTab == 0
+                                  ? EditObjectPage()
+                                  : EditTenantPage(),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    width: 12.w,
-                  ),
-                  BoxIcon(
-                    iconPath: 'assets/icons/trash.svg',
-                    iconColor: Colors.black,
-                    backgroundColor: Colors.white,
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => CustomAlertDialog(
-                            title: 'Вы действительно хотите удалить карточку объекта?',
-                          )
-                      );
-                    },
-                  ),
-                ],
-              ),
+                        SizedBox(
+                          width: 12.w,
+                        ),
+                        BoxIcon(
+                          iconPath: 'assets/icons/trash.svg',
+                          iconColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => CustomAlertDialog(
+                                  title: 'Вы действительно хотите удалить карточку объекта?',
+                                )
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                  : null,
               expandedHeight: 70,
               toolbarHeight: 70,
               collapsedHeight: 70,

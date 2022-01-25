@@ -6,7 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/analytics/pages/analytics_page.dart';
-import 'package:property_management/authorization/pages/authorization_page.dart';
+import 'package:property_management/authentication/pages/authorization_page.dart';
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
 import 'package:property_management/exploitation/pages/exploitation_page.dart';
 import 'package:property_management/objects/pages/list_objects_page.dart';
@@ -120,7 +120,6 @@ class MyNavBar extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.width);
     return Container(
         height: Platform.isIOS ? 90 : 80,
         decoration: BoxDecoration(

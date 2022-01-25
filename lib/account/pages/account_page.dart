@@ -5,11 +5,13 @@ import 'package:property_management/account/pages/change_password_page.dart';
 import 'package:property_management/account/pages/personal_information_page.dart';
 import 'package:property_management/account/widgets/change_profile_bottom_sheet.dart';
 import 'package:property_management/account/widgets/logout_alert_dialog.dart';
+import 'package:property_management/authentication/bloc/authentication_bloc.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/container_for_transition.dart';
+import 'package:provider/src/provider.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -62,7 +64,7 @@ class AccountPage extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'Фамилия Имя Отчество',
+                    context.read<AppBloc>().state.user.getFullName(),
                     textAlign: TextAlign.center,
                     style: title2.copyWith(
                       color: Color(0xffC7C9CC),

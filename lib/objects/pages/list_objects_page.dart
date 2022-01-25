@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/account/pages/account_page.dart';
+import 'package:property_management/authentication/bloc/authentication_bloc.dart';
 import 'package:property_management/objects/pages/search_objects_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/objects/widgets/search_text_field.dart';
 import 'package:property_management/settings/pages/settings_page.dart';
+import 'package:property_management/utils/user_repository.dart';
 import 'package:property_management/utils/utils.dart';
+import 'package:provider/src/provider.dart';
 import 'create_object_page.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
@@ -97,21 +100,23 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
               centerTitle: true,
               elevation: 0,
               forceElevated: innerBoxIsScrolled,
-              title: true == true /// Зависимость от ориентации
-                  ? Row(
+              title: Row(
+                children: [
+                  Spacer(),
+                  BoxIcon(
+                    iconPath: 'assets/icons/profile.svg',
+                    iconColor: Colors.black,
+                    backgroundColor: Colors.white,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AccountPage()),
+                      );
+                    },
+                  ),
+                  if (context.read<AppBloc>().state.user.role != 'user')
+                    Row(
                       children: [
-                        Spacer(),
-                        BoxIcon(
-                          iconPath: 'assets/icons/profile.svg',
-                          iconColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AccountPage()),
-                            );
-                          },
-                        ),
                         SizedBox(
                           width: 12,
                         ),
@@ -127,8 +132,9 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                           },
                         ),
                       ],
-                    )
-                  : null,
+                    ),
+                ],
+              ),
               expandedHeight: 110,
               toolbarHeight: 70,
               collapsedHeight: 70,

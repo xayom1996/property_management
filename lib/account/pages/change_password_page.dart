@@ -4,10 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/theme/colors.dart';
 import 'package:property_management/theme/styles.dart';
+import 'package:property_management/utils/user_repository.dart';
 import 'package:property_management/utils/utils.dart';
 import 'package:property_management/widgets/box_button.dart';
 import 'package:property_management/widgets/box_icon.dart';
 import 'package:property_management/widgets/input_field.dart';
+import 'package:provider/src/provider.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key? key}) : super(key: key);
@@ -105,6 +107,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     title: 'Изменить пароль',
                     disabled: isDisabledButton() ? false : true,
                     onTap: () {
+                      context.read<UserRepository>().changePassword(currentPassword, newPassword);
                       Navigator.pop(context);
                       Navigator.push(
                         context,
