@@ -137,7 +137,7 @@ class UserRepository {
     }
   }
 
-  void changePassword(String currentPassword, String newPassword) async {
+  Future<void> changePassword(String currentPassword, String newPassword) async {
     final user = _firebaseAuth.currentUser;
     final cred = EmailAuthProvider.credential(
         email: user!.email!, password: currentPassword
@@ -153,9 +153,9 @@ class UserRepository {
     });
   }
 
-  void resetPassword(String email) {
+  Future<void> resetPassword(String email) async {
     try {
-      _firebaseAuth.sendPasswordResetEmail(email: email);
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
     } catch(err) {
       print(err);
     }

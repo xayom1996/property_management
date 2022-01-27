@@ -5,7 +5,8 @@ import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/widgets/box_text.dart';
 
 class BoxInputField extends StatefulWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
+  final Function(String)? onChanged;
   final String placeholder;
   final String title;
   final Widget? leading;
@@ -21,8 +22,9 @@ class BoxInputField extends StatefulWidget {
 
   BoxInputField({
     Key? key,
-    required this.controller,
     required this.title,
+    this.controller,
+    this.onChanged,
     this.placeholder = '',
     this.enabled = true,
     this.leading,
@@ -100,6 +102,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
                           maxLines: widget.enabled == true ? 1 : null,
                           enabled: widget.enabled,
                           controller: widget.controller,
+                          onChanged: widget.onChanged,
                           style: body,
                           focusNode: _focus,
                           obscureText: widget.password ? !showPassword : false,
@@ -147,7 +150,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
                 ],
               ),
             ),
-            if (widget.errorText != null && widget.errorText != '')
+            if (widget.isError && widget.errorText != null && widget.errorText != '')
               Padding(
                 padding: EdgeInsets.only(top: 12),
                 child: Text(
