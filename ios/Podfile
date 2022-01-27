@@ -1,11 +1,9 @@
 # Uncomment the next line to define a global platform for your project
  platform :ios, '10.0'
 
-target 'testing_gowtham' do
-# Comment the next line if you're not using Swift and don't want to use
+target 'Runner' do
  use_frameworks!
 
-# Pods for testing_gowtham
  pod 'Firebase/Core'
  pod 'Firebase/Firestore'
 end
