@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:property_management/authentication/bloc/authentication_bloc.dart';
-import 'package:property_management/authentication/bloc/authentication_state.dart';
+import 'package:formz/formz.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/bloc/app_state.dart';
+import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/pages/recovery_password_page.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
-import 'package:property_management/theme/box_ui.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/user_repository.dart';
-import 'package:property_management/utils/utils.dart';
+import 'package:property_management/app/theme/box_ui.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/utils/utils.dart';
 
 class AuthorizationPage extends StatefulWidget {
   AuthorizationPage({Key? key}) : super(key: key);

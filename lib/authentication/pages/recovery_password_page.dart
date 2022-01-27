@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
-import 'package:property_management/theme/box_ui.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/user_repository.dart';
-import 'package:property_management/utils/utils.dart';
+import 'package:property_management/app/theme/box_ui.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
 import 'package:provider/src/provider.dart';
 
 class RecoveryPasswordPage extends StatefulWidget {

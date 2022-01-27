@@ -6,7 +6,7 @@ import 'package:firebase_auth_platform_interface/firebase_auth_platform_interfac
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:meta/meta.dart';
 import 'package:property_management/account/models/user.dart';
-import 'package:property_management/utils/cache.dart';
+import 'package:property_management/app/utils/cache.dart';
 
 class LogInWithEmailAndPasswordFailure implements Exception {
   /// {@macro log_in_with_email_and_password_failure}

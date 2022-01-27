@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/utils.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/utils.dart';
 
 class CustomCheckBox extends StatefulWidget {
   const CustomCheckBox({Key? key}) : super(key: key);

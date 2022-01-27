@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/widgets/box_icon.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
 
 class ObjectCarouselCard extends StatelessWidget {
   final int id;

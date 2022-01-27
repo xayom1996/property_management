@@ -10,10 +10,10 @@ import 'package:property_management/authentication/pages/authorization_page.dart
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
 import 'package:property_management/exploitation/pages/exploitation_page.dart';
 import 'package:property_management/objects/pages/list_objects_page.dart';
-import 'package:property_management/theme/styles.dart';
+import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/total/pages/total_page.dart';
-import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_icon.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
 
 
 class DashboardPage extends StatefulWidget {

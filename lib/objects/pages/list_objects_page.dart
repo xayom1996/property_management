@@ -6,20 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/account/pages/account_page.dart';
-import 'package:property_management/authentication/bloc/authentication_bloc.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/objects/pages/search_objects_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/objects/widgets/search_text_field.dart';
 import 'package:property_management/settings/pages/settings_page.dart';
-import 'package:property_management/utils/user_repository.dart';
-import 'package:property_management/utils/utils.dart';
+import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/utils/utils.dart';
 import 'package:provider/src/provider.dart';
 import 'create_object_page.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
-import 'package:property_management/theme/colors.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/widgets/box_icon.dart';
+import 'package:property_management/app/theme/colors.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate({

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/exploitation/widgets/comment_bottom_sheet.dart';
-import 'package:property_management/theme/styles.dart';
+import 'package:property_management/app/theme/styles.dart';
 
 ///Затраты
 class ExpensesContainer extends StatelessWidget {

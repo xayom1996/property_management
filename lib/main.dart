@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:property_management/authentication/bloc/authentication_bloc.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
+import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
 import 'package:property_management/splash_page.dart';
-import 'package:property_management/theme/box_ui.dart';
+import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/total/pages/total_charts.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:property_management/utils/user_repository.dart';
+import 'package:property_management/app/utils/user_repository.dart';
 
 Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

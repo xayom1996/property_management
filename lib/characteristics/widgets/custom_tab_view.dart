@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/characteristics/widgets/document_page.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_icon.dart';
-import 'package:property_management/widgets/custom_checkbox.dart';
-import 'package:property_management/widgets/input_field.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/custom_checkbox.dart';
+import 'package:property_management/app/widgets/input_field.dart';
 
 class CustomTabView extends StatelessWidget {
   final List<Map> objectItems;

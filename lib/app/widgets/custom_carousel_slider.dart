@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:property_management/widgets/object_carousel_card.dart';
+import 'package:property_management/app/widgets/object_carousel_card.dart';
 
 class CustomCarouselSlider extends StatefulWidget {
   const CustomCarouselSlider({Key? key}) : super(key: key);

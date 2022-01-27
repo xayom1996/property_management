@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:property_management/authentication/bloc/authentication_bloc.dart';
-import 'package:property_management/authentication/bloc/authentication_event.dart';
-import 'package:property_management/authentication/bloc/authentication_state.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/authentication/pages/authorization_page.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
-import 'package:property_management/theme/styles.dart';
+import 'package:property_management/app/theme/styles.dart';
 
 class SplashPage extends StatefulWidget{
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:property_management/theme/colors.dart';
-import 'package:property_management/theme/styles.dart';
+import 'package:property_management/app/theme/colors.dart';
+import 'package:property_management/app/theme/styles.dart';
 
 class BoxText extends StatelessWidget {
   final String text;

@@ -4,12 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/objects/pages/upload_document_page.dart';
 import 'package:property_management/objects/widgets/action_bottom_sheet.dart';
 import 'package:property_management/settings/pages/characteristic_items_page.dart';
-import 'package:property_management/theme/colors.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_icon.dart';
-import 'package:property_management/widgets/container_for_transition.dart';
-import 'package:property_management/widgets/input_field.dart';
+import 'package:property_management/app/theme/colors.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/container_for_transition.dart';
+import 'package:property_management/app/widgets/input_field.dart';
 
 class ChangeFieldPage extends StatefulWidget {
   final String title;
