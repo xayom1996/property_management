@@ -28,18 +28,6 @@ Future<void> main() async {
 
   final userRepository = UserRepository();
   await userRepository.user.first;
-
-  // await authenticationRepository.logInWithEmailAndPassword(email: 'xayom1996@gmail.com', password: 'povibi80');
-  // print(userRepository.currentUser.id);
-  // FirebaseFirestore firestore = FirebaseFirestore.instance;
-  // userRepository.firestore
-  //     .collection('users')
-  //     .get()
-  //     .then((QuerySnapshot querySnapshot) {
-  //   querySnapshot.docs.forEach((doc) {
-  //     print(doc['email']);
-  //   });
-  // });
   return runApp(
     DevicePreview(
       // enabled: !kReleaseMode,
@@ -65,10 +53,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: _userRepository,
-      child: BlocProvider(
-        create: (_) => AppBloc(
-          userRepository: _userRepository,
-        ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => AppBloc(userRepository: _userRepository)),
+          BlocProvider(create: (_) => AuthCubit(_userRepository)),
+          BlocProvider(create: (_) => RecoveryPasswordCubit(_userRepository)),
+        ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),
           builder: () => MaterialApp(
