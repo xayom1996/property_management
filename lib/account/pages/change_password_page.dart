@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:formz/formz.dart';
+import 'package:property_management/account/cubit/change_password/change_password_cubit.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
@@ -11,38 +14,8 @@ import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/input_field.dart';
 import 'package:provider/src/provider.dart';
 
-class ChangePasswordPage extends StatefulWidget {
+class ChangePasswordPage extends StatelessWidget {
   const ChangePasswordPage({Key? key}) : super(key: key);
-
-  @override
-  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
-}
-
-class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final TextEditingController currentPasswordController = TextEditingController();
-  final TextEditingController newPasswordController = TextEditingController();
-  String currentPassword = '';
-  String newPassword = '';
-
-  @override
-  void initState() {
-    currentPasswordController.addListener(() {
-      setState(() {
-        currentPassword = currentPasswordController.text;
-      });
-    });
-
-    newPasswordController.addListener(() {
-      setState(() {
-        newPassword = newPasswordController.text;
-      });
-    });
-    super.initState();
-  }
-
-  bool isDisabledButton() {
-    return currentPassword != '' && newPassword != '';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,63 +48,72 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         toolbarHeight: 68,
         backgroundColor: kBackgroundColor,
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
+      body: BlocConsumer<ChangePasswordCubit, ChangePasswordState>(
+        listener: (context, state) {
+          if (state.status.isSubmissionSuccess) {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>
+                  SuccessfullPage(
+                    information: Text(
+                      'Ваш пароль успешно изменен',
+                      textAlign: TextAlign.center,
+                      style: body.copyWith(
+                          color: Color(0xff151515)
+                      ),
+                    ),
+                  )),
+            );
+          }
+        },
+        builder: (context, state) {
+          return CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
                   child: Column(
                     children: [
-                      BoxInputField(
-                        controller: currentPasswordController,
-                        placeholder: 'Введите текущий пароль',
-                        title: 'Текущий пароль',
-                        password: true,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
+                        child: Column(
+                          children: [
+                            BoxInputField(
+                              key: const Key('currentPassword_textField'),
+                              onChanged: (password) => context.read<ChangePasswordCubit>().currentPasswordChanged(password),
+                              placeholder: 'Введите текущий пароль',
+                              title: 'Текущий пароль',
+                              password: true,
+                            ),
+                            BoxInputField(
+                              key: const Key('newPassword_textField'),
+                              onChanged: (password) => context.read<ChangePasswordCubit>().newPasswordChanged(password),
+                              placeholder: 'Введите новый пароль',
+                              title: 'Новый пароль',
+                              password: true,
+                            ),
+                          ],
+                        ),
                       ),
-                      BoxInputField(
-                        controller: newPasswordController,
-                        placeholder: 'Введите новый пароль',
-                        title: 'Новый пароль',
-                        password: true,
+                      Spacer(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.24.sw),),
+                        child: BoxButton(
+                          title: 'Изменить пароль',
+                          disabled: !state.status.isValidated,
+                          onTap: () => context.read<ChangePasswordCubit>().changePassword(),
+                          busy: state.status.isSubmissionInProgress,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 40,
                       ),
                     ],
                   ),
                 ),
-                Spacer(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.24.sw),),
-                  child: BoxButton(
-                    title: 'Изменить пароль',
-                    disabled: isDisabledButton() ? false : true,
-                    onTap: () {
-                      context.read<UserRepository>().changePassword(currentPassword, newPassword);
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SuccessfullPage(
-                          information: Text(
-                            'Ваш пароль успешно изменен',
-                            textAlign: TextAlign.center,
-                            style: body.copyWith(
-                                color: Color(0xff151515)
-                            ),
-                          ),
-                        )),
-                      );
-                    },
-                    // busy: isBusy,
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
               ],
-            ),
-          ),
-        ],
+            );
+        },
       ),
     );
   }

@@ -20,3 +20,7 @@ class AppUserChanged extends AppEvent {
   @override
   List<Object> get props => [user];
 }
+
+class AppUserUpdated extends AppUserChanged {
+  AppUserUpdated(User user) : super(user);
+}

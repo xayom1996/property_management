@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:property_management/account/cubit/change_password/change_password_cubit.dart';
+import 'package:property_management/account/cubit/personal_info/personal_info_cubit.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
@@ -58,6 +60,8 @@ class App extends StatelessWidget {
           BlocProvider(create: (_) => AppBloc(userRepository: _userRepository)),
           BlocProvider(create: (_) => AuthCubit(_userRepository)),
           BlocProvider(create: (_) => RecoveryPasswordCubit(_userRepository)),
+          BlocProvider(create: (_) => PersonalInfoCubit(_userRepository)),
+          BlocProvider(create: (_) => ChangePasswordCubit(_userRepository)),
         ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),

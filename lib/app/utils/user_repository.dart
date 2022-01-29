@@ -35,7 +35,7 @@ class LogInWithEmailAndPasswordFailure implements Exception {
           'Incorrect password, please try again.',
         );
       default:
-        return const LogInWithEmailAndPasswordFailure();
+        return LogInWithEmailAndPasswordFailure(code);
     }
   }
 
@@ -104,6 +104,14 @@ class UserRepository {
         : User.empty;
   }
 
+  Future<void> updateUser(User user) async {
+    String documentId = currentUser.id;
+    await _fireStore.collection('users').doc(documentId)
+        .update(user.toJson())
+        .then((value) => print("User Updated"))
+        .catchError((error) => print("Failed to update user: $error"));
+  }
+
   Future<void> signUp({required String email, required String password}) async {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
@@ -142,15 +150,22 @@ class UserRepository {
     final cred = EmailAuthProvider.credential(
         email: user!.email!, password: currentPassword
     );
-    user.reauthenticateWithCredential(cred).then((value) {
-      user.updatePassword(newPassword).then((_) {
-        print('Пароль изменен');
-      }).catchError((error) {
-        print(error);
-      });
-    }).catchError((err) {
-      print(err);
+    user.updatePassword(newPassword).then((_) {
+      print('Пароль изменен');
+    }).catchError((error) {
+      print(error);
     });
+    // user.reauthenticateWithCredential(cred).then((value) {
+    //   print(value);
+    //   user.updatePassword(newPassword).then((_) {
+    //     print('Пароль изменен');
+    //   }).catchError((error) {
+    //     print(error);
+    //   });
+    // }).catchError((err) {
+    //   print(err);
+    //   throw LogInWithEmailAndPasswordFailure.fromCode("Неверный пароль");
+    // });
   }
 
   Future<void> resetPassword(String email) async {

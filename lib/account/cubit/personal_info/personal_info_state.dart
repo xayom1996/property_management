@@ -8,3 +8,13 @@ class PersonalInfoInitial extends PersonalInfoState {
   @override
   List<Object> get props => [];
 }
+
+class PersonalInfoSuccessfullySaved extends PersonalInfoState{
+  @override
+  List<Object?> get props => [];
+}
+
+class PersonalInfoErrorSaved extends PersonalInfoState{
+  @override
+  List<Object?> get props => [];
+}

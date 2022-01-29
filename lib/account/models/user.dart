@@ -53,4 +53,22 @@ class User {
     "patronymic": patronymic ?? null,
     "role": role,
   };
+
+  User copyWith({
+    String? id,
+    String? email,
+    String? firstName,
+    String? secondName,
+    String? patronymic,
+    String? role,
+  }) {
+    return User(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      firstName: firstName ?? this.firstName,
+      secondName: secondName ?? this.patronymic,
+      patronymic: patronymic ?? this.patronymic,
+      role: role ?? this.role,
+    );
+  }
 }

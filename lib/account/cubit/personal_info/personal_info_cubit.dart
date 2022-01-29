@@ -1,8 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:property_management/account/models/user.dart';
+import 'package:property_management/app/utils/user_repository.dart';
 
 part 'personal_info_state.dart';
 
 class PersonalInfoCubit extends Cubit<PersonalInfoState> {
-  PersonalInfoCubit() : super(PersonalInfoInitial());
+  PersonalInfoCubit(this._userRepository) : super(PersonalInfoInitial());
+
+  final UserRepository _userRepository;
+
+  void updateUser({String}) {
+    // emit(state.copyWith(user: user));
+  }
 }
