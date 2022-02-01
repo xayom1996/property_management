@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:property_management/authentication/pages/authorization_page.dart';
 import 'package:property_management/app/theme/styles.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 import 'package:provider/src/provider.dart';
 
 class LogoutAlertDialog extends StatelessWidget {

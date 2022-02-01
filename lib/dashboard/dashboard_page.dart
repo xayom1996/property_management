@@ -3,12 +3,16 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/analytics/pages/analytics_page.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/authentication/pages/authorization_page.dart';
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
 import 'package:property_management/exploitation/pages/exploitation_page.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/pages/list_objects_page.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/total/pages/total_page.dart';
@@ -69,15 +73,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
         child: IndexedStack(
-              key: const PageStorageKey('Indexed'),
-              index: currentIndex,
-              children: pages,
-            ),
+          key: const PageStorageKey('Indexed'),
+          index: currentIndex,
+          children: pages,
+        ),
       ),
       bottomNavigationBar: MyNavBar(
         currentIndex: currentIndex,

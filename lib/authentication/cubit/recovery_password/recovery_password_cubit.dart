@@ -1,13 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/authentication/form_inputs/email.dart';
 
 part 'recovery_password_state.dart';
 
 class RecoveryPasswordCubit extends Cubit<RecoveryPasswordState> {
-  RecoveryPasswordCubit(this._userRepository) : super(const RecoveryPasswordState());
+  RecoveryPasswordCubit(this._userRepository)
+      : super(const RecoveryPasswordState());
 
   final UserRepository _userRepository;
 

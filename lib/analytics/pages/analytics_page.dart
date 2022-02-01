@@ -155,18 +155,25 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                       motion: ScrollMotion(),
                       children: [
                         Spacer(),
-                        BoxIcon(
-                          iconPath: 'assets/icons/trash.svg',
-                          iconColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => CustomAlertDialog(
-                                  title: 'Вы действительно хотите удалить план?',
-                                )
-                            );
-                          },
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: BoxIcon(
+                              iconPath: 'assets/icons/trash.svg',
+                              iconColor: Colors.black,
+                              backgroundColor: Colors.white,
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => CustomAlertDialog(
+                                      title: 'Вы действительно хотите удалить план?',
+                                    )
+                                );
+                              },
+
+                            ),
+                          ),
                         ),
                         SizedBox(
                           width: 10,

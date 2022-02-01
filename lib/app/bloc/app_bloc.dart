@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:property_management/account/models/user.dart';
 import 'package:property_management/app/bloc/app_event.dart';
 import 'package:property_management/app/bloc/app_state.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc({required UserRepository userRepository})
@@ -18,8 +18,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           on<AppUserUpdated>(_onUserUpdated);
           on<AppLogoutRequested>(_onLogoutRequested);
           _userSubscription = _userRepository.user.listen(
-                (user) => add(AppUserChanged(user)),
+              (user) => add(AppUserChanged(user)),
           );
+          // _userRepository.getObjects(state.user);
         }
 
   final UserRepository _userRepository;

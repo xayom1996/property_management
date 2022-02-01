@@ -9,14 +9,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/account/cubit/change_password/change_password_cubit.dart';
 import 'package:property_management/account/cubit/personal_info/personal_info_cubit.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/services/firestore_service.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/splash_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/total/pages/total_charts.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 
 Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -50,7 +52,6 @@ class App extends StatelessWidget {
 
   final UserRepository _userRepository;
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
@@ -62,6 +63,8 @@ class App extends StatelessWidget {
           BlocProvider(create: (_) => RecoveryPasswordCubit(_userRepository)),
           BlocProvider(create: (_) => PersonalInfoCubit(_userRepository)),
           BlocProvider(create: (_) => ChangePasswordCubit(_userRepository)),
+          BlocProvider(create: (_) => ObjectsBloc(fireStoreService: FireStoreService(),
+              userRepository: _userRepository)),
         ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),

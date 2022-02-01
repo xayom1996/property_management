@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/authentication/form_inputs/email.dart';
 import 'package:property_management/authentication/form_inputs/password.dart';
 

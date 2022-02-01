@@ -7,7 +7,7 @@ import 'package:formz/formz.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/app/theme/styles.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
 import 'package:provider/src/provider.dart';
@@ -33,7 +33,7 @@ class RecoveryPasswordPage extends StatelessWidget {
                           information: Column(
                             children: [
                               Text(
-                                'На ваш почтовый адрес выслан временный пароль для входа в систему',
+                                'На ваш почтовый адрес выслана инструкция для смены пароля',
                                 textAlign: TextAlign.center,
                                 style: body.copyWith(
                                     color: Color(0xff151515)

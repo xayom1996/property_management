@@ -7,7 +7,7 @@ import 'package:property_management/account/cubit/change_password/change_passwor
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_button.dart';
 import 'package:property_management/app/widgets/box_icon.dart';

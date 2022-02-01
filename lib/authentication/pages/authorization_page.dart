@@ -11,7 +11,7 @@ import 'package:property_management/authentication/pages/recovery_password_page.
 import 'package:property_management/dashboard/dashboard_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/app/theme/styles.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/app/utils/utils.dart';
 
 class AuthorizationPage extends StatelessWidget {
@@ -65,8 +65,8 @@ class AuthorizationPage extends StatelessWidget {
                                     onChanged: (email) => context.read<AuthCubit>().emailChanged(email),
                                     placeholder: 'Введите логин',
                                     title: 'Логин',
-                                    errorText: 'Введите корректный почтовый адрес',
-                                    isError: state.email.value.length > 3 && !state.email.valid,
+                                    errorText: !state.email.valid ? 'Введите корректный почтовый адрес': '',
+                                    isError: state.email.value.length > 3 && !state.email.valid || state.status.isSubmissionFailure,
                                   ),
                                   BoxInputField(
                                     key: const Key('loginForm_passwordInput_textField'),
@@ -75,7 +75,7 @@ class AuthorizationPage extends StatelessWidget {
                                     title: 'Пароль',
                                     password: true,
                                     // password: isPassword,
-                                    // isError: isError,
+                                    isError: state.status.isSubmissionFailure,
                                   ),
                                   SizedBox(
                                     height: 32,

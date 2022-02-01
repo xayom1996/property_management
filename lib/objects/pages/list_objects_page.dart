@@ -3,15 +3,17 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/account/pages/account_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/pages/search_objects_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/objects/widgets/search_text_field.dart';
 import 'package:property_management/settings/pages/settings_page.dart';
-import 'package:property_management/app/utils/user_repository.dart';
+import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:provider/src/provider.dart';
 import 'create_object_page.dart';
@@ -317,112 +319,119 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                 topLeft: Radius.circular(24),
               )
           ),
-          child: CustomScrollView(
-            slivers: [
-              SliverPersistentHeader(
-                pinned: false,
-                delegate: _SliverAppBarDelegate(
-                  minHeight: 56,
-                  maxHeight: 56,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                    decoration: BoxDecoration(
-                        color: Color(0xffFCFCFC),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(24),
-                          topLeft: Radius.circular(24),
-                        )
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Colors.transparent, isScrollControlled: true,
-                              builder: (context) {
-                                return FilterBottomSheet();
-                              }
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/filter.svg',
-                                color: Colors.black,
-                                height: 12,
+          child: BlocConsumer<ObjectsBloc, ObjectsState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              return CustomScrollView(
+                      slivers: [
+                        SliverPersistentHeader(
+                          pinned: false,
+                          delegate: _SliverAppBarDelegate(
+                            minHeight: 56,
+                            maxHeight: 56,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                              decoration: BoxDecoration(
+                                  color: Color(0xffFCFCFC),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(24),
+                                    topLeft: Radius.circular(24),
+                                  )
                               ),
-                              SizedBox(width: 4),
-                              Text(
-                                'По названию',
-                                style: title2.copyWith(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.transparent, isScrollControlled: true,
+                                        builder: (context) {
+                                          return FilterBottomSheet();
+                                        }
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/filter.svg',
+                                          color: Colors.black,
+                                          height: 12,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'По названию',
+                                          style: title2.copyWith(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/plus.svg',
+                                          color: Color(0xff4B81EF),
+                                          height: 16,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'Добавить',
+                                          style: title2.copyWith(
+                                            color: Color(0xff4B81EF),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => CreateObjectPage()),
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/plus.svg',
-                                color: Color(0xff4B81EF),
-                                height: 16,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                'Добавить',
-                                style: title2.copyWith(
-                                  color: Color(0xff4B81EF),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400
-                                ),
-                              ),
-                            ],
+                        SliverPersistentHeader(
+                          pinned: false,
+                          delegate: _SliverAppBarDelegate(
+                            minHeight: 16,
+                            maxHeight: 16,
+                            child: Container(),
+                            ),
+                        ),
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                                child: state.status == ObjectsStatus.loading
+                                    ? ObjectSkeleton()
+                                    : GestureDetector(
+                                        onTap: () {
+                                          widget.goToCharacteristicsPage();
+                                        },
+                                        child: ObjectCard(id: index)
+                                      ),
+                              );
+                            },
+                            childCount: state.places.length,
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                ),
-              ),
-              SliverPersistentHeader(
-                pinned: false,
-                delegate: _SliverAppBarDelegate(
-                  minHeight: 16,
-                  maxHeight: 16,
-                  child: Container(),
-                  ),
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                      child: isLoading
-                          ? ObjectSkeleton()
-                          : GestureDetector(
-                              onTap: () {
-                                widget.goToCharacteristicsPage();
-                              },
-                              child: ObjectCard(id: index)
-                            ),
                     );
-                  },
-                  childCount: objects.length,
-                ),
-              ),
-            ],
+            },
           ),
         ),
       ),
