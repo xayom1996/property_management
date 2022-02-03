@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:property_management/objects/models/place.dart';
 import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
@@ -12,7 +13,8 @@ import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 
 class ObjectCard extends StatelessWidget {
   final int id;
-  const ObjectCard({Key? key, required this.id}) : super(key: key);
+  final Place? place;
+  const ObjectCard({Key? key, required this.id, this.place}) : super(key: key);
 
   void doNothing(BuildContext context) {}
 
@@ -80,71 +82,73 @@ class ObjectCard extends StatelessWidget {
       ),
       child: Container(
         // padding: EdgeInsets.all(16.sp),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          if (objects[id]['color'] != null)
-                            Padding(
-                              padding: EdgeInsets.only(right: 8),
-                              child: Container(
-                                height: 20,
-                                width: 20,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(20) //                 <--- border radius here
-                                  ),
-                                  color: Color(objects[id]['color']),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '!',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          Text(
-                            objects[id]['name'],
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: body,
-                          ),
-                        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (objects[id]['color'] != null)
+                  Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: Container(
+                      height: 20,
+                      width: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(20) //                 <--- border radius here
+                        ),
+                        color: Color(objects[id]['color']),
                       ),
-                      Text(objects[id]['area'], style: body,),
-                    ],
+                      child: Center(
+                        child: Text(
+                          '!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    objects[id]['address'],
+                Expanded(
+                  child: Text(
+                    place == null
+                        ? objects[id]['name']
+                        : place!.objectItems['Название объекта']!.value,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: body.copyWith(color: Color(0xffC7C9CC)),
+                    style: body,
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Divider(),
-                  SizedBox(
-                    height: 12,
-                  ),
-                ],
-              ),
-            )
+                ),
+                SizedBox(width: 15,),
+                Text(
+                  place == null
+                      ? objects[id]['area']
+                      : '${place!.objectItems['Площадь объекта']!.value} ${place!.objectItems['Площадь объекта']!.unit}',
+                  style: body,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 4,
+            ),
+            Text(
+              place == null
+                  ? objects[id]['address']
+                  : '${place!.objectItems['Адрес объекта']!.value}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: body.copyWith(color: Color(0xffC7C9CC)),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Divider(),
+            SizedBox(
+              height: 12,
+            ),
           ],
         ),
       ),

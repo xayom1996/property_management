@@ -149,6 +149,9 @@ class UserRepository {
 
 
   Future<User> getUser() async {
+    if (currentUser.id == '') {
+      return User.empty;
+    }
     String documentId = currentUser.id;
     DocumentSnapshot userRef = await _fireStore.collection('users')
         .doc(documentId)
@@ -184,10 +187,6 @@ class UserRepository {
     required String password,
   }) async {
     try {
-      // final cred = EmailAuthProvider.credential(
-      //     email: email, password: password
-      // );
-      // await _firebaseAuth.signInWithCredential(cred);
       await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,

@@ -26,20 +26,26 @@ class FireStoreService {
     for (var i = 0; i < objectItemsFilled.length; i++){
       objectItems[i].value = objectItemsFilled[i]['value'];
     }
-
+    Map<String, dynamic> objectMap = {for (var item in objectItems) item.title : item.toJson()};
     await _fireStore.collection('objects')
         .add({
-      'objectItems': List.from(objectItems.map((item) => item.toJson())),
+      'objectItems': objectMap,
       // 'tenantItems': 'tenantItems',
       'ownerId': 'ownerId',
       'createdDate': 'createdDate',
     })
-        .then((value) => print("Object Added"))
-        .catchError((error) => print("Failed to add: $error"));
+    .then((value) => print("Object Added"))
+    .catchError((error) => print("Failed to add: $error"));
   }
 
   Future<List<Place>> getObjects(User user) async {
-    QuerySnapshot querySnapshot  = await _fireStore.collection('objects').get();
+    QuerySnapshot querySnapshot;
+    if (user.role == 'admin') {
+      querySnapshot = await _fireStore.collection('objects')
+          .get();
+    }else {
+      querySnapshot = await _fireStore.collection('objects').where('ownerId', isEqualTo: user.id).get();
+    }
 
     List<Place> places = querySnapshot.docs.map((doc) => Place.fromJson(doc.data() as Map<String, dynamic>)).toList();
     return places;

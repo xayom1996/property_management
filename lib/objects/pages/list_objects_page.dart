@@ -94,346 +94,364 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffF5F7F9),
-      body:  NestedScrollView(
-        controller: _controller,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              centerTitle: true,
-              elevation: 0,
-              forceElevated: innerBoxIsScrolled,
-              title: Row(
-                children: [
-                  Spacer(),
-                  BoxIcon(
-                    iconPath: 'assets/icons/profile.svg',
-                    iconColor: Colors.black,
-                    backgroundColor: Colors.white,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AccountPage()),
-                      );
-                    },
-                  ),
-                  if (context.read<AppBloc>().state.user.role != 'user')
-                    Row(
+      body:  BlocConsumer<ObjectsBloc, ObjectsState>(
+          listener: (context, state) {
+            // TODO: implement listener
+          },
+          builder: (context, state) {
+            return NestedScrollView(
+              controller: _controller,
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverAppBar(
+                    centerTitle: true,
+                    elevation: 0,
+                    forceElevated: innerBoxIsScrolled,
+                    title: Row(
                       children: [
-                        SizedBox(
-                          width: 12,
-                        ),
+                        Spacer(),
                         BoxIcon(
-                          iconPath: 'assets/icons/settings.svg',
+                          iconPath: 'assets/icons/profile.svg',
                           iconColor: Colors.black,
                           backgroundColor: Colors.white,
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => SettingsPage()),
+                              MaterialPageRoute(builder: (context) => AccountPage()),
                             );
                           },
                         ),
+                        if (context.read<AppBloc>().state.user.role != 'user')
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 12,
+                              ),
+                              BoxIcon(
+                                iconPath: 'assets/icons/settings.svg',
+                                iconColor: Colors.black,
+                                backgroundColor: Colors.white,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                       ],
                     ),
-                ],
-              ),
-              expandedHeight: 110,
-              toolbarHeight: 70,
-              collapsedHeight: 70,
-              pinned: true,
-              backgroundColor: Color(0xffF5F7F9),
-              flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-                return FlexibleSpaceBar(
-                  centerTitle: constraints.biggest.height > 70 ? false : true,
-                  titlePadding: constraints.biggest.height > 70
-                      ? EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44))
-                      : EdgeInsets.symmetric(vertical: 24),
-                  title: AnimatedOpacity(
-                    duration: Duration(milliseconds: 300),
-                    opacity: 1.0,
-                    child: Text('Объекты',
-                        style: constraints.biggest.height > 70
-                            ? heading1Style.copyWith(fontSize: 24)
-                            : body,
-                    ),
+                    expandedHeight: 110,
+                    toolbarHeight: 70,
+                    collapsedHeight: 70,
+                    pinned: true,
+                    backgroundColor: Color(0xffF5F7F9),
+                    flexibleSpace: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+                      return FlexibleSpaceBar(
+                        centerTitle: constraints.biggest.height > 70 ? false : true,
+                        titlePadding: constraints.biggest.height > 70
+                            ? EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44))
+                            : EdgeInsets.symmetric(vertical: 24),
+                        title: AnimatedOpacity(
+                          duration: Duration(milliseconds: 300),
+                          opacity: 1.0,
+                          child: Text('Объекты',
+                              style: constraints.biggest.height > 70
+                                  ? heading1Style.copyWith(fontSize: 24)
+                                  : body,
+                          ),
+                        ),
+                      );
+                    })
                   ),
-                );
-              })
-            ),
-            SliverPersistentHeader(
-              pinned: false,
-              delegate: _SliverAppBarDelegate(
-                minHeight: 44,
-                maxHeight: 44,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                  child: true == true
-                      ? GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
-                                  goToCharacteristicsPage: widget.goToCharacteristicsPage,
-                                ),
-                                transitionDuration: Duration.zero,
-                              ),
-                            );
-                          },
-                          child: SearchTextField()
-                      )
-                      : Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
-                                      goToCharacteristicsPage: widget.goToCharacteristicsPage,
+                  SliverPersistentHeader(
+                    pinned: false,
+                    delegate: _SliverAppBarDelegate(
+                      minHeight: 44,
+                      maxHeight: 44,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                        child: true == true
+                            ? GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
+                                        goToCharacteristicsPage: widget.goToCharacteristicsPage,
+                                      ),
+                                      transitionDuration: Duration.zero,
                                     ),
-                                    transitionDuration: Duration.zero,
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: 327,
-                                child: SearchTextField(),
-                              ),
-                            ),
-                            Spacer(),
-                            Row(
-                              children: [
-                                BoxIcon(
-                                  iconPath: 'assets/icons/profile.svg',
-                                  iconColor: Colors.black,
-                                  backgroundColor: Colors.white,
-                                ),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                BoxIcon(
-                                  iconPath: 'assets/icons/settings.svg',
-                                  iconColor: Colors.black,
-                                  backgroundColor: Colors.white,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                ),
-              ),
-            ),
-            SliverPersistentHeader(
-              pinned: false,
-              delegate: _SliverAppBarDelegate(
-                minHeight: 24,
-                maxHeight: 24,
-                child: Container(),
-              ),
-            ),
-            if (isPinned)
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SliverAppBarDelegate(
-                  minHeight: 56,
-                  maxHeight: 56,
-                  child: Container(
-                    height: 56,
-                    constraints: BoxConstraints(maxWidth: 1.sw),
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                    decoration: BoxDecoration(
-                      color: Color(0xffF5F7F9),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                                context: context,
-                                backgroundColor: Colors.transparent, isScrollControlled: true,
-                                builder: (context) {
-                                  return FilterBottomSheet();
-                                }
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/filter.svg',
-                                color: Colors.black,
-                                height: 12,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                'По названию',
-                                style: title2.copyWith(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => CreateObjectPage()),
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icons/plus.svg',
-                                color: Color(0xff4B81EF),
-                                height: 16,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                'Добавить',
-                                style: title2.copyWith(
-                                    color: Color(0xff4B81EF),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-          ];
-        },
-        // body: Container(),
-        body: Container(
-          decoration: BoxDecoration(
-              color: Color(0xffFCFCFC),
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(24),
-                topLeft: Radius.circular(24),
-              )
-          ),
-          child: BlocConsumer<ObjectsBloc, ObjectsState>(
-            listener: (context, state) {
-              // TODO: implement listener
-            },
-            builder: (context, state) {
-              return CustomScrollView(
-                      slivers: [
-                        SliverPersistentHeader(
-                          pinned: false,
-                          delegate: _SliverAppBarDelegate(
-                            minHeight: 56,
-                            maxHeight: 56,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                              decoration: BoxDecoration(
-                                  color: Color(0xffFCFCFC),
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(24),
-                                    topLeft: Radius.circular(24),
-                                  )
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  );
+                                },
+                                child: SearchTextField()
+                            )
+                            : Row(
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: Colors.transparent, isScrollControlled: true,
-                                        builder: (context) {
-                                          return FilterBottomSheet();
-                                        }
-                                      );
-                                    },
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icons/filter.svg',
-                                          color: Colors.black,
-                                          height: 12,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          'По названию',
-                                          style: title2.copyWith(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: (){
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
+                                            goToCharacteristicsPage: widget.goToCharacteristicsPage,
+                                          ),
+                                          transitionDuration: Duration.zero,
+                                        ),
                                       );
                                     },
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icons/plus.svg',
-                                          color: Color(0xff4B81EF),
-                                          height: 16,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          'Добавить',
-                                          style: title2.copyWith(
-                                            color: Color(0xff4B81EF),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400
-                                          ),
-                                        ),
-                                      ],
+                                    child: Container(
+                                      width: 327,
+                                      child: SearchTextField(),
                                     ),
+                                  ),
+                                  Spacer(),
+                                  Row(
+                                    children: [
+                                      BoxIcon(
+                                        iconPath: 'assets/icons/profile.svg',
+                                        iconColor: Colors.black,
+                                        backgroundColor: Colors.white,
+                                      ),
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      BoxIcon(
+                                        iconPath: 'assets/icons/settings.svg',
+                                        iconColor: Colors.black,
+                                        backgroundColor: Colors.white,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ),
+                      ),
+                    ),
+                  ),
+                  SliverPersistentHeader(
+                    pinned: false,
+                    delegate: _SliverAppBarDelegate(
+                      minHeight: 24,
+                      maxHeight: 24,
+                      child: Container(),
+                    ),
+                  ),
+                  if (isPinned && state.status == ObjectsStatus.fetched && state.places.isNotEmpty)
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverAppBarDelegate(
+                        minHeight: 56,
+                        maxHeight: 56,
+                        child: Container(
+                          height: 56,
+                          constraints: BoxConstraints(maxWidth: 1.sw),
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                          decoration: BoxDecoration(
+                            color: Color(0xffF5F7F9),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.transparent, isScrollControlled: true,
+                                      builder: (context) {
+                                        return FilterBottomSheet();
+                                      }
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/filter.svg',
+                                      color: Colors.black,
+                                      height: 12,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'По названию',
+                                      style: title2.copyWith(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/plus.svg',
+                                      color: Color(0xff4B81EF),
+                                      height: 16,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Добавить',
+                                      style: title2.copyWith(
+                                          color: Color(0xff4B81EF),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SliverPersistentHeader(
-                          pinned: false,
-                          delegate: _SliverAppBarDelegate(
-                            minHeight: 16,
-                            maxHeight: 16,
-                            child: Container(),
-                            ),
+                      ),
+                    ),
+                ];
+              },
+              // body: Container(),
+              body: Container(
+                decoration: BoxDecoration(
+                    color: Color(0xffFCFCFC),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(24),
+                      topLeft: Radius.circular(24),
+                    )
+                ),
+                child: state.status == ObjectsStatus.fetched && state.places.isNotEmpty
+                    ? Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                          height: 56,
+                          decoration: BoxDecoration(
+                              color: Color(0xffFCFCFC),
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(24),
+                                topLeft: Radius.circular(24),
+                              )
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.transparent, isScrollControlled: true,
+                                      builder: (context) {
+                                        return FilterBottomSheet();
+                                      }
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/filter.svg',
+                                      color: Colors.black,
+                                      height: 12,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'По названию',
+                                      style: title2.copyWith(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/plus.svg',
+                                      color: Color(0xff4B81EF),
+                                      height: 16,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Добавить',
+                                      style: title2.copyWith(
+                                          color: Color(0xff4B81EF),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                                child: state.status == ObjectsStatus.loading
-                                    ? ObjectSkeleton()
-                                    : GestureDetector(
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                                itemCount: state.places.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                                    child: state.status == ObjectsStatus.loading
+                                        ? ObjectSkeleton()
+                                        : GestureDetector(
                                         onTap: () {
                                           widget.goToCharacteristicsPage();
                                         },
-                                        child: ObjectCard(id: index)
-                                      ),
-                              );
-                            },
-                            childCount: state.places.length,
-                          ),
+                                        child: ObjectCard(id: index, place: state.places[index])
+                                    ),
+                                  );
+                                }
+                            ),
                         ),
                       ],
-                    );
-            },
-          ),
-        ),
+                    )
+                    : CustomScrollView(
+                        slivers: [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icons/home_white.svg',
+                                  color: Color(0xffE9ECEE),
+                                  height: 80,
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                ),
+                                Text(
+                                  'У Вас пока не добавлен ни один объект',
+                                  textAlign: TextAlign.center,
+                                  style: body.copyWith(
+                                    color: Color(0xffC7C9CC),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            );
+          }
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
 import 'package:property_management/account/cubit/change_password/change_password_cubit.dart';
 import 'package:property_management/account/cubit/personal_info/personal_info_cubit.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
@@ -19,6 +22,7 @@ import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/total/pages/total_charts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:property_management/app/services/user_repository.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -26,6 +30,8 @@ Future<void> main() async {
     statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
     statusBarBrightness: Brightness.light,
   ));
+
+  await Hive.initFlutter();
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

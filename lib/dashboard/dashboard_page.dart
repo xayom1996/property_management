@@ -73,41 +73,50 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: SafeArea(
-        child: IndexedStack(
-          key: const PageStorageKey('Indexed'),
-          index: currentIndex,
-          children: pages,
-        ),
-      ),
-      bottomNavigationBar: MyNavBar(
-        currentIndex: currentIndex,
-        onTap: onChangeIndex,
-        items: const [
-          {
-            'iconPath': 'assets/icons/home.svg',
-            'title': 'Объекты',
-          },
-          {
-            'iconPath': 'assets/icons/characteristic.svg',
-            'title': 'Характеристики',
-          },
-          {
-            'iconPath': 'assets/icons/exploitation.svg',
-            'title': 'Эксплуатация',
-          },
-          {
-            'iconPath': 'assets/icons/analytics.svg',
-            'title': 'Аналитика',
-          },
-          {
-            'iconPath': 'assets/icons/total.svg',
-            'title': 'Итоги',
-          },
-        ],
-      ),
+    return BlocConsumer<ObjectsBloc, ObjectsState>(
+        listener: (context, state) {
+          // TODO: implement listener
+        },
+        builder: (context, state) {
+          return Scaffold(
+            key: _scaffoldKey,
+            body: SafeArea(
+              child: IndexedStack(
+                key: const PageStorageKey('Indexed'),
+                index: currentIndex,
+                children: pages,
+              ),
+            ),
+            bottomNavigationBar: state.status == ObjectsStatus.fetched && state.places.isNotEmpty
+                ? MyNavBar(
+                    currentIndex: currentIndex,
+                    onTap: onChangeIndex,
+                    items: const [
+                      {
+                        'iconPath': 'assets/icons/home.svg',
+                        'title': 'Объекты',
+                      },
+                      {
+                        'iconPath': 'assets/icons/characteristic.svg',
+                        'title': 'Характеристики',
+                      },
+                      {
+                        'iconPath': 'assets/icons/exploitation.svg',
+                        'title': 'Эксплуатация',
+                      },
+                      {
+                        'iconPath': 'assets/icons/analytics.svg',
+                        'title': 'Аналитика',
+                      },
+                      {
+                        'iconPath': 'assets/icons/total.svg',
+                        'title': 'Итоги',
+                      },
+                    ],
+                  )
+                : null,
+          );
+        }
     );
   }
 }

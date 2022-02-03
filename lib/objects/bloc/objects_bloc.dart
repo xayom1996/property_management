@@ -31,7 +31,9 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
 
   void _onGetObjects(ObjectsEvent event, Emitter<ObjectsState> emit) async {
     emit(const ObjectsState.loading());
-    List<Place> places = await _fireStoreService.getObjects(User.empty);
+    // await _fireStoreService.addObject();
+    List<Place> places = await _fireStoreService.getObjects(await _userRepository.getUser());
+    print(places);
     emit(ObjectsState.fetched(places));
   }
 }

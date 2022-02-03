@@ -5,6 +5,7 @@ import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/authentication/pages/authorization_page.dart';
 
 class ChangeProfileBottomSheet extends StatefulWidget {
   const ChangeProfileBottomSheet({Key? key}) : super(key: key);
@@ -122,6 +123,10 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
                   title: 'Добавить новый аккаунт',
                   onTap: (){
                     Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AuthorizationPage(addNewAccount: true,)),
+                    );
                   },
                 ),
               ),

@@ -1,8 +1,8 @@
 import 'package:property_management/characteristics/models/characteristics.dart';
 
 class Place {
-  final List<Characteristics> objectItems;
-  List<Characteristics>? tenantItems;
+  final Map<String, Characteristics> objectItems;
+  Map<String, Characteristics>? tenantItems;
   final String? ownerId;
   final String? createdDate;
 
@@ -14,18 +14,18 @@ class Place {
   });
 
   Map<String, dynamic> toJson() => {
-    'objectItems': List.from(objectItems.map((item) => item.toJson())),
-    'tenantItems': tenantItems != null
-        ? List.from(tenantItems!.map((item) => item.toJson()))
-        : [],
+    // 'objectItems': List.from(objectItems.map((item) => item.toJson())),
+    // 'tenantItems': tenantItems != null
+    //     ? List.from(tenantItems!.map((item) => item.toJson()))
+    //     : [],
     'ownerId': ownerId,
     'createdDate': createdDate,
   };
 
   factory Place.fromJson(Map<String, dynamic> json) => Place(
-    objectItems: List<Characteristics>.from(json["objectItems"].map((item) => Characteristics.fromJson(item))),
+    objectItems: Map<String, Characteristics>.from(json["objectItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value)))),
     tenantItems: json["tenantItems"] != null
-        ? List<Characteristics>.from(json["tenantItems"].map((item) => Characteristics.fromJson(item)))
+        ? Map<String, Characteristics>.from(json["tenantItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value))))
         : json["tenantItems"],
     ownerId: json["ownerId"],
     createdDate: json["ownerId"],
