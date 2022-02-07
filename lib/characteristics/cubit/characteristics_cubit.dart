@@ -8,7 +8,6 @@ class CharacteristicsCubit extends Cubit<CharacteristicsState> {
   CharacteristicsCubit() : super(const CharacteristicsState());
 
     void fetchObjects(List<Place> places) {
-      print('A');
       emit(state.copyWith(
         places: List.from(places.map((e) => e)),
         currentIndexTab: 0,

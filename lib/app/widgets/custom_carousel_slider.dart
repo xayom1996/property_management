@@ -11,23 +11,21 @@ import 'package:property_management/objects/models/place.dart';
 
 class CustomCarouselSlider extends StatelessWidget {
   final List<Place>? places;
-  CustomCarouselSlider({Key? key, this.places = const []}) : super(key: key);
-
-  final CarouselController buttonCarouselController = CarouselController();
+  final CarouselController? carouselController;
+  CustomCarouselSlider({Key? key, this.places = const [], this.carouselController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    print('aa');
     final List fixedList = Iterable<int>.generate(places!.length).toList();
     return BlocConsumer<CharacteristicsCubit, CharacteristicsState>(
       listener: (context, state) {
         if (state.isJump) {
-          buttonCarouselController.jumpToPage(state.selectedPlaceId);
+          carouselController!.jumpToPage(state.selectedPlaceId);
         }
       },
       builder: (context, state) {
         return CarouselSlider(
-          carouselController: buttonCarouselController,
+          carouselController: carouselController,
           options: CarouselOptions(
               viewportFraction: 316 / MediaQuery.of(context).size.width,
               height: 83,

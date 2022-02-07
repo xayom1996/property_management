@@ -13,10 +13,10 @@ class AddObjectCubit extends Cubit<AddObjectState> {
       : _fireStoreService = fireStoreService,
         _appBloc = appBloc,
         super(AddObjectState()) {
-          getItems();
+          getItems(_appBloc.state.objectItems);
           _appBlocSubscription = _appBloc.stream.listen(
                   (state){
-                    getItems();
+                    getItems(state.objectItems);
                   });
         }
 
@@ -24,9 +24,7 @@ class AddObjectCubit extends Cubit<AddObjectState> {
   final AppBloc _appBloc;
   late StreamSubscription _appBlocSubscription;
 
-  void getItems() async {
-    List<Characteristics> items = await _fireStoreService
-        .getObjectCharacteristics();
+  void getItems(List<Characteristics> items) async {
     List<Characteristics> _addItems = List.from(items.map((item) => Characteristics.fromJson(item.toJson())));
     emit(AddObjectState(
       addItems: _addItems,
@@ -36,6 +34,11 @@ class AddObjectCubit extends Cubit<AddObjectState> {
 
   void getOwners() async {
 
+  }
+
+  bool isObjectItemsValid(List<Characteristics> items) {
+    return items[0].getFullValue().isNotEmpty && items[1].getFullValue().isNotEmpty
+    && items[2].getFullValue().isNotEmpty && items[3].getFullValue().isNotEmpty;
   }
 
   void changeItemValue(int id, String value) {
@@ -49,7 +52,9 @@ class AddObjectCubit extends Cubit<AddObjectState> {
     _addItems[id].value = value;
     emit(state.copyWith(
       addItems: _addItems,
-      status: StateStatus.success,
+      status: isObjectItemsValid(_addItems)
+          ? StateStatus.valid
+          : StateStatus.invalid,
     ));
   }
 

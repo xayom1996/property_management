@@ -48,12 +48,7 @@ class DashboardPage extends StatelessWidget {
         listener: (context, state) {
         },
         builder: (context, state) {
-          print(state.status);
-
           if (state.status == ObjectsStatus.fetched){
-            print(state.places.length);
-            print('CHARA');
-            print(state.places.length);
             context.read<CharacteristicsCubit>().fetchObjects(state.places);
           }
           return Scaffold(

@@ -18,7 +18,8 @@ import 'package:property_management/app/widgets/input_field.dart';
 
 class ItemPage extends StatefulWidget {
   final Characteristics item;
-  ItemPage({Key? key, required this.item}) : super(key: key);
+  final Function onChange;
+  ItemPage({Key? key, required this.item, required this.onChange}) : super(key: key);
 
   @override
   State<ItemPage> createState() => _ItemPageState();
@@ -76,7 +77,8 @@ class _ItemPageState extends State<ItemPage> {
               iconColor: Colors.black,
               backgroundColor: Colors.white,
               onTap: () {
-                context.read<AddObjectCubit>().changeItemValue(widget.item.id, textController.text);
+                widget.onChange(widget.item.id, textController.text);
+                // context.read<AddObjectCubit>().changeItemValue(widget.item.id, textController.text);
                 Navigator.pop(context);
               },
             ),
@@ -113,6 +115,10 @@ class _ItemPageState extends State<ItemPage> {
                           controller: textController,
                           placeholder: widget.item.placeholder ?? '',
                           title: widget.item.title,
+                          disableSpace: widget.item.type == 'Число',
+                          keyboardType: widget.item.type == 'Число'
+                              ? TextInputType.number
+                              : null,
                         ),
                         if (widget.item.title == 'Площадь объекта' || widget.item.title == 'Банковское обслуживание')
                           hasDocument == false

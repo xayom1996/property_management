@@ -17,7 +17,7 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
     required AppBloc appBloc})
       : _fireStoreService = fireStoreService,
         _appBloc = appBloc,
-        super(const ObjectsState.initial()) {
+        super(const ObjectsState()) {
         on<ObjectsGetEvent>(_onGetObjects);
         on<GetFilteredObjectsEvent>(_onGetFilteredObjects);
         on<ChangeFilterObjectsEvent>(_onChangeFilterObjects);
@@ -34,10 +34,20 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
 
 
   void _onGetObjects(ObjectsGetEvent event, Emitter<ObjectsState> emit) async {
-    emit(const ObjectsState.loading());
-    List<Place> places = await _fireStoreService.getObjects(event.user, event.owners);
-    places.sort((a, b) => a.objectItems['Название объекта']!.value!.compareTo(b.objectItems['Название объекта']!.value!));
-    emit(ObjectsState.fetched(places, 'name'));
+    emit(state.copyWith(status: ObjectsStatus.loading));
+    List<Place> places;
+    if (event.user.isEmpty) {
+      places = [];
+    } else {
+      places = await _fireStoreService.getObjects(event.user, event.owners);
+    }
+    String filterBy = state.filterBy;
+    String filterField = 'Название объекта';
+    if (filterBy == 'address'){
+      filterField = 'Адрес объекта';
+    }
+    places.sort((a, b) => a.objectItems[filterField]!.value!.compareTo(b.objectItems[filterField]!.value!));
+    emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: 'name'));
   }
 
   void _onGetFilteredObjects(GetFilteredObjectsEvent event, Emitter<ObjectsState> emit) async {
@@ -47,21 +57,25 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
     if (filterBy == 'address'){
       filterField = 'Адрес объекта';
     }
-    emit(const ObjectsState.loading());
+    emit(state.copyWith(status: ObjectsStatus.loading));
     places.sort((a, b) => a.objectItems[filterField]!.value!.compareTo(b.objectItems[filterField]!.value!));
-    emit(ObjectsState.fetched(places, filterBy));
+    emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
   }
 
   void _onChangeFilterObjects(ChangeFilterObjectsEvent event, Emitter<ObjectsState> emit) async {
-    emit(ObjectsState.fetched(state.places, event.filterBy));
+    emit(state.copyWith(status: ObjectsStatus.fetched, filterBy: event.filterBy));
   }
 
   void _onDeleteObject(DeleteObjectEvent event, Emitter<ObjectsState> emit) async {
     List<Place> places = state.places;
-    String filterBy = state.filterBy;
-    emit(const ObjectsState.loading());
-    print(state);
-    places.removeAt(event.index);
-    emit(ObjectsState.fetched(places, filterBy));
+    emit(state.copyWith(status: ObjectsStatus.loading));
+    try{
+      await _fireStoreService.deleteObject(places[event.index].id);
+      places.removeAt(event.index);
+      emit(state.copyWith(status: ObjectsStatus.fetched, places: places));
+    } catch(e) {
+      print(e);
+    }
+    emit(state.copyWith(status: ObjectsStatus.fetched));
   }
 }

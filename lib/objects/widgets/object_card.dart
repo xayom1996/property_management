@@ -47,7 +47,7 @@ class ObjectCard extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => EditObjectPage()),
+                    MaterialPageRoute(builder: (context) => EditObjectPage(id: id,)),
                   );
                 },
                 backgroundColor: Colors.white,

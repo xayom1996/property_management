@@ -16,9 +16,27 @@ class FireStoreService {
   final CacheClient _cache;
   final FirebaseFirestore _fireStore;
 
-  Future<List<Characteristics>> getObjectCharacteristics() async {
+  // Future<void> addTenantCharacteristics() async {
+  //   Map<String, dynamic> tenantCharacteristics = {};
+  //   for (var i = 0; i < tenantItems.length; i++) {
+  //     tenantCharacteristics[tenantItems[i]['title']] = {
+  //       'id': i,
+  //       'title': tenantItems[i]['title'],
+  //       'placeholder': tenantItems[i]['placeholder'],
+  //       'type': tenantItems[i]['type'],
+  //       'unit': tenantItems[i]['unit'],
+  //     };
+  //   }
+  //   await _fireStore.collection('characteristics')
+  //       .doc('tenant_characteristics')
+  //       .set(tenantCharacteristics)
+  //       .then((value) => print("tenant_characteristics Added"))
+  //       .catchError((error) => throw Exception('Error adding'));
+  // }
+
+  Future<List<Characteristics>> getCharacteristics(String docId) async {
     DocumentSnapshot objectCharacteristics = await _fireStore.collection('characteristics')
-        .doc('object_characteristics')
+        .doc(docId)
         .get();
     var characteristics = objectCharacteristics.data() as Map<String, dynamic>;
 
@@ -39,9 +57,21 @@ class FireStoreService {
         .catchError((error) => throw Exception('Error adding'));
   }
 
-  Future<void> deleteObject() async {
+  Future<void> editObject({required List<Characteristics> filledItems, required String docId}) async {
+    Map<String, dynamic> objectMap = {for (var item in filledItems) item.title : item.toJson()}; // 2016-01-25
     await _fireStore.collection('objects')
-        .doc('ABC123')
+        .doc(docId)
+        .set({
+          'objectItems': objectMap,
+          'createdDate': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        })
+        .then((value) => print("Object updated"))
+        .catchError((error) => throw Exception('Error adding'));
+  }
+
+  Future<void> deleteObject(String docId) async {
+    await _fireStore.collection('objects')
+        .doc(docId)
         .delete()
         .then((value) => print("Object deleted"))
         .catchError((error) => throw Exception('Error adding'));
@@ -54,8 +84,11 @@ class FireStoreService {
     } else {
       querySnapshot = await _fireStore.collection('objects').where('objectItems.Собственник.value', whereIn: owners).get();
     }
-
-    List<Place> places = querySnapshot.docs.map((doc) => Place.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    List<Place> places = querySnapshot.docs.map((doc) {
+      var place = doc.data() as Map<String, dynamic>;
+      place['id'] = doc.id;
+      return Place.fromJson(place);
+    }).toList();
     return places;
   }
 

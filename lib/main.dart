@@ -20,6 +20,7 @@ import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/cubit/add_object/add_object_cubit.dart';
+import 'package:property_management/objects/cubit/edit_object/edit_object_cubit.dart';
 import 'package:property_management/splash_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/total/pages/total_charts.dart';
@@ -91,6 +92,7 @@ class App extends StatelessWidget {
           BlocProvider(create: (_) => CharacteristicsCubit()),
           BlocProvider(create: (_) => AddObjectCubit(fireStoreService: _fireStoreService,
               appBloc: _appBloc)),
+          BlocProvider(create: (_) => EditObjectCubit(fireStoreService: _fireStoreService)),
         ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),

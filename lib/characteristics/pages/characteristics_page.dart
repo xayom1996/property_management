@@ -1,13 +1,16 @@
 import 'dart:math';
 
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/pages/create_tenant_page.dart';
 import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/objects/pages/edit_tenant_page.dart';
@@ -56,27 +59,12 @@ class CharacteristicsPage extends StatelessWidget {
   bool isLoading = true;
   // int currentIndexTab = 0;
 
-  List<Map> firstTabObjectItems = [
-    {'title': 'Собственник', 'value': 'УК Смарт'},
-    {'title': 'Выделенная мощность (электричество)', 'value': '2'},
-    {'title': 'Выделенная мощность (тепло)', 'value': '2'},
-    {'title': 'Начальная стоимость', 'value': '1 000 000 ₽'},
-    {'title': 'Дата приобретения', 'value': '07.05.2021'},
-    {'title': 'Рыночная стоимость помещения', 'value': '900 000 ₽'},
-    {'title': 'Кадастровый номер', 'value': ''},
-    {'title': 'Кадастровая стоимость', 'value': '900 000 ₽'},
-    {'title': 'Договор водоснабжения', 'value': 'Договор от 12.04.14'},
-    {'title': 'Система налогообложения', 'value': 'Патент'},
-    {'title': 'Фактическая Налоговая нагрузка', 'value': '10 000 ₽'},
-    {'title': 'Арендная плата', 'value': '30 000 ₽'},
-    {'title': 'Коэффициент капитализации', 'value': '1,2'},
-  ];
-
   List<Map> secondTabObjectItems = [];
+
+  final CarouselController carouselController = CarouselController();
 
   @override
   Widget build(BuildContext context) {
-    print('AAAAa');
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: NestedScrollView(
@@ -86,50 +74,54 @@ class CharacteristicsPage extends StatelessWidget {
                 centerTitle: true,
                 elevation: 0,
                 forceElevated: innerBoxIsScrolled,
-                title: context.read<AppBloc>().state.user.isAdminOrManager()
-                    ? Row(
-                        children: [
-                          Spacer(),
-                          BlocBuilder<CharacteristicsCubit, CharacteristicsState>(
-                              buildWhen: (previousState, state) {
-                                return previousState.currentIndexTab != state.currentIndexTab;
-                              },
-                              builder: (context, state) {
-                                return BoxIcon(
-                                  iconPath: 'assets/icons/edit.svg',
-                                  iconColor: Colors.black,
-                                  backgroundColor: Colors.white,
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => state.currentIndexTab == 0
-                                          ? EditObjectPage()
-                                          : EditTenantPage(),
-                                      ),
+                title: BlocBuilder<AppBloc, AppState>(
+                  builder: (context, appState) {
+                    return appState.user.isAdminOrManager()
+                        ? Row(
+                            children: [
+                              Spacer(),
+                              BlocBuilder<CharacteristicsCubit, CharacteristicsState>(
+                                  builder: (context, state) {
+                                    return BoxIcon(
+                                      iconPath: 'assets/icons/edit.svg',
+                                      iconColor: Colors.black,
+                                      backgroundColor: Colors.white,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => state.currentIndexTab == 0
+                                              ? EditObjectPage(id: state.selectedPlaceId)
+                                              : EditTenantPage(),
+                                          ),
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                              }
-                          ),
-                          SizedBox(
-                            width: 12.w,
-                          ),
-                          BoxIcon(
-                            iconPath: 'assets/icons/trash.svg',
-                            iconColor: Colors.black,
-                            backgroundColor: Colors.white,
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => CustomAlertDialog(
-                                    title: 'Вы действительно хотите удалить карточку объекта?',
-                                  )
-                              );
-                            },
-                          ),
-                        ],
-                      )
-                    : null,
+                                  }
+                              ),
+                              SizedBox(
+                                width: 12.w,
+                              ),
+                              BoxIcon(
+                                iconPath: 'assets/icons/trash.svg',
+                                iconColor: Colors.black,
+                                backgroundColor: Colors.white,
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => CustomAlertDialog(
+                                        title: 'Вы действительно хотите удалить карточку объекта?',
+                                        onApprove: () {
+                                          context.read<ObjectsBloc>().add(DeleteObjectEvent(index: context.read<CharacteristicsCubit>().state.selectedPlaceId));
+                                        }
+                                      )
+                                  );
+                                },
+                              ),
+                            ],
+                          )
+                        : Container();
+                  }
+                ),
                 expandedHeight: 70,
                 toolbarHeight: 70,
                 collapsedHeight: 70,
@@ -157,6 +149,7 @@ class CharacteristicsPage extends StatelessWidget {
                     builder: (context, state) {
                       return CustomCarouselSlider(
                           key: const Key('carousel'),
+                          carouselController: carouselController,
                           places: state.places
                       );
                     }

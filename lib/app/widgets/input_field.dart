@@ -20,6 +20,7 @@ class BoxInputField extends StatefulWidget {
   final bool? disableSpace;
   final void Function()?trailingTapped;
   final Function()? onTap;
+  final TextInputType? keyboardType;
 
 
   BoxInputField({
@@ -36,6 +37,7 @@ class BoxInputField extends StatefulWidget {
     this.password = false,
     this.isError = false,
     this.backgroundColor,
+    this.keyboardType,
     this.errorText, this.onTap,
   }) : super(key: key);
 
@@ -104,7 +106,9 @@ class _BoxInputFieldState extends State<BoxInputField> {
                           inputFormatters: widget.disableSpace == true
                             ? [FilteringTextInputFormatter.deny(RegExp(r"\s\b|\b\s"))]
                             : [],
-                          keyboardType: widget.enabled == true ? null : TextInputType.multiline,
+                          keyboardType: widget.keyboardType != null
+                              ? widget.keyboardType
+                              : widget.enabled == true ? null : TextInputType.multiline,
                           maxLines: widget.enabled == true ? 1 : null,
                           enabled: widget.enabled,
                           controller: widget.controller,

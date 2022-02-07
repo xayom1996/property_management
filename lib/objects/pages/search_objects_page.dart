@@ -28,7 +28,7 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
     });
     Timer(const Duration(milliseconds: 300), () {
       setState(() {
-        isLoading = false;
+        isLoading = true;
       });
     });
   }

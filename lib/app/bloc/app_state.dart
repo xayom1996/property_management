@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:property_management/account/models/user.dart';
+import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
+import 'package:property_management/characteristics/models/characteristics.dart';
 
 enum AppStatus {
   authenticated,
@@ -11,16 +13,20 @@ class AppState extends Equatable {
     required this.status,
     this.user = User.empty,
     this.owners = const [],
+    this.objectItems = const [],
+    this.tenantItems = const [],
   });
 
-  const AppState.authenticated(User user, List<String> owners)
-      : this._(status: AppStatus.authenticated, user: user, owners: owners);
+  const AppState.authenticated(User user, List<String> owners, List<Characteristics> objectItems, List<Characteristics> tenantItems)
+      : this._(status: AppStatus.authenticated, user: user, owners: owners, objectItems: objectItems, tenantItems: tenantItems);
 
   const AppState.unauthenticated() : this._(status: AppStatus.unauthenticated);
 
   final AppStatus status;
   final User user;
   final List<String> owners;
+  final List<Characteristics> objectItems;
+  final List<Characteristics> tenantItems;
 
   @override
   List<Object> get props => [status, user, owners];

@@ -3,6 +3,8 @@ part of 'add_object_cubit.dart';
 enum StateStatus {
   initial,
   loading,
+  valid,
+  invalid,
   success,
   error,
 }

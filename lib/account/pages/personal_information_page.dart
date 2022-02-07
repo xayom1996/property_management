@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:property_management/account/cubit/personal_info/personal_info_cubit.dart';
+import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_event.dart';
 import 'package:property_management/app/theme/colors.dart';
@@ -50,16 +51,35 @@ class PersonalInformationPage extends StatelessWidget {
               iconColor: Colors.black,
               backgroundColor: Colors.white,
               onTap: () {
-                context.read<AppBloc>().add(
-                    AppUserUpdated(
-                        user.copyWith(
-                          firstName: _firstName.text,
-                          secondName: _secondName.text,
-                          patronymic: _patronymic.text,
-                        )
-                    )
-                );
-                Navigator.pop(context);
+                if (user.firstName != _firstName.text ||
+                    user.secondName != _secondName.text || user.patronymic != _patronymic.text){
+                  context.read<AppBloc>().add(
+                      AppUserUpdated(
+                          user.copyWith(
+                            firstName: _firstName.text,
+                            secondName: _secondName.text,
+                            patronymic: _patronymic.text,
+                          )
+                      )
+                  );
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>
+                        SuccessfullPage(
+                          information: Text(
+                            'Личная информация успешно изменена',
+                            textAlign: TextAlign.center,
+                            style: body.copyWith(
+                                color: Color(0xff151515)
+                            ),
+                          ),
+                        )),
+                  );
+                }
+                else {
+                  Navigator.pop(context);
+                }
               },
             ),
           ],

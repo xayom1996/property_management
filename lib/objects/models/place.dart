@@ -1,11 +1,13 @@
 import 'package:property_management/characteristics/models/characteristics.dart';
 
 class Place {
+  final String id;
   final Map<String, Characteristics> objectItems;
   Map<String, Characteristics>? tenantItems;
   final String? createdDate;
 
   Place({
+    required this.id,
     required this.objectItems,
     this.tenantItems,
     this.createdDate,
@@ -20,6 +22,7 @@ class Place {
   };
 
   factory Place.fromJson(Map<String, dynamic> json) => Place(
+    id: json['id'] ?? '',
     objectItems: Map<String, Characteristics>.from(json["objectItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value)))),
     tenantItems: json["tenantItems"] != null
         ? Map<String, Characteristics>.from(json["tenantItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value))))
