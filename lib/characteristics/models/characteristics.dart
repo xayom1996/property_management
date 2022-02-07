@@ -1,3 +1,5 @@
+import 'package:property_management/app/utils/utils.dart';
+
 class Characteristics {
   final int id;
   final String title;
@@ -44,5 +46,11 @@ class Characteristics {
   @override
   String toString() {
     return '$id $title $value';
+  }
+
+  String getFullValue () {
+    if (value == null || value!.isEmpty) return '';
+    if (type == 'Текст' || title.contains('Коэффициент')) return '$value';
+    return formatNumber(value ?? '0', unit);
   }
 }

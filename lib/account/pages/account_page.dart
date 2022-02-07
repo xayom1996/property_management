@@ -73,10 +73,15 @@ class AccountPage extends StatelessWidget {
                         Text(
                           state.user.getFullName(),
                           textAlign: TextAlign.center,
-                          style: title2.copyWith(
-                            color: Color(0xffC7C9CC),
-                            fontSize: 22,
-                          ),
+                          style: state.user.getFullName() == 'Фамилия Имя Отчество'
+                              ? title2.copyWith(
+                                  color: Color(0xffC7C9CC),
+                                  fontSize: 22,
+                                )
+                              : title2.copyWith(
+                                  color: Color(0xff151515),
+                                  fontSize: 20,
+                                ),
                         ),
                         SizedBox(
                           height: 32,
@@ -104,7 +109,7 @@ class AccountPage extends StatelessWidget {
                           onTap: () {
                             showModalBottomSheet(
                                 context: context,
-                                backgroundColor: Colors.transparent, isScrollControlled: true,
+                                backgroundColor: Colors.transparent, isScrollControlled: false,
                                 builder: (context) {
                                   return ChangeProfileBottomSheet();
                                 }

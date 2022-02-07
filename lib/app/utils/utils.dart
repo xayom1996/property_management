@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 String validateEmail(String? value) {
   String pattern =
@@ -237,3 +238,8 @@ List<Map> totalTableItems = [
   {'title': 'Средний прирост стоимости в год, % ', 'objects': ['10%', '10%', '10%', '10%', '10%', '10%', '10%', '10%', '10%']},
   {'title': 'Доли', 'objects': ['100', '100', '2', '100', '100', '2', '100', '100', '2']},
 ];
+
+
+String formatNumber(String value, String? symbol) {
+  return NumberFormat.currency(locale: 'ru', symbol: symbol ?? '', decimalDigits: 0).format(double.parse(value));
+}

@@ -14,26 +14,54 @@ part 'objects_state.dart';
 
 class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
   ObjectsBloc({required FireStoreService fireStoreService,
-    required UserRepository userRepository})
+    required AppBloc appBloc})
       : _fireStoreService = fireStoreService,
-       _userRepository = userRepository,
+        _appBloc = appBloc,
         super(const ObjectsState.initial()) {
         on<ObjectsGetEvent>(_onGetObjects);
-        _userSubscription = _userRepository.user.listen(
-              (user) => add(ObjectsGetEvent()),
-        );
+        on<GetFilteredObjectsEvent>(_onGetFilteredObjects);
+        on<ChangeFilterObjectsEvent>(_onChangeFilterObjects);
+        on<DeleteObjectEvent>(_onDeleteObject);
+        _appBlocSubscription = _appBloc.stream.listen(
+              (state){
+                add(ObjectsGetEvent(user: state.user, owners: state.owners));
+              });
       }
 
   final FireStoreService _fireStoreService;
-  final UserRepository _userRepository;
-  late StreamSubscription _userSubscription;
+  final AppBloc _appBloc;
+  late StreamSubscription _appBlocSubscription;
 
 
-  void _onGetObjects(ObjectsEvent event, Emitter<ObjectsState> emit) async {
+  void _onGetObjects(ObjectsGetEvent event, Emitter<ObjectsState> emit) async {
     emit(const ObjectsState.loading());
-    // await _fireStoreService.addObject();
-    List<Place> places = await _fireStoreService.getObjects(await _userRepository.getUser());
-    print(places);
-    emit(ObjectsState.fetched(places));
+    List<Place> places = await _fireStoreService.getObjects(event.user, event.owners);
+    places.sort((a, b) => a.objectItems['Название объекта']!.value!.compareTo(b.objectItems['Название объекта']!.value!));
+    emit(ObjectsState.fetched(places, 'name'));
+  }
+
+  void _onGetFilteredObjects(GetFilteredObjectsEvent event, Emitter<ObjectsState> emit) async {
+    List<Place> places = state.places;
+    String filterBy = state.filterBy;
+    String filterField = 'Название объекта';
+    if (filterBy == 'address'){
+      filterField = 'Адрес объекта';
+    }
+    emit(const ObjectsState.loading());
+    places.sort((a, b) => a.objectItems[filterField]!.value!.compareTo(b.objectItems[filterField]!.value!));
+    emit(ObjectsState.fetched(places, filterBy));
+  }
+
+  void _onChangeFilterObjects(ChangeFilterObjectsEvent event, Emitter<ObjectsState> emit) async {
+    emit(ObjectsState.fetched(state.places, event.filterBy));
+  }
+
+  void _onDeleteObject(DeleteObjectEvent event, Emitter<ObjectsState> emit) async {
+    List<Place> places = state.places;
+    String filterBy = state.filterBy;
+    emit(const ObjectsState.loading());
+    print(state);
+    places.removeAt(event.index);
+    emit(ObjectsState.fetched(places, filterBy));
   }
 }

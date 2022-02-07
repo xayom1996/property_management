@@ -10,7 +10,9 @@ import 'package:property_management/analytics/pages/analytics_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/authentication/pages/authorization_page.dart';
+import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
+import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/exploitation/pages/exploitation_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/pages/list_objects_page.dart';
@@ -20,21 +22,12 @@ import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 
 
-class DashboardPage extends StatefulWidget {
-  DashboardPage({Key? key}) : super(key: key);
-
-  @override
-  State<DashboardPage> createState() => _DashboardPageState();
-}
-
-class _DashboardPageState extends State<DashboardPage> {
+class DashboardPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final TextEditingController textController = new TextEditingController();
-
-  int currentIndex = 0;
-
-  late List<Widget> pages;
+  // int currentIndex = 0;
+  //
+  // late List<Widget> pages;
   // [
   //   ListObjectsPage(
   //     goToCharacteristicsPage: () {
@@ -50,69 +43,69 @@ class _DashboardPageState extends State<DashboardPage> {
   // ];
 
   @override
-  void initState() {
-    pages = [
-      ListObjectsPage(
-        goToCharacteristicsPage: () {
-          onChangeIndex(1);
-        },
-      ),
-      CharacteristicsPage(),
-      ExploitationPage(),
-      AnalyticsPage(),
-      TotalPage(),
-    ];
-    super.initState();
-  }
-
-  void onChangeIndex(int index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocConsumer<ObjectsBloc, ObjectsState>(
         listener: (context, state) {
-          // TODO: implement listener
         },
         builder: (context, state) {
+          print(state.status);
+
+          if (state.status == ObjectsStatus.fetched){
+            print(state.places.length);
+            print('CHARA');
+            print(state.places.length);
+            context.read<CharacteristicsCubit>().fetchObjects(state.places);
+          }
           return Scaffold(
             key: _scaffoldKey,
-            body: SafeArea(
-              child: IndexedStack(
-                key: const PageStorageKey('Indexed'),
-                index: currentIndex,
-                children: pages,
-              ),
+            body: BlocBuilder<DashboardCubit, DashboardState>(
+              builder: (context, dashboardState) {
+                return SafeArea(
+                  child: IndexedStack(
+                    key: const PageStorageKey('Indexed'),
+                    index: dashboardState.index,
+                    children: context.read<DashboardCubit>().pages,
+                  ),
+                );
+              },
             ),
             bottomNavigationBar: state.status == ObjectsStatus.fetched && state.places.isNotEmpty
-                ? MyNavBar(
-                    currentIndex: currentIndex,
-                    onTap: onChangeIndex,
-                    items: const [
-                      {
-                        'iconPath': 'assets/icons/home.svg',
-                        'title': 'Объекты',
-                      },
-                      {
-                        'iconPath': 'assets/icons/characteristic.svg',
-                        'title': 'Характеристики',
-                      },
-                      {
-                        'iconPath': 'assets/icons/exploitation.svg',
-                        'title': 'Эксплуатация',
-                      },
-                      {
-                        'iconPath': 'assets/icons/analytics.svg',
-                        'title': 'Аналитика',
-                      },
-                      {
-                        'iconPath': 'assets/icons/total.svg',
-                        'title': 'Итоги',
-                      },
-                    ],
+                ? BlocBuilder<DashboardCubit, DashboardState>(
+                    builder: (context, dashboardState) {
+                      return MyNavBar(
+                        currentIndex: dashboardState.index,
+                        onTap: (DashboardItem dashboardItem) {
+                          context.read<DashboardCubit>().getNavBarItem(dashboardItem);
+                        },
+                        items: const [
+                          {
+                            'iconPath': 'assets/icons/home.svg',
+                            'title': 'Объекты',
+                            'dashboardItem': DashboardItem.objects,
+                          },
+                          {
+                            'iconPath': 'assets/icons/characteristic.svg',
+                            'title': 'Характеристики',
+                            'dashboardItem': DashboardItem.characteristics,
+                          },
+                          {
+                            'iconPath': 'assets/icons/exploitation.svg',
+                            'title': 'Эксплуатация',
+                            'dashboardItem': DashboardItem.exploitation,
+                          },
+                          {
+                            'iconPath': 'assets/icons/analytics.svg',
+                            'title': 'Аналитика',
+                            'dashboardItem': DashboardItem.analytics,
+                          },
+                          {
+                            'iconPath': 'assets/icons/total.svg',
+                            'title': 'Итоги',
+                            'dashboardItem': DashboardItem.total,
+                          },
+                        ],
+                      );
+                    },
                   )
                 : null,
           );
@@ -124,7 +117,7 @@ class _DashboardPageState extends State<DashboardPage> {
 class MyNavBar extends StatelessWidget{
   final List<Map> items;
   final int currentIndex;
-  final Function(int) onTap;
+  final Function(DashboardItem) onTap;
 
   MyNavBar({Key? key, required this.items, required this.currentIndex,
     required this.onTap}) : super(key: key);
@@ -160,7 +153,7 @@ class MyNavBar extends StatelessWidget{
                       : 0,
                   child: InkWell(
                     onTap: (){
-                      onTap(index);
+                      onTap(items[index]['dashboardItem']);
                     },
                     child: Padding(
                       padding: EdgeInsets.only(right: index == items.length - 1

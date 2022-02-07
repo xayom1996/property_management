@@ -11,6 +11,7 @@ class User {
     this.firstName,
     this.secondName,
     this.patronymic,
+    this.owner,
     required this.role,
   });
 
@@ -20,6 +21,7 @@ class User {
   final String? secondName;
   final String? patronymic;
   final String role;
+  final String? owner;
 
   /// Empty user which represents an unauthenticated user.
   static const empty = User(id: '', email: '', role: 'user');
@@ -31,27 +33,36 @@ class User {
   bool get isNotEmpty => this != User.empty;
 
   String getFullName() {
-    return firstName == null && secondName == null && patronymic == null
+    if (isEmpty) {
+      return 'Фамилия Имя Отчество';
+    }
+    return firstName!.isEmpty && secondName!.isEmpty && patronymic!.isEmpty
         ? 'Фамилия Имя Отчество'
-        : '${firstName ?? ''} ${secondName ?? ''} ${patronymic ?? ''}';
+        : '${secondName ?? ''} ${firstName ?? ''} ${patronymic ?? ''}';
+  }
+
+  bool isAdminOrManager() {
+    return role == 'admin' || role == 'manager';
   }
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     id: json["id"],
     email: json["email"],
-    firstName: json["firstName"] ?? null,
-    secondName: json["secondName"] ?? null,
-    patronymic: json["patronymic"] ?? null,
+    firstName: json["firstName"] ?? '',
+    secondName: json["secondName"] ?? '',
+    patronymic: json["patronymic"] ?? '',
     role: json["role"] ?? 'user',
+    owner: json["owner"] ?? '',
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "email": email,
-    "firstName": firstName ?? null,
-    "secondName": secondName ?? null,
-    "patronymic": patronymic ?? null,
+    "firstName": firstName ?? '',
+    "secondName": secondName ?? '',
+    "patronymic": patronymic ?? '',
     "role": role,
+    "owner": owner ?? '',
   };
 
   User copyWith({
@@ -61,6 +72,7 @@ class User {
     String? secondName,
     String? patronymic,
     String? role,
+    String? owner,
   }) {
     return User(
       id: id ?? this.id,
@@ -69,6 +81,7 @@ class User {
       secondName: secondName ?? this.patronymic,
       patronymic: patronymic ?? this.patronymic,
       role: role ?? this.role,
+      owner: owner ?? this.owner,
     );
   }
 }

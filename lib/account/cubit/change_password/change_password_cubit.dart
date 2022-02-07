@@ -11,6 +11,14 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
 
   final UserRepository _userRepository;
 
+  void initialState() {
+    emit(state.copyWith(
+      newPassword: const Password.pure(),
+      currentPassword: const Password.pure(),
+      status: FormzStatus.pure,
+    ));
+  }
+
   void currentPasswordChanged(String value) {
     final password = Password.dirty(value);
     emit(state.copyWith(
@@ -36,6 +44,11 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
         newPassword: const Password.pure(),
         currentPassword: const Password.pure(),
         status: FormzStatus.pure,
+      ));
+    } on LogInWithEmailAndPasswordFailure catch (e) {
+      emit(state.copyWith(
+        errorMessage: e.message,
+        status: FormzStatus.submissionFailure,
       ));
     } catch (e) {
       print('Ошибка');

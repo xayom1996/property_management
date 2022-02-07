@@ -3,13 +3,11 @@ import 'package:property_management/characteristics/models/characteristics.dart'
 class Place {
   final Map<String, Characteristics> objectItems;
   Map<String, Characteristics>? tenantItems;
-  final String? ownerId;
   final String? createdDate;
 
   Place({
     required this.objectItems,
     this.tenantItems,
-    this.ownerId,
     this.createdDate,
   });
 
@@ -18,7 +16,6 @@ class Place {
     // 'tenantItems': tenantItems != null
     //     ? List.from(tenantItems!.map((item) => item.toJson()))
     //     : [],
-    'ownerId': ownerId,
     'createdDate': createdDate,
   };
 
@@ -27,7 +24,6 @@ class Place {
     tenantItems: json["tenantItems"] != null
         ? Map<String, Characteristics>.from(json["tenantItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value))))
         : json["tenantItems"],
-    ownerId: json["ownerId"],
     createdDate: json["ownerId"],
   );
 }

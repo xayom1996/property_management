@@ -25,22 +25,14 @@ class LogInWithEmailAndPasswordFailure implements Exception {
     switch (code) {
       case 'invalid-email':
         return const LogInWithEmailAndPasswordFailure(
-          'Email is not valid or badly formatted.',
-        );
-      case 'user-disabled':
-        return const LogInWithEmailAndPasswordFailure(
-          'This user has been disabled. Please contact support for help.',
+          'Введите корректный почтовый адрес',
         );
       case 'user-not-found':
         return const LogInWithEmailAndPasswordFailure(
-          'Email is not found, please create an account.',
-        );
-      case 'wrong-password':
-        return const LogInWithEmailAndPasswordFailure(
-          'Incorrect password, please try again.',
+          'Аккаунт с такой почтой не найден',
         );
       default:
-        return LogInWithEmailAndPasswordFailure(code);
+        return const LogInWithEmailAndPasswordFailure('Неверный логин и пароль');
     }
   }
 
@@ -203,27 +195,27 @@ class UserRepository {
     final cred = EmailAuthProvider.credential(
         email: user!.email!, password: currentPassword
     );
-    user.updatePassword(newPassword).then((_) {
-      print('Пароль изменен');
-    }).catchError((error) {
-      print(error);
-    });
-    // user.reauthenticateWithCredential(cred).then((value) {
-    //   print(value);
-    //   user.updatePassword(newPassword).then((_) {
-    //     print('Пароль изменен');
-    //   }).catchError((error) {
-    //     print(error);
-    //   });
-    // }).catchError((err) {
-    //   print(err);
-    //   throw LogInWithEmailAndPasswordFailure.fromCode("Неверный пароль");
-    // });
+    try {
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: user.email!, password: currentPassword
+      );
+      user.updatePassword(newPassword).then((_) {
+        print('Пароль изменен');
+      }).catchError((error) {
+        print(error);
+      });
+    } on FirebaseAuthException catch (e) {
+      throw const LogInWithEmailAndPasswordFailure('Неверный текущий пароль');
+    } catch (_) {
+      throw const LogInWithEmailAndPasswordFailure();
+    }
   }
 
   Future<void> resetPassword(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
     } catch(err) {
       print(err);
     }

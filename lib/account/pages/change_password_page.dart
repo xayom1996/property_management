@@ -19,6 +19,8 @@ class ChangePasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<ChangePasswordCubit>().initialState();
+
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -84,6 +86,8 @@ class ChangePasswordPage extends StatelessWidget {
                               placeholder: 'Введите текущий пароль',
                               title: 'Текущий пароль',
                               password: true,
+                              errorText: state.errorMessage,
+                              isError: state.status.isSubmissionFailure,
                             ),
                             BoxInputField(
                               key: const Key('newPassword_textField'),

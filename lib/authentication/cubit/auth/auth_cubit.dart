@@ -12,10 +12,19 @@ class AuthCubit extends Cubit<AuthState> {
 
   final UserRepository _userRepository;
 
+  void initialState() {
+    emit(state.copyWith(
+      email: const Email.pure(),
+      password: const Password.pure(),
+      status: FormzStatus.pure,
+    ));
+  }
+
   void emailChanged(String value) {
     final email = Email.dirty(value);
     emit(state.copyWith(
       email: email,
+      // status: FormzStatus.valid,
       status: Formz.validate([email, state.password]),
     ));
   }
@@ -24,33 +33,49 @@ class AuthCubit extends Cubit<AuthState> {
     final password = Password.dirty(value);
     emit(state.copyWith(
       password: password,
+      // status: FormzStatus.valid,
       status: Formz.validate([state.email, password]),
     ));
   }
 
-  Future<void> logIn({bool addNewAccount = false}) async {
-    if (!state.status.isValidated) return;
+  Future<void> logIn({String? email, String? password, bool addNewAccount = false}) async {
+    // if (state.email.invalid){
+    //   emit(state.copyWith(
+    //     errorMessage: 'Введите корректный почтовый адрес',
+    //     status: FormzStatus.submissionFailure,
+    //   ));
+    //   return;
+    // }
+    if (email == null && password == null && !state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
       await _userRepository.logInWithEmailAndPassword(
-        email: state.email.value,
-        password: state.password.value,
+        email: email ?? state.email.value,
+        password: password ?? state.password.value,
       );
-      var box = await Hive.openBox('passwordBox');
-      Map accounts;
-      if (box.get('accounts') != null) {
-        accounts = box.get('accounts');
-      } else {
-        accounts = {};
+      var box = await Hive.openBox('accountsBox');
+      if (addNewAccount == true) {
+        Map accounts;
+        if (box.get('accounts') != null) {
+          accounts = box.get('accounts');
+        } else {
+          accounts = {};
+        }
+        if (accounts[state.email.value] == null) {
+          accounts[state.email.value] = {
+            'email': state.email.value,
+            'password': state.password.value,
+          };
+        }
+        box.put('accounts', accounts);
       }
-      if (accounts[state.email.value] == null) {
-        accounts[state.email.value] = {
-          'email': state.email.value,
-          'password': state.password.value,
-        };
+      else{
+        box.put('account', {
+          'email': email ?? state.email.value,
+          'password': password ?? state.password.value,
+        });
+
       }
-      print(accounts);
-      box.put('accounts', accounts);
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
       emit(state.copyWith(
         email: const Email.pure(),
@@ -59,7 +84,7 @@ class AuthCubit extends Cubit<AuthState> {
       ));
     } on LogInWithEmailAndPasswordFailure catch (e) {
       emit(state.copyWith(
-        errorMessage: 'Неверный логин и пароль',
+        errorMessage: e.message,
         status: FormzStatus.submissionFailure,
       ));
     } catch (_) {

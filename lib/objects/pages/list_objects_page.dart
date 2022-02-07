@@ -8,6 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/account/pages/account_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/widgets/box_button.dart';
+import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
+import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/pages/search_objects_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
@@ -55,8 +58,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class ListObjectsPage extends StatefulWidget {
-  final Function() goToCharacteristicsPage;
-  const ListObjectsPage({Key? key, required this.goToCharacteristicsPage}) : super(key: key);
+  const ListObjectsPage({Key? key}) : super(key: key);
 
   @override
   State<ListObjectsPage> createState() => _ListObjectsPageState();
@@ -121,7 +123,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                             );
                           },
                         ),
-                        if (context.read<AppBloc>().state.user.role != 'user')
+                        if (context.read<AppBloc>().state.user.isAdminOrManager())
                           Row(
                             children: [
                               SizedBox(
@@ -142,7 +144,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                           ),
                       ],
                     ),
-                    expandedHeight: 110,
+                    expandedHeight: state.places.isNotEmpty ? 110 : 70,
                     toolbarHeight: 70,
                     collapsedHeight: 70,
                     pinned: true,
@@ -165,78 +167,38 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                       );
                     })
                   ),
-                  SliverPersistentHeader(
-                    pinned: false,
-                    delegate: _SliverAppBarDelegate(
-                      minHeight: 44,
-                      maxHeight: 44,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                        child: true == true
-                            ? GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
-                                        goToCharacteristicsPage: widget.goToCharacteristicsPage,
-                                      ),
-                                      transitionDuration: Duration.zero,
-                                    ),
-                                  );
-                                },
-                                child: SearchTextField()
-                            )
-                            : Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                          pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
-                                            goToCharacteristicsPage: widget.goToCharacteristicsPage,
-                                          ),
-                                          transitionDuration: Duration.zero,
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: 327,
-                                      child: SearchTextField(),
-                                    ),
+                  if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty)
+                    SliverPersistentHeader(
+                      pinned: false,
+                      delegate: _SliverAppBarDelegate(
+                        minHeight: 44,
+                        maxHeight: 44,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                          child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation1, animation2) => const SearchObjectsPage(),
+                                    transitionDuration: Duration.zero,
                                   ),
-                                  Spacer(),
-                                  Row(
-                                    children: [
-                                      BoxIcon(
-                                        iconPath: 'assets/icons/profile.svg',
-                                        iconColor: Colors.black,
-                                        backgroundColor: Colors.white,
-                                      ),
-                                      SizedBox(
-                                        width: 12,
-                                      ),
-                                      BoxIcon(
-                                        iconPath: 'assets/icons/settings.svg',
-                                        iconColor: Colors.black,
-                                        backgroundColor: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                );
+                              },
+                              child: SearchTextField()
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  SliverPersistentHeader(
-                    pinned: false,
-                    delegate: _SliverAppBarDelegate(
-                      minHeight: 24,
-                      maxHeight: 24,
-                      child: Container(),
+                  if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty)
+                    SliverPersistentHeader(
+                      pinned: false,
+                      delegate: _SliverAppBarDelegate(
+                        minHeight: 24,
+                        maxHeight: 24,
+                        child: Container(),
+                      ),
                     ),
-                  ),
                   if (isPinned && state.status == ObjectsStatus.fetched && state.places.isNotEmpty)
                     SliverPersistentHeader(
                       pinned: true,
@@ -282,32 +244,33 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                   ],
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: (){
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => CreateObjectPage()),
-                                  );
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/plus.svg',
-                                      color: Color(0xff4B81EF),
-                                      height: 16,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'Добавить',
-                                      style: title2.copyWith(
-                                          color: Color(0xff4B81EF),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400
+                              if (context.read<AppBloc>().state.user.isAdminOrManager())
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                    );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/plus.svg',
+                                        color: Color(0xff4B81EF),
+                                        height: 16,
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Добавить',
+                                        style: title2.copyWith(
+                                            color: Color(0xff4B81EF),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -324,7 +287,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                       topLeft: Radius.circular(24),
                     )
                 ),
-                child: state.status == ObjectsStatus.fetched && state.places.isNotEmpty
+                child: state.places.isNotEmpty
                     ? Column(
                       children: [
                         Container(
@@ -369,32 +332,33 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                   ],
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: (){
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => CreateObjectPage()),
-                                  );
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/plus.svg',
-                                      color: Color(0xff4B81EF),
-                                      height: 16,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'Добавить',
-                                      style: title2.copyWith(
-                                          color: Color(0xff4B81EF),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400
+                              if (context.read<AppBloc>().state.user.isAdminOrManager())
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                    );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/plus.svg',
+                                        color: Color(0xff4B81EF),
+                                        height: 16,
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Добавить',
+                                        style: title2.copyWith(
+                                            color: Color(0xff4B81EF),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -410,45 +374,70 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                     child: state.status == ObjectsStatus.loading
                                         ? ObjectSkeleton()
                                         : GestureDetector(
-                                        onTap: () {
-                                          widget.goToCharacteristicsPage();
-                                        },
-                                        child: ObjectCard(id: index, place: state.places[index])
-                                    ),
+                                            onTap: () {
+                                              context.read<CharacteristicsCubit>().changeSelectedPlaceId(index, isJump: true);
+                                              context.read<DashboardCubit>().getNavBarItem(DashboardItem.characteristics);
+                                              // widget.goToCharacteristicsPage();
+                                            },
+                                            child: ObjectCard(id: index, place: state.places[index], isLast: index == state.places.length - 1,)
+                                          ),
                                   );
                                 }
                             ),
                         ),
                       ],
                     )
-                    : CustomScrollView(
-                        slivers: [
-                          SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/home_white.svg',
-                                  color: Color(0xffE9ECEE),
-                                  height: 80,
+                    : Stack(
+                      children: [
+                        CustomScrollView(
+                            slivers: [
+                              SliverFillRemaining(
+                                hasScrollBody: false,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/home_white.svg',
+                                      color: Color(0xffE9ECEE),
+                                      height: 80,
+                                    ),
+                                    SizedBox(
+                                      height: 32,
+                                    ),
+                                    Text(
+                                      'У Вас пока не добавлен ни один объект',
+                                      textAlign: TextAlign.center,
+                                      style: body.copyWith(
+                                        color: Color(0xffC7C9CC),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  height: 32,
+                              ),
+                            ],
+                          ),
+                        if (context.read<AppBloc>().state.user.isAdminOrManager() && state.status == ObjectsStatus.fetched && state.places.isEmpty)
+                          Positioned(
+                            bottom: 24,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.25.sw), vertical: 16),
+                              child: SizedBox(
+                                width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
+                                child: BoxButton(
+                                  title: 'Добавить',
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                    );
+                                  },
                                 ),
-                                Text(
-                                  'У Вас пока не добавлен ни один объект',
-                                  textAlign: TextAlign.center,
-                                  style: body.copyWith(
-                                    color: Color(0xffC7C9CC),
-                                  ),
-                                )
-                              ],
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                      ],
+                    ),
               ),
             );
           }

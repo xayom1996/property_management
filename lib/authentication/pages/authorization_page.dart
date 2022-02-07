@@ -20,6 +20,8 @@ class AuthorizationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<AuthCubit>().initialState();
+
     return Container(
       color: kBackgroundColor,
       child: SafeArea(
@@ -69,24 +71,28 @@ class AuthorizationPage extends StatelessWidget {
                                         onChanged: (email) => context.read<AuthCubit>().emailChanged(email),
                                         placeholder: 'Введите логин',
                                         title: 'Логин',
-                                        errorText: !state.email.valid ? 'Введите корректный почтовый адрес': '',
-                                        isError: state.email.value.length > 3 && !state.email.valid || state.status.isSubmissionFailure,
+                                        disableSpace: true,
+                                        errorText: state.errorMessage != 'Неверный логин и пароль'
+                                            ? state.errorMessage
+                                            : '',
+                                        isError: state.status.isSubmissionFailure,
                                       ),
                                       BoxInputField(
                                         key: const Key('loginForm_passwordInput_textField'),
                                         onChanged: (password) => context.read<AuthCubit>().passwordChanged(password),
                                         placeholder: 'Введите пароль',
                                         title: 'Пароль',
+                                        disableSpace: true,
                                         password: true,
                                         // password: isPassword,
-                                        isError: state.status.isSubmissionFailure,
+                                        isError: state.status.isSubmissionFailure && state.errorMessage == 'Неверный логин и пароль',
                                       ),
                                       SizedBox(
                                         height: 32,
                                       ),
                                       Text(
-                                          state.status.isSubmissionFailure
-                                              ? state.errorMessage ?? ''
+                                          state.status.isSubmissionFailure && state.errorMessage == 'Неверный логин и пароль'
+                                              ? state.errorMessage!
                                               : '',
                                           style: body.copyWith(
                                               color: const Color.fromRGBO(255, 77, 109, 1)
@@ -96,7 +102,7 @@ class AuthorizationPage extends StatelessWidget {
                                       BoxButton(
                                         title: 'Войти',
                                         disabled: !state.status.isValidated,
-                                        onTap: () => context.read<AuthCubit>().logIn(),
+                                        onTap: () => context.read<AuthCubit>().logIn(addNewAccount: addNewAccount == true),
                                         busy: state.status.isSubmissionInProgress,
                                       ),
                                       SizedBox(

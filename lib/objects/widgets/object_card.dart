@@ -4,31 +4,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/models/place.dart';
 import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/custom_alert_dialog.dart';
+import 'package:provider/src/provider.dart';
 
 class ObjectCard extends StatelessWidget {
   final int id;
   final Place? place;
-  const ObjectCard({Key? key, required this.id, this.place}) : super(key: key);
+  final bool? isLast;
+  const ObjectCard({Key? key, required this.id, this.place, this.isLast = false}) : super(key: key);
 
   void doNothing(BuildContext context) {}
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      key: ValueKey(id),
+      key: ValueKey(place!.objectItems['Название объекта']!.value),
       endActionPane: ActionPane(
         motion: ScrollMotion(),
         children: [
           Spacer(),
-          // SizedBox(
-          //   width: 50,
-          // ),
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
@@ -69,6 +70,9 @@ class ObjectCard extends StatelessWidget {
                       context: context,
                       builder: (context) => CustomAlertDialog(
                         title: 'Вы действительно хотите удалить карточку объекта?',
+                        onApprove: () {
+                          context.read<ObjectsBloc>().add(DeleteObjectEvent(index: id));
+                        }
                       )
                   );
                 },
@@ -80,6 +84,7 @@ class ObjectCard extends StatelessWidget {
           ),
         ],
       ),
+      enabled: context.read<AppBloc>().state.user.isAdminOrManager(),
       child: Container(
         // padding: EdgeInsets.all(16.sp),
         child: Column(
@@ -126,7 +131,7 @@ class ObjectCard extends StatelessWidget {
                 Text(
                   place == null
                       ? objects[id]['area']
-                      : '${place!.objectItems['Площадь объекта']!.value} ${place!.objectItems['Площадь объекта']!.unit}',
+                      : place!.objectItems['Площадь объекта']!.getFullValue(),
                   style: body,
                 ),
               ],
@@ -145,7 +150,8 @@ class ObjectCard extends StatelessWidget {
             SizedBox(
               height: 16,
             ),
-            Divider(),
+            if (isLast != true)
+              Divider(),
             SizedBox(
               height: 12,
             ),

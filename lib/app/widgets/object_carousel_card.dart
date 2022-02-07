@@ -4,11 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/objects/models/place.dart';
 
 class ObjectCarouselCard extends StatelessWidget {
-  final int id;
+  final Place place;
   final bool bordered;
-  const ObjectCarouselCard({Key? key, required this.id, this.bordered = false}) : super(key: key);
+  const ObjectCarouselCard({Key? key, this.bordered = false, required this.place}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +37,34 @@ class ObjectCarouselCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'ЖК Акваленд, 3-к • 96 кв.м.',
-              style: body,
-              textAlign: TextAlign.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Text(
+                    '${place.objectItems['Название объекта']!.value}',
+                    style: body,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  '•',
+                  style: body,
+                  textAlign: TextAlign.center,
+                ),
+                Expanded(
+                  child: Text(
+                    '${place.objectItems['Площадь объекта']!.getFullValue()}',
+                    style: body,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
             Text(
-              'г. Новосибирск, Ленинградский пр-т, 124',
+              '${place.objectItems['Адрес объекта']!.value}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: caption1,

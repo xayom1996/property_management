@@ -10,8 +10,7 @@ import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 
 class SearchObjectsPage extends StatefulWidget {
-  final Function() goToCharacteristicsPage;
-  const SearchObjectsPage({Key? key, required this.goToCharacteristicsPage}) : super(key: key);
+  const SearchObjectsPage({Key? key}) : super(key: key);
 
   @override
   State<SearchObjectsPage> createState() => _SearchObjectsPageState();
@@ -169,7 +168,7 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
                                 ? ObjectSkeleton()
                                 : GestureDetector(
                                     onTap: () {
-                                      widget.goToCharacteristicsPage();
+                                      // widget.goToCharacteristicsPage();
                                       Navigator.pop(context);
                                     },
                                     child: ObjectCard(id: index)

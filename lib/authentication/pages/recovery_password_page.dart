@@ -94,8 +94,11 @@ class RecoveryPasswordPage extends StatelessWidget {
                                       onChanged: (email) => context.read<RecoveryPasswordCubit>().emailChanged(email),
                                       placeholder: 'Введите почтовый адрес',
                                       title: 'Почтовый адрес',
-                                      isError: state.email.value.length > 3 && !state.email.valid,
-                                      errorText: 'Введите корректный почтовый адрес',
+                                      disableSpace: true,
+                                      errorText: state.errorMessage != 'Неверный логин и пароль'
+                                          ? state.errorMessage
+                                          : '',
+                                      isError: state.status.isSubmissionFailure,
                                     ),
                                     Spacer(),
                                     BoxButton(

@@ -18,12 +18,17 @@ class Email extends FormzInput<String, EmailValidationError> {
 
   static final RegExp _emailRegExp = RegExp(
     r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
+    // r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]',
   );
 
   @override
   EmailValidationError? validator(String? value) {
-    return _emailRegExp.hasMatch(value ?? '')
+    return value!.isNotEmpty
         ? null
         : EmailValidationError.invalid;
+    // return null;
+    // return _emailRegExp.hasMatch(value ?? '')
+    //     ? null
+    //     : EmailValidationError.invalid;
   }
 }

@@ -32,7 +32,7 @@ class RecoveryPasswordCubit extends Cubit<RecoveryPasswordState> {
       ));
     } on LogInWithEmailAndPasswordFailure catch (e) {
       emit(state.copyWith(
-        errorMessage: 'Ошибка',
+        errorMessage: e.message,
         status: FormzStatus.submissionFailure,
       ));
     } catch (_) {

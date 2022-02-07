@@ -4,7 +4,8 @@ import 'package:property_management/app/theme/styles.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   final String title;
-  const CustomAlertDialog({Key? key, required this.title}) : super(key: key);
+  final Function()? onApprove;
+  const CustomAlertDialog({Key? key, required this.title, this.onApprove}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +42,9 @@ class CustomAlertDialog extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
+                          if (onApprove != null) {
+                            onApprove!();
+                          }
                           Navigator.of(context).pop();
                         },
                         child: Container(

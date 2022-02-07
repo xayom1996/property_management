@@ -88,19 +88,21 @@ class PersonalInformationPage extends StatelessWidget {
                     children: [
                       BoxInputField(
                         controller: _secondName,
-                        onChanged: (String value) {
-                        },
+                        onChanged: (String value) {},
+                        disableSpace: true,
                         placeholder: 'Введите фамилию',
                         title: 'Фамилия',
                       ),
                       BoxInputField(
                         controller: _firstName,
                         placeholder: 'Введите имя',
+                        disableSpace: true,
                         title: 'Имя',
                       ),
                       BoxInputField(
                         controller: _patronymic,
                         placeholder: 'Введите отчество',
+                        disableSpace: true,
                         title: 'Отчество',
                       ),
                       BoxInputField(

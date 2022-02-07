@@ -15,8 +15,11 @@ import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/services/firestore_service.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
+import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
+import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
+import 'package:property_management/objects/cubit/add_object/add_object_cubit.dart';
 import 'package:property_management/splash_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/total/pages/total_charts.dart';
@@ -38,12 +41,19 @@ Future<void> main() async {
 
   final userRepository = UserRepository();
   await userRepository.user.first;
+
+  final fireStoreService = FireStoreService();
+
+  final appBloc = AppBloc(userRepository: userRepository, fireStoreService: fireStoreService);
+
   return runApp(
     DevicePreview(
       // enabled: !kReleaseMode,
       enabled: false,
       builder: (context) => App(
-        userRepository: userRepository,
+          userRepository: userRepository,
+          fireStoreService: fireStoreService,
+          appBloc: appBloc,
       ), // Wrap your app
     ),
   );
@@ -53,10 +63,16 @@ class App extends StatelessWidget {
   const App({
     Key? key,
     required UserRepository userRepository,
+    required FireStoreService fireStoreService,
+    required AppBloc appBloc,
   })  : _userRepository = userRepository,
+        _fireStoreService = fireStoreService,
+        _appBloc = appBloc,
         super(key: key);
 
   final UserRepository _userRepository;
+  final FireStoreService _fireStoreService;
+  final AppBloc _appBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +80,17 @@ class App extends StatelessWidget {
       value: _userRepository,
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_) => AppBloc(userRepository: _userRepository)),
+          BlocProvider(create: (_) => _appBloc),
           BlocProvider(create: (_) => AuthCubit(_userRepository)),
           BlocProvider(create: (_) => RecoveryPasswordCubit(_userRepository)),
           BlocProvider(create: (_) => PersonalInfoCubit(_userRepository)),
           BlocProvider(create: (_) => ChangePasswordCubit(_userRepository)),
-          BlocProvider(create: (_) => ObjectsBloc(fireStoreService: FireStoreService(),
-              userRepository: _userRepository)),
+          BlocProvider(create: (_) => DashboardCubit()),
+          BlocProvider(create: (_) => ObjectsBloc(appBloc: _appBloc,
+            fireStoreService: _fireStoreService)),
+          BlocProvider(create: (_) => CharacteristicsCubit()),
+          BlocProvider(create: (_) => AddObjectCubit(fireStoreService: _fireStoreService,
+              appBloc: _appBloc)),
         ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),

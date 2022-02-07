@@ -143,7 +143,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
         },
         body: currentIndexTab == 0
             ? CustomTabView(
-          objectItems: firstTabObjectItems,
+          objectItems: {},
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
@@ -301,7 +301,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               : null,
         )
             : CustomTabView(
-          objectItems: secondTabObjectItems,
+          objectItems: {},
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),

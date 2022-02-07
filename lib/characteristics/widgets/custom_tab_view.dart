@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/characteristics/models/characteristics.dart';
 import 'package:property_management/characteristics/widgets/document_page.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
@@ -10,7 +11,7 @@ import 'package:property_management/app/widgets/custom_checkbox.dart';
 import 'package:property_management/app/widgets/input_field.dart';
 
 class CustomTabView extends StatelessWidget {
-  final List<Map> objectItems;
+  final Map<String, Characteristics> objectItems;
   final Widget? textButton;
   final Widget? child;
   final bool? checkbox;
@@ -18,20 +19,23 @@ class CustomTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Characteristics> sortedItems = objectItems.values.toList();
+    sortedItems.sort((a, b) => a.id.compareTo(b.id));
+
     return child == null
         ? Container(
             padding: EdgeInsets.only(left: horizontalPadding(context, 44), right:horizontalPadding(context, 44), top: 16),
             child: textButton ?? SingleChildScrollView(
                   child: Column(
                     children: [
-                      for (var item in objectItems)
+                      for (var item in sortedItems)
                         BoxInputField(
-                          controller: TextEditingController(text: item['value']),
-                          title: item['title'],
+                          controller: TextEditingController(text: item.getFullValue()),
+                          title: item.title,
                           placeholder: 'Данные не заполнены',
                           enabled: false,
                           backgroundColor: Color(0xffF5F5F5).withOpacity(0.6),
-                          trailing: item['title'] == 'Договор водоснабжения'
+                          trailing: item.title == 'Договор водоснабжения'
                               ? BoxIcon(
                                   iconPath: 'assets/icons/document.svg',
                                   iconColor: Color(0xff5589F1),
@@ -43,7 +47,7 @@ class CustomTabView extends StatelessWidget {
                                     );
                                   },
                                 )
-                              : item['value'] == ''
+                              : item.getFullValue().isEmpty
                                 ? Padding(
                                   padding: EdgeInsets.only(right: 16),
                                   child: Tooltip(

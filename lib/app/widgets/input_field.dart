@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
@@ -16,7 +17,8 @@ class BoxInputField extends StatefulWidget {
   final String? errorText;
   final bool? enabled;
   final Color? backgroundColor;
-  final void Function()? trailingTapped;
+  final bool? disableSpace;
+  final void Function()?trailingTapped;
   final Function()? onTap;
 
 
@@ -27,6 +29,7 @@ class BoxInputField extends StatefulWidget {
     this.onChanged,
     this.placeholder = '',
     this.enabled = true,
+    this.disableSpace = false,
     this.leading,
     this.trailing,
     this.trailingTapped,
@@ -98,6 +101,9 @@ class _BoxInputFieldState extends State<BoxInputField> {
                       children: [
                         BoxText.caption(widget.title),
                         TextField(
+                          inputFormatters: widget.disableSpace == true
+                            ? [FilteringTextInputFormatter.deny(RegExp(r"\s\b|\b\s"))]
+                            : [],
                           keyboardType: widget.enabled == true ? null : TextInputType.multiline,
                           maxLines: widget.enabled == true ? 1 : null,
                           enabled: widget.enabled,
