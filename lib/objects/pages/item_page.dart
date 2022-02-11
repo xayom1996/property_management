@@ -1,13 +1,20 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
+import 'package:property_management/app/widgets/custom_checkbox.dart';
 import 'package:property_management/characteristics/models/characteristics.dart';
 import 'package:property_management/objects/cubit/add_object/add_object_cubit.dart';
 import 'package:property_management/objects/pages/upload_document_page.dart';
 import 'package:property_management/objects/widgets/action_bottom_sheet.dart';
+import 'package:property_management/objects/widgets/document_card.dart';
 import 'package:property_management/settings/pages/characteristic_items_page.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
@@ -15,6 +22,9 @@ import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/container_for_transition.dart';
 import 'package:property_management/app/widgets/input_field.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 class ItemPage extends StatefulWidget {
   final Characteristics item;
@@ -27,7 +37,8 @@ class ItemPage extends StatefulWidget {
 
 class _ItemPageState extends State<ItemPage> {
   bool hasDocument = false;
-  String document = "";
+  String documentUrl = "";
+  bool loadingDocument = false;
   String checkedItem = '';
 
   late final TextEditingController textController;
@@ -36,6 +47,10 @@ class _ItemPageState extends State<ItemPage> {
   void initState() {
     textController = TextEditingController(text: widget.item.value);
     checkedItem = widget.item.value ?? '';
+    if (widget.item.documentUrl != null && widget.item.documentUrl!.isNotEmpty) {
+      documentUrl = widget.item.documentUrl!;
+      hasDocument = true;
+    }
     super.initState();
   }
 
@@ -77,7 +92,7 @@ class _ItemPageState extends State<ItemPage> {
               iconColor: Colors.black,
               backgroundColor: Colors.white,
               onTap: () {
-                widget.onChange(widget.item.id, textController.text);
+                widget.onChange(widget.item.id, textController.text, documentUrl);
                 // context.read<AddObjectCubit>().changeItemValue(widget.item.id, textController.text);
                 Navigator.pop(context);
               },
@@ -87,133 +102,242 @@ class _ItemPageState extends State<ItemPage> {
       ),
       body: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
-          return Container(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  widget.item.title == 'Собственник'
-                  ? Column(
-                      children: [
-                        for (var item in state.owners)
-                          ContainerForTransition(
-                            title: item,
-                            icon: checkedItem == item ? Icons.check : null,
-                            onTap: () {
-                              textController.text = item;
-                              setState(() {
-                                checkedItem = item;
-                              });
-                            },
-                          ),
-                      ],
-                    )
-                  : Column(
+          return CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BoxInputField(
-                          controller: textController,
-                          placeholder: widget.item.placeholder ?? '',
-                          title: widget.item.title,
-                          disableSpace: widget.item.type == 'Число',
-                          keyboardType: widget.item.type == 'Число'
-                              ? TextInputType.number
-                              : null,
-                        ),
-                        if (widget.item.title == 'Площадь объекта' || widget.item.title == 'Банковское обслуживание')
-                          hasDocument == false
-                              ? GestureDetector(
-                            onTap: (){
-                              showCupertinoModalPopup<void>(
-                                context: context,
-                                builder: (BuildContext context) => ActionBottomSheet(
-                                  onUploadFromDevice: () {
-                                    setState(() {
-                                      hasDocument = true;
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                  onUploadFromUrl: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => UploadDocumentPage()),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Spacer(),
-                                SvgPicture.asset(
-                                  'assets/icons/document.svg',
-                                  color: Color(0xff4B81EF),
-                                  height: 16,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Добавить документ',
-                                  style: body.copyWith(
-                                    color: Color(0xff5589F1),
-                                  ),
-                                ),
-                                Spacer(),
-                              ],
-                            ),
-                          )
-                              : Stack(
+                        widget.item.title == 'Собственник' || widget.item.choices!.isNotEmpty
+                        ? Column(
                             children: [
-                              Container(
-                                width: 138,
-                                height: 138,
-                              ),
-                              Positioned(
-                                top: 10,
-                                left: 0,
-                                child: Container(
-                                  height: 128,
-                                  width: 128,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xffF5F7F9),
-                                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                              if (widget.item.title == 'Собственник')
+                                for (var item in state.owners)
+                                  ContainerForTransition(
+                                    title: item,
+                                    icon: checkedItem == item ? Icons.check : null,
+                                    onTap: () {
+                                      textController.text = item;
+                                      setState(() {
+                                        checkedItem = item;
+                                      });
+                                    },
                                   ),
-                                  child: Center(
-                                    child: SvgPicture.asset(
-                                      'assets/icons/document.svg',
-                                      color: Color(0xffE9ECEE),
-                                      height: 40,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child:  GestureDetector(
-                                  onTap: () {
+                              if (widget.item.choices!.isNotEmpty)
+                                CustomCheckBox(
+                                  choices: widget.item.choices!,
+                                  checkedColor: checkedItem,
+                                  onChange: (String value) {
+                                    textController.text = value;
                                     setState(() {
-                                      hasDocument = false;
+                                      checkedItem = value;
                                     });
                                   },
-                                  child: BoxIcon(
-                                    size: 24,
-                                    iconSize: 12,
-                                    iconPath: 'assets/icons/clear.svg',
-                                    backgroundColor: Color(0xffE9ECEE),
-                                    iconColor: Color(0xffC7C9CC),
-                                  ),
+                                ),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (widget.item.isDate()) {
+                                    DatePicker.showPicker(context,
+                                        showTitleActions: true,
+                                        onConfirm: (date) {
+                                          setState(() {
+                                            textController.text =
+                                                DateFormat('dd.MM.yyyy').format(date);
+                                          });
+                                        },
+                                        pickerModel: CustomPicker(
+                                            currentTime: DateTime.now(),
+                                            locale: LocaleType.ru),
+                                        locale: LocaleType.ru
+                                    );
+                                  }
+                                },
+                                child: BoxInputField(
+                                  controller: textController,
+                                  autoFocus: true,
+                                  placeholder: widget.item.placeholder ?? '',
+                                  title: widget.item.title,
+                                  enabled: !widget.item.isDate(),
+                                  disableSpace: widget.item.type == 'Число',
+                                  keyboardType: widget.item.type == 'Число'
+                                      ? const TextInputType.numberWithOptions(decimal: true, signed: true)
+                                      : null,
                                 ),
                               ),
+                              hasDocument == false
+                                  ? GestureDetector(
+                                      onTap: (){
+                                        showCupertinoModalPopup<void>(
+                                          context: context,
+                                          builder: (BuildContext context) => ActionBottomSheet(
+                                            onUploadFromDevice: () async {
+                                              FilePickerResult? result = await FilePicker.platform.pickFiles();
+                                              if (result != null) {
+                                                File file = File(result.files.first.path!);
+                                                String fileName = result.files.first.name;
+
+                                                setState(() {
+                                                  loadingDocument = true;
+                                                  hasDocument = true;
+                                                });
+
+                                                Navigator.pop(context);
+
+                                                try {
+                                                  await firebase_storage.FirebaseStorage.instance
+                                                      .ref('documents/$fileName')
+                                                      .putFile(file);
+                                                  String _documentUrl = await firebase_storage.FirebaseStorage.instance
+                                                      .ref('documents/$fileName')
+                                                      .getDownloadURL();
+                                                  setState(() {
+                                                    documentUrl = _documentUrl;
+                                                  });
+                                                  print(documentUrl);
+                                                } on firebase_core.FirebaseException catch (e) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                    content: const Text('Произошла ошибка'),
+                                                    backgroundColor: Colors.red,
+                                                    action: SnackBarAction(
+                                                      label: '',
+                                                      textColor: Colors.white,
+                                                      onPressed: () {
+                                                        // Some code to undo the change.
+                                                      },
+                                                    ),
+                                                  ));
+                                                  setState(() {
+                                                    documentUrl = '';
+                                                    hasDocument = false;
+                                                  });
+                                                } finally {
+                                                  setState(() {
+                                                    loadingDocument = false;
+                                                  });
+                                                }
+
+                                              } else {
+                                                // User canceled the picker
+                                              }
+                                            },
+                                            onUploadFromUrl: () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => UploadDocumentPage()),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Spacer(),
+                                          SvgPicture.asset(
+                                            'assets/icons/document.svg',
+                                            color: Color(0xff4B81EF),
+                                            height: 16,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Добавить документ',
+                                            style: body.copyWith(
+                                              color: Color(0xff5589F1),
+                                            ),
+                                          ),
+                                          Spacer(),
+                                        ],
+                                      ),
+                                    )
+                                  : DocumentCard(
+                                      url: documentUrl,
+                                      isLoading: loadingDocument,
+                                      onDelete: (){
+                                        setState(() {
+                                          hasDocument = false;
+                                          documentUrl = '';
+                                        });
+                                      }
+                                    )
                             ],
                           ),
                       ],
                     ),
-                ],
+                  ),
               ),
-            );
+            ],
+          );
         },
       ),
     );
+  }
+}
+
+class CustomPicker extends CommonPickerModel {
+  String digits(int value, int length) {
+    return '$value'.padLeft(length, "0");
+  }
+
+  CustomPicker({DateTime? currentTime, required LocaleType locale}) : super(locale: locale) {
+    this.currentTime = currentTime ?? DateTime.now();
+    this.setLeftIndex(this.currentTime.day);
+    this.setMiddleIndex(this.currentTime.month);
+    this.setRightIndex(this.currentTime.year);
+  }
+
+  @override
+  String? leftStringAtIndex(int index) {
+    int maxDays = DateTime(this.currentRightIndex(), this.currentMiddleIndex() + 1, 0).day;
+    if (index >= 1 && index <= maxDays) {
+      return this.digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String? middleStringAtIndex(int index) {
+    if (index >= 1 && index <= 12) {
+      return this.digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String? rightStringAtIndex(int index) {
+    if (index >= 2000 && index <= 2025) {
+      return this.digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String leftDivider() {
+    return "";
+  }
+
+  @override
+  String rightDivider() {
+    return "";
+  }
+
+  @override
+  List<int> layoutProportions() {
+    return [1, 2, 1];
+  }
+
+  @override
+  DateTime finalTime() {
+    return DateTime.utc(this.currentRightIndex(), this.currentMiddleIndex(), this.currentLeftIndex());
   }
 }

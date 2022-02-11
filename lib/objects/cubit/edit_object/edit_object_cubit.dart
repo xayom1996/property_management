@@ -36,12 +36,13 @@ class EditObjectCubit extends Cubit<EditObjectState> {
         && items[2].getFullValue().isNotEmpty && items[3].getFullValue().isNotEmpty;
   }
 
-  void changeItemValue(int id, String value) {
+  void changeItemValue(int id, String value, String documentUrl) {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
     List<Characteristics> _items = List<Characteristics>.from(state.items.map((item) => item));
     _items[id].value = value;
+    _items[id].documentUrl = documentUrl;
     emit(state.copyWith(
       items: _items,
       status: isObjectItemsValid(_items)

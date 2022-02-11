@@ -15,12 +15,15 @@ import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/services/firestore_service.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
+import 'package:property_management/bloc_observer.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/cubit/add_object/add_object_cubit.dart';
+import 'package:property_management/objects/cubit/add_tenant/add_tenant_cubit.dart';
 import 'package:property_management/objects/cubit/edit_object/edit_object_cubit.dart';
+import 'package:property_management/objects/cubit/edit_tenant/edit_tenant_cubit.dart';
 import 'package:property_management/splash_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/total/pages/total_charts.dart';
@@ -47,16 +50,19 @@ Future<void> main() async {
 
   final appBloc = AppBloc(userRepository: userRepository, fireStoreService: fireStoreService);
 
-  return runApp(
-    DevicePreview(
-      // enabled: !kReleaseMode,
-      enabled: false,
-      builder: (context) => App(
-          userRepository: userRepository,
-          fireStoreService: fireStoreService,
-          appBloc: appBloc,
-      ), // Wrap your app
+  return BlocOverrides.runZoned(
+    () => runApp(
+        DevicePreview(
+          enabled: !kReleaseMode,
+          // enabled: false,
+          builder: (context) => App(
+              userRepository: userRepository,
+              fireStoreService: fireStoreService,
+              appBloc: appBloc,
+          ), // Wrap your app
+        ),
     ),
+    blocObserver: SimpleBlocObserver(),
   );
 }
 
@@ -93,6 +99,9 @@ class App extends StatelessWidget {
           BlocProvider(create: (_) => AddObjectCubit(fireStoreService: _fireStoreService,
               appBloc: _appBloc)),
           BlocProvider(create: (_) => EditObjectCubit(fireStoreService: _fireStoreService)),
+          BlocProvider(create: (_) => AddTenantCubit(fireStoreService: _fireStoreService,
+              appBloc: _appBloc)),
+          BlocProvider(create: (_) => EditTenantCubit(fireStoreService: _fireStoreService)),
         ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),

@@ -3,14 +3,20 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
+import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
+import 'package:property_management/objects/models/place.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
+import 'package:provider/src/provider.dart';
 
 class SearchObjectsPage extends StatefulWidget {
-  const SearchObjectsPage({Key? key}) : super(key: key);
+  final Function(String) onTapObject;
+  const SearchObjectsPage({Key? key, required this.onTapObject}) : super(key: key);
 
   @override
   State<SearchObjectsPage> createState() => _SearchObjectsPageState();
@@ -20,15 +26,28 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
   bool isLoading = false;
   String searchText = '';
   final searchedController = TextEditingController();
+  List<Place> searchedPlaces = [];
+  List<Place> places = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void changedSearchText(String text) {
     setState(() {
       searchText = text;
-      isLoading = true;
+      if (searchText == '') {
+        searchedPlaces = [];
+      }
+      else {
+        isLoading = true;
+        searchedPlaces = List.from(context.read<ObjectsBloc>().state.places.where((element) => element.isContains(searchText)));
+      }
     });
     Timer(const Duration(milliseconds: 300), () {
       setState(() {
-        isLoading = true;
+        isLoading = false;
       });
     });
   }
@@ -130,37 +149,39 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
               ],
             ),
           ),
-          body: searchText == ''
+          body: (searchText == '' || searchedPlaces.isEmpty) && !isLoading
               ? CustomScrollView(
-            slivers: [
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icons/search.svg',
-                      color: Color(0xffE9ECEE),
-                      height: 72,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 24, horizontal: horizontalPadding(context, 44)),
-                      child: Text(
-                        'Ничего не найдено, попробуйте изменить запрос',
-                        textAlign: TextAlign.center,
-                        style: body.copyWith(
-                          color: Color(0xffC7C9CC),
-                        ),
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/search.svg',
+                            color: Color(0xffE9ECEE),
+                            height: 72,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24, horizontal: horizontalPadding(context, 44)),
+                            child: Text(
+                              'Ничего не найдено, попробуйте изменить запрос',
+                              textAlign: TextAlign.center,
+                              style: body.copyWith(
+                                color: Color(0xffC7C9CC),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    )
+                    ),
                   ],
-                ),
-              ),
-            ],
-          )
+                )
               : ListView.builder(
-                    itemCount: 5,
+                    itemCount: isLoading
+                        ? 10
+                        : searchedPlaces.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
@@ -168,11 +189,11 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
                                 ? ObjectSkeleton()
                                 : GestureDetector(
                                     onTap: () {
-                                      // widget.goToCharacteristicsPage();
+                                      widget.onTapObject(searchedPlaces[index].id);
                                       Navigator.pop(context);
                                     },
-                                    child: ObjectCard(id: index)
-                                  ),
+                                    child: ObjectCard(id: index, place: searchedPlaces[index], isLast: index == searchedPlaces.length - 1,)
+                                ),
                       );
                     }
                 ),

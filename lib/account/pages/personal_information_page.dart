@@ -94,8 +94,11 @@ class PersonalInformationPage extends StatelessWidget {
         builder: (context, state) {
           _email.text = user.email;
           _firstName.text = user.firstName ?? '';
+          _firstName.selection = TextSelection.fromPosition(TextPosition(offset: _firstName.text.length));
           _secondName.text = user.secondName ?? '';
+          _secondName.selection = TextSelection.fromPosition(TextPosition(offset: _secondName.text.length));
           _patronymic.text = user.patronymic ?? '';
+          _patronymic.selection = TextSelection.fromPosition(TextPosition(offset: _patronymic.text.length));
 
           return CustomScrollView(
             slivers: [

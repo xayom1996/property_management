@@ -16,13 +16,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         super(
         // userRepository.currentUser.isNotEmpty
         //     ? AppState.authenticated(userRepository.currentUser)
-        const AppState.unauthenticated(),
+        const AppState(status: AppStatus.unauthenticated),
       ) {
           on<AppUserChanged>(_onUserChanged);
           on<AppUserUpdated>(_onUserUpdated);
           on<AppLogoutRequested>(_onLogoutRequested);
           _userSubscription = _userRepository.user.listen(
               (user) async {
+                emit(state.copyWith(
+                  status: AppStatus.loading,
+                ));
                 User _user = await _userRepository.getUser();
                 List<String> owners = await _fireStoreService.getOwners(_user);
                 List<Characteristics> objectItems = [];
@@ -44,16 +47,26 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   late final StreamSubscription<User> _userSubscription;
 
   void _onUserChanged(AppUserChanged event, Emitter<AppState> emit) async {
-    if (event.user.isEmpty) {
-      emit(const AppState.unauthenticated());
-    } else {
-      emit(AppState.authenticated(event.user, event.owners, event.objectItems, event.tenantItems));
-    }
+    emit(state.copyWith(
+      status: event.user.isEmpty
+          ? AppStatus.unauthenticated
+          : AppStatus.authenticated,
+      user: event.user,
+      owners: event.owners,
+      objectItems: event.objectItems,
+      tenantItems: event.tenantItems,
+    ));
   }
 
   void _onUserUpdated(AppUserUpdated event, Emitter<AppState> emit) async {
+    emit(state.copyWith(
+        status: AppStatus.loading,
+    ));
     await _userRepository.updateUser(event.user);
-    emit(AppState.authenticated(event.user, state.owners, state.objectItems, state.tenantItems));
+    emit(state.copyWith(
+      status: AppStatus.authenticated,
+      user: event.user,
+    ));
   }
 
   void _onLogoutRequested(AppLogoutRequested event, Emitter<AppState> emit) {

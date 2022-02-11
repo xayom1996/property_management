@@ -29,6 +29,12 @@ class Place {
         : json["tenantItems"],
     createdDate: json["ownerId"],
   );
+
+  bool isContains(String value) {
+    return objectItems['Название объекта']!.getFullValue().contains(value) ||
+        objectItems['Адрес объекта']!.getFullValue().contains(value) ||
+        objectItems['Площадь объекта']!.getFullValue().contains(value);
+  }
 }
 
 // class Object {

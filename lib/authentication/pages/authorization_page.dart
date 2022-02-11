@@ -20,7 +20,6 @@ class AuthorizationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<AuthCubit>().initialState();
 
     return Container(
       color: kBackgroundColor,
@@ -148,7 +147,10 @@ class AuthorizationPage extends StatelessWidget {
                         ),
                         child: IconButton(
                           icon: Icon(Icons.arrow_back, color: Colors.black),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            context.read<AuthCubit>().initialState();
+                            Navigator.of(context).pop();
+                          },
                         ),
                       ),
                       top: 24,

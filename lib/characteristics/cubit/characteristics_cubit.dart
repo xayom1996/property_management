@@ -10,13 +10,19 @@ class CharacteristicsCubit extends Cubit<CharacteristicsState> {
     void fetchObjects(List<Place> places) {
       emit(state.copyWith(
         places: List.from(places.map((e) => e)),
-        currentIndexTab: 0,
-        selectedPlaceId: 0,
+        // currentIndexTab: 1,
+        selectedPlaceId: state.selectedPlaceId > places.length - 1
+            ? 0
+            : state.selectedPlaceId,
         isJump: true,
       ));
     }
 
-    void changeSelectedPlaceId(int index, {bool isJump = false}) {
+    void changeSelectedPlaceId(int? index, {bool isJump = false, String? id}) {
+      if (id != null) {
+        index = state.places.indexWhere((element) => element.id == id);
+      }
+      print(index);
       emit(state.copyWith(
         selectedPlaceId: index,
         isJump: isJump,

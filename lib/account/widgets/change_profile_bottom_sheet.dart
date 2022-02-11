@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hive/hive.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
@@ -9,6 +12,8 @@ import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/pages/authorization_page.dart';
 import 'package:provider/src/provider.dart';
@@ -23,6 +28,7 @@ class ChangeProfileBottomSheet extends StatefulWidget {
 class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
   Map accounts = {};
   Map account = {};
+  final dataKey = new GlobalKey();
 
   @override
   void initState() {
@@ -39,6 +45,14 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
     accounts[account['email']] = account;
     setState(() {});
   }
+
+  void deleteAccount(String email) async {
+    var box = await Hive.openBox('accountsBox');
+    accounts.remove(email);
+    box.put('accounts', accounts);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppBloc, AppState>(
@@ -48,7 +62,8 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
           child: Container(
             // height: 335,
             constraints: BoxConstraints(
-              maxHeight: (245 + 46 * accounts.values.length).toDouble(),
+              maxHeight: (245 + 40 * 3).toDouble(),
+              // maxHeight: (600).toDouble(),
             ),
             decoration: BoxDecoration(
               color: kBackgroundColor,
@@ -85,53 +100,126 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
                       const SizedBox(
                         height: 26,
                       ),
-                      Column(
-                        children: [
-                          for (var account in accounts.values)
-                            Column(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    if (state.user.email != account['email']) {
-                                      context.read<AuthCubit>().logIn(
-                                        email: account['email'],
-                                        password: account['password'],
-                                      );
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Container(
+                        height: 150,
+                        child: ListView(
+                          scrollDirection: Axis.vertical,
+                          children: [
+                            for (var account in accounts.values)
+                              Column(
+                                children: [
+                                  Slidable(
+                                    key: ValueKey(account['email']),
+                                    endActionPane: ActionPane(
+                                      motion: ScrollMotion(),
                                       children: [
-                                        Text(
-                                          account['fullName'] ?? account['email'],
-                                          style: body,
+                                        Spacer(),
+                                        BoxIcon(
+                                          iconPath: 'assets/icons/trash.svg',
+                                          iconColor: Colors.black,
+                                          backgroundColor: Colors.white,
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) => CustomAlertDialog(
+                                                    title: 'Удалить аккаунт из списка быстрого доступа?',
+                                                    onApprove: () {
+                                                      deleteAccount(account['email']);
+                                                    }
+                                                )
+                                            );
+                                          },
                                         ),
-                                        if (state.user.email == account['email'])
-                                          Icon(
-                                            Icons.check,
-                                            size: 22,
-                                            color: Color(0xff5589F1),
-                                          )
+                                        SizedBox(
+                                          width: 10,
+                                        ),
                                       ],
                                     ),
+                                    enabled: state.user.email != account['email'],
+                                    child: InkWell(
+                                      onTap: () {
+                                        if (state.user.email != account['email']) {
+                                          context.read<AuthCubit>().logIn(
+                                            email: account['email'],
+                                            password: account['password'],
+                                          );
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              account['fullName'] ?? account['email'],
+                                              style: body,
+                                            ),
+                                            if (state.user.email == account['email'])
+                                              Icon(
+                                                Icons.check,
+                                                size: 22,
+                                                color: Color(0xff5589F1),
+                                              )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                if (accounts.values.last != account)
-                                  Divider()
-                              ],
-                            ),
-                        ],
+                                  if (accounts.values.last != account)
+                                    Divider()
+                                ],
+                              ),
+                          ],
+                        ),
                       ),
+                      // Column(
+                      //   children: [
+                      //     for (var account in accounts.values)
+                      //       Column(
+                      //         children: [
+                      //           InkWell(
+                      //             onTap: () {
+                      //               if (state.user.email != account['email']) {
+                      //                 // context.read<AuthCubit>().logIn(
+                      //                 //   email: account['email'],
+                      //                 //   password: account['password'],
+                      //                 // );
+                      //                 Navigator.pop(context);
+                      //               }
+                      //             },
+                      //             child: Padding(
+                      //               padding: const EdgeInsets.all(12.0),
+                      //               child: Row(
+                      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //                 children: [
+                      //                   Text(
+                      //                     account['fullName'] ?? account['email'],
+                      //                     style: body,
+                      //                   ),
+                      //                   if (state.user.email == account['email'])
+                      //                     Icon(
+                      //                       Icons.check,
+                      //                       size: 22,
+                      //                       color: Color(0xff5589F1),
+                      //                     )
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           if (accounts.values.last != account)
+                      //             Divider()
+                      //         ],
+                      //       ),
+                      //   ],
+                      // ),
                       SizedBox(
                         height: 24,
                       ),
                     ],
                   ),
                 ),
-                if (accounts.values.length < 3)
+                // if (accounts.values.length < 3)
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.25.sw)),
                     child: SizedBox(

@@ -84,4 +84,9 @@ class User {
       owner: owner ?? this.owner,
     );
   }
+
+  @override
+  String toString() {
+    return '$email $id';
+  }
 }

@@ -94,7 +94,7 @@ class ObjectCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (objects[id]['color'] != null)
+                if (place!.tenantItems != null && place!.tenantItems!['Отмеченный клиент']!.getFullValue().isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(right: 8),
                     child: Container(
@@ -104,7 +104,7 @@ class ObjectCard extends StatelessWidget {
                         borderRadius: BorderRadius.all(
                             Radius.circular(20) //                 <--- border radius here
                         ),
-                        color: Color(objects[id]['color']),
+                        color: Color(int.parse(place!.tenantItems!['Отмеченный клиент']!.value!)),
                       ),
                       child: Center(
                         child: Text(

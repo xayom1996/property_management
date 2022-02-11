@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/app/services/firestore_service.dart';
 import 'package:property_management/characteristics/models/characteristics.dart';
 
@@ -16,7 +17,9 @@ class AddObjectCubit extends Cubit<AddObjectState> {
           getItems(_appBloc.state.objectItems);
           _appBlocSubscription = _appBloc.stream.listen(
                   (state){
-                    getItems(state.objectItems);
+                    if (state.status != AppStatus.loading) {
+                      getItems(state.objectItems);
+                    }
                   });
         }
 
@@ -32,16 +35,12 @@ class AddObjectCubit extends Cubit<AddObjectState> {
     ));
   }
 
-  void getOwners() async {
-
-  }
-
   bool isObjectItemsValid(List<Characteristics> items) {
     return items[0].getFullValue().isNotEmpty && items[1].getFullValue().isNotEmpty
     && items[2].getFullValue().isNotEmpty && items[3].getFullValue().isNotEmpty;
   }
 
-  void changeItemValue(int id, String value) {
+  void changeItemValue(int id, String value, String documentUrl) {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
@@ -50,6 +49,7 @@ class AddObjectCubit extends Cubit<AddObjectState> {
       _addItems.add(item);
     }
     _addItems[id].value = value;
+    _addItems[id].documentUrl = documentUrl;
     emit(state.copyWith(
       addItems: _addItems,
       status: isObjectItemsValid(_addItems)

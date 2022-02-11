@@ -89,29 +89,30 @@ class EditObjectPage extends StatelessWidget {
                   child: Column(
                     children: [
                       for (var item in state.items)
-                        BoxInputField(
-                          controller: TextEditingController(text: item.getFullValue()),
-                          placeholder: item.placeholder ?? '',
-                          title: item.title,
-                          enabled: false,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ItemPage(
-                                item: item,
-                                onChange: (int id, String value) {
-                                  context.read<EditObjectCubit>().changeItemValue(id, value);
-                                },
-                              )),
-                            );
-                          },
-                          trailing: const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 14,
-                            color: Color(0xff5589F1),
+                        if (item.showInCreating())
+                          BoxInputField(
+                            controller: TextEditingController(text: item.getFullValue()),
+                            placeholder: item.placeholder ?? '',
+                            title: item.title,
+                            enabled: false,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ItemPage(
+                                  item: item,
+                                  onChange: (int id, String value, String documentUrl) {
+                                    context.read<EditObjectCubit>().changeItemValue(id, value, documentUrl);
+                                  },
+                                )),
+                              );
+                            },
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                              color: Color(0xff5589F1),
+                            ),
+                            // isError: isError,
                           ),
-                          // isError: isError,
-                        ),
                       SizedBox(
                         height: 60,
                       ),
@@ -127,7 +128,7 @@ class EditObjectPage extends StatelessWidget {
                     child: SizedBox(
                       width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
                       child: BoxButton(
-                        title: 'Редактировать',
+                        title: 'Сохранить',
                         onTap: (){
                           context.read<EditObjectCubit>().editObject();
                         },

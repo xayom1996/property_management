@@ -91,7 +91,9 @@ class CharacteristicsPage extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(builder: (context) => state.currentIndexTab == 0
                                               ? EditObjectPage(id: state.selectedPlaceId)
-                                              : EditTenantPage(),
+                                              : state.places[state.selectedPlaceId].tenantItems != null
+                                                ? EditTenantPage(id: state.selectedPlaceId)
+                                                : CreateTenantPage(docId: state.places[state.selectedPlaceId].id),
                                           ),
                                         );
                                       },
@@ -206,39 +208,70 @@ class CharacteristicsPage extends StatelessWidget {
                     : state.places[state.selectedPlaceId].objectItems,
               )
                   : CustomTabView(
-                objectItems: const {},
-                checkbox: true,
-                textButton: secondTabObjectItems.isEmpty
-                    ? GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CreateTenantPage()),
+                      objectItems: state.places.isEmpty
+                          ? {}
+                          : state.places[state.selectedPlaceId].tenantItems ?? {},
+                      checkbox: true,
+                      textButton: state.places[state.selectedPlaceId].tenantItems == null
+                          ? context.read<AppBloc>().state.user.isAdminOrManager()
+                            ? GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => CreateTenantPage(docId: state.places[state.selectedPlaceId].id)),
+                                  );
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/plus.svg',
+                                      color: Color(0xff4B81EF),
+                                      height: 16,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Добавить характеристики арендатора',
+                                      style: title2.copyWith(
+                                          color: Color(0xff4B81EF),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : CustomScrollView(
+                                slivers: [
+                                  SliverFillRemaining(
+                                    hasScrollBody: false,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/home_white.svg',
+                                          color: Color(0xffE9ECEE),
+                                          height: 80,
+                                        ),
+                                        SizedBox(
+                                          height: 32,
+                                        ),
+                                        Text(
+                                          'Данные не заполнены, обратитесь к вашему менеджеру',
+                                          textAlign: TextAlign.center,
+                                          style: body.copyWith(
+                                            color: Color(0xffC7C9CC),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                          : null,
                     );
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/plus.svg',
-                        color: Color(0xff4B81EF),
-                        height: 16,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Добавить характеристики арендатора',
-                        style: title2.copyWith(
-                            color: Color(0xff4B81EF),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-                    : null,
-              );
             }
         ),
       )

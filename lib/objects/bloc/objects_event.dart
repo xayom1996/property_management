@@ -24,8 +24,11 @@ class ChangeFilterObjectsEvent extends ObjectsEvent {
 }
 
 class GetFilteredObjectsEvent extends ObjectsEvent {
+  final String filterBy;
+
+  const GetFilteredObjectsEvent({required this.filterBy});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [filterBy];
 }
 
 class DeleteObjectEvent extends ObjectsEvent {

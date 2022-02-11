@@ -71,7 +71,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
   ScrollController _controller = ScrollController();
 
   _scrollListener() {
-    if (_controller.offset >= 138 + 35){
+    if (_controller.offset >= 110 + 35){
       setState(() {
         isPinned = true;
       });
@@ -86,11 +86,11 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
   void initState() {
     _controller.addListener(_scrollListener);
     super.initState();
-    Timer(const Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
+    // Timer(const Duration(seconds: 2), () {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    // });
   }
   @override
   Widget build(BuildContext context) {
@@ -180,7 +180,12 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
-                                    pageBuilder: (context, animation1, animation2) => const SearchObjectsPage(),
+                                    pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
+                                      onTapObject: (String id) {
+                                        context.read<CharacteristicsCubit>().changeSelectedPlaceId(null, id: id, isJump: true);
+                                        context.read<DashboardCubit>().getNavBarItem(DashboardItem.characteristics);
+                                      }
+                                    ),
                                     transitionDuration: Duration.zero,
                                   ),
                                 );
@@ -221,7 +226,9 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                       context: context,
                                       backgroundColor: Colors.transparent, isScrollControlled: true,
                                       builder: (context) {
-                                        return FilterBottomSheet();
+                                        return FilterBottomSheet(
+                                          filterBy: state.filterBy,
+                                        );
                                       }
                                   );
                                 },
@@ -234,7 +241,9 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                     ),
                                     SizedBox(width: 4),
                                     Text(
-                                      'По названию',
+                                      state.filterBy == 'name'
+                                          ? 'По названию'
+                                          : 'По адресу',
                                       style: title2.copyWith(
                                           color: Colors.black,
                                           fontSize: 14,
@@ -287,107 +296,8 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                       topLeft: Radius.circular(24),
                     )
                 ),
-                child: state.places.isNotEmpty
-                    ? Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                          height: 56,
-                          decoration: BoxDecoration(
-                              color: Color(0xffFCFCFC),
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(24),
-                                topLeft: Radius.circular(24),
-                              )
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.transparent, isScrollControlled: true,
-                                      builder: (context) {
-                                        return FilterBottomSheet();
-                                      }
-                                  );
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/filter.svg',
-                                      color: Colors.black,
-                                      height: 12,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'По названию',
-                                      style: title2.copyWith(
-                                          color: Colors.black,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (context.read<AppBloc>().state.user.isAdminOrManager())
-                                GestureDetector(
-                                  onTap: (){
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => CreateObjectPage()),
-                                    );
-                                  },
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/icons/plus.svg',
-                                        color: Color(0xff4B81EF),
-                                        height: 16,
-                                      ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        'Добавить',
-                                        style: title2.copyWith(
-                                            color: Color(0xff4B81EF),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                                itemCount: state.places.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                                    child: state.status == ObjectsStatus.loading
-                                        ? ObjectSkeleton()
-                                        : GestureDetector(
-                                            onTap: () {
-                                              context.read<CharacteristicsCubit>().changeSelectedPlaceId(index, isJump: true);
-                                              context.read<DashboardCubit>().getNavBarItem(DashboardItem.characteristics);
-                                              // widget.goToCharacteristicsPage();
-                                            },
-                                            child: ObjectCard(id: index, place: state.places[index], isLast: index == state.places.length - 1,)
-                                          ),
-                                  );
-                                }
-                            ),
-                        ),
-                      ],
-                    )
-                    : Stack(
+                child: state.places.isEmpty && state.status == ObjectsStatus.fetched
+                    ? Stack(
                       children: [
                         CustomScrollView(
                             slivers: [
@@ -437,7 +347,111 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                             ),
                           ),
                       ],
-                    ),
+                    )
+                    : Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                            height: 56,
+                            decoration: BoxDecoration(
+                                color: Color(0xffFCFCFC),
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(24),
+                                  topLeft: Radius.circular(24),
+                                )
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.transparent, isScrollControlled: true,
+                                        builder: (context) {
+                                          return FilterBottomSheet(
+                                            filterBy: state.filterBy,
+                                          );
+                                        }
+                                    );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/filter.svg',
+                                        color: Colors.black,
+                                        height: 12,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        state.filterBy == 'name'
+                                            ? 'По названию'
+                                            : 'По адресу',
+                                        style: title2.copyWith(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (context.read<AppBloc>().state.user.isAdminOrManager())
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/plus.svg',
+                                          color: Color(0xff4B81EF),
+                                          height: 16,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'Добавить',
+                                          style: title2.copyWith(
+                                              color: Color(0xff4B81EF),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                                itemCount: state.status == ObjectsStatus.loading
+                                    ? 10
+                                    : state.places.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                                    child: state.status == ObjectsStatus.loading
+                                        ? ObjectSkeleton()
+                                        : GestureDetector(
+                                            onTap: () {
+                                              context.read<CharacteristicsCubit>().changeSelectedPlaceId(index, isJump: true);
+                                              context.read<DashboardCubit>().getNavBarItem(DashboardItem.characteristics);
+                                            },
+                                            child: ObjectCard(id: index, place: state.places[index], isLast: index == state.places.length - 1,)
+                                          ),
+                                  );
+                                }
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             );
           }

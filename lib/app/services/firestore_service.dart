@@ -57,13 +57,34 @@ class FireStoreService {
         .catchError((error) => throw Exception('Error adding'));
   }
 
+  Future<void> addTenant({required List<Characteristics> tenantItems, required String docId}) async {
+    Map<String, dynamic> tenantMap = {for (var item in tenantItems) item.title : item.toJson()}; // 2016-01-25
+    await _fireStore.collection('objects')
+        .doc(docId)
+        .update({
+            'tenantItems': tenantMap,
+        })
+        .then((value) => print("Object Added"))
+        .catchError((error) => throw Exception('Error adding'));
+  }
+
   Future<void> editObject({required List<Characteristics> filledItems, required String docId}) async {
     Map<String, dynamic> objectMap = {for (var item in filledItems) item.title : item.toJson()}; // 2016-01-25
     await _fireStore.collection('objects')
         .doc(docId)
-        .set({
+        .update({
           'objectItems': objectMap,
-          'createdDate': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        })
+        .then((value) => print("Object updated"))
+        .catchError((error) => throw Exception('Error adding'));
+  }
+
+  Future<void> editTenant({required List<Characteristics> filledItems, required String docId}) async {
+    Map<String, dynamic> tenantMap = {for (var item in filledItems) item.title : item.toJson()}; // 2016-01-25
+    await _fireStore.collection('objects')
+        .doc(docId)
+        .update({
+          'tenantItems': tenantMap,
         })
         .then((value) => print("Object updated"))
         .catchError((error) => throw Exception('Error adding'));

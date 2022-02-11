@@ -84,31 +84,30 @@ class CreateObjectPage extends StatelessWidget {
                         child: Column(
                           children: [
                             for (var item in state.addItems)
-                              BoxInputField(
-                                controller: TextEditingController(text: item.getFullValue()),
-                                placeholder: item.placeholder ?? '',
-                                title: item.title,
-                                enabled: false,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => ItemPage(
-                                      item: item,
-                                      onChange: (int id, String value) {
-                                        print(id);
-                                        print(value);
-                                        context.read<AddObjectCubit>().changeItemValue(id, value);
-                                      },
-                                    )),
-                                  );
-                                },
-                                trailing: const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 14,
-                                  color: Color(0xff5589F1),
+                              if (item.showInCreating())
+                                BoxInputField(
+                                  controller: TextEditingController(text: item.getFullValue()),
+                                  placeholder: item.placeholder ?? '',
+                                  title: item.title,
+                                  enabled: false,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ItemPage(
+                                        item: item,
+                                        onChange: (int id, String value, String documentUrl) {
+                                          context.read<AddObjectCubit>().changeItemValue(id, value, documentUrl);
+                                        },
+                                      )),
+                                    );
+                                  },
+                                  trailing: const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 14,
+                                    color: Color(0xff5589F1),
+                                  ),
+                                  // isError: isError,
                                 ),
-                                // isError: isError,
-                              ),
                             SizedBox(
                               height: 60,
                             ),

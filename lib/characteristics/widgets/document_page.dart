@@ -13,7 +13,8 @@ import 'package:property_management/app/widgets/container_for_transition.dart';
 import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 
 class DocumentPage extends StatelessWidget {
-  const DocumentPage({Key? key}) : super(key: key);
+  final String documentUrl;
+  const DocumentPage({Key? key, required this.documentUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +68,8 @@ class DocumentPage extends StatelessWidget {
             hasScrollBody: true,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Image.asset(
-                'assets/document.png',
+              child: Image.network(
+                documentUrl,
                 // fit: BoxFit.cover,
                 width: ScreenUtil().orientation == Orientation.portrait
                     ? 1.sw

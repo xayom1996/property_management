@@ -23,10 +23,10 @@ class ActionBottomSheet extends StatelessWidget {
           ),
           onPressed: onUploadFromDevice,
         ),
-        CupertinoActionSheetAction(
-          child: const Text('Загрузить по ссылке'),
-          onPressed: onUploadFromUrl,
-        )
+        // CupertinoActionSheetAction(
+        //   child: const Text('Загрузить по ссылке'),
+        //   onPressed: onUploadFromUrl,
+        // )
       ],
       cancelButton: CupertinoActionSheetAction(
         child: const Text('Отмена'),

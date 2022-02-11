@@ -19,8 +19,6 @@ class ChangePasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<ChangePasswordCubit>().initialState();
-
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -36,6 +34,7 @@ class ChangePasswordPage extends StatelessWidget {
               iconColor: Colors.black,
               backgroundColor: Colors.white,
               onTap: () {
+                context.read<ChangePasswordCubit>().initialState();
                 Navigator.pop(context);
               },
             ),

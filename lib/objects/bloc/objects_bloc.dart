@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:property_management/account/models/user.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_event.dart';
+import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/app/services/firestore_service.dart';
 import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/objects/models/place.dart';
@@ -24,7 +25,9 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
         on<DeleteObjectEvent>(_onDeleteObject);
         _appBlocSubscription = _appBloc.stream.listen(
               (state){
-                add(ObjectsGetEvent(user: state.user, owners: state.owners));
+                if (state.status != AppStatus.loading) {
+                  add(ObjectsGetEvent(user: state.user, owners: state.owners));
+                }
               });
       }
 
@@ -38,6 +41,7 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
     List<Place> places;
     if (event.user.isEmpty) {
       places = [];
+      return emit(state.copyWith(status: ObjectsStatus.initial, places: places, filterBy: 'name'));
     } else {
       places = await _fireStoreService.getObjects(event.user, event.owners);
     }
@@ -51,13 +55,13 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
   }
 
   void _onGetFilteredObjects(GetFilteredObjectsEvent event, Emitter<ObjectsState> emit) async {
+    emit(state.copyWith(status: ObjectsStatus.loading));
     List<Place> places = state.places;
-    String filterBy = state.filterBy;
+    String filterBy = event.filterBy;
     String filterField = 'Название объекта';
     if (filterBy == 'address'){
       filterField = 'Адрес объекта';
     }
-    emit(state.copyWith(status: ObjectsStatus.loading));
     places.sort((a, b) => a.objectItems[filterField]!.value!.compareTo(b.objectItems[filterField]!.value!));
     emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
   }

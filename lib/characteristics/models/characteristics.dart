@@ -7,8 +7,10 @@ class Characteristics {
   final String? additionalInfo;
   final String type;
   final String? unit;
+  final List<String>? choices;
   String? value;
   String? documentUrl;
+  List<String>? details;
 
   Characteristics({
     required this.id,
@@ -19,6 +21,8 @@ class Characteristics {
     this.unit,
     this.value,
     this.documentUrl,
+    this.choices,
+    this.details,
   });
 
   factory Characteristics.fromJson(Map<String, dynamic> json) => Characteristics(
@@ -29,7 +33,13 @@ class Characteristics {
     type: json["type"],
     unit: json["unit"],
     value: json["value"],
-    documentUrl: json["documentUrl"],
+    documentUrl: json["documentUrl"] ?? '',
+    choices: json["choices"] != null
+        ? List.from(json["choices"].map((choice) => choice))
+        : [],
+    details: json["details"] != null
+        ? List.from(json["details"].map((detail) => detail))
+        : [],
   );
 
   Map<String, dynamic> toJson() => {
@@ -40,7 +50,9 @@ class Characteristics {
     "type": type,
     "unit": unit,
     "value": value,
-    "documentUrl": documentUrl,
+    "documentUrl": documentUrl ?? '',
+    "choices": choices ?? [],
+    "details": details ?? [],
   };
 
   @override
@@ -49,8 +61,29 @@ class Characteristics {
   }
 
   String getFullValue () {
+    if (details != null && details!.isNotEmpty) {
+      String requisites = '';
+      for (var i = 0; i < details!.length; i++) {
+        if (details![i].isNotEmpty) {
+          requisites += details![i];
+          if (i != details!.length - 1){
+            requisites += '\n';
+          }
+        }
+      }
+      return requisites.isEmpty ? '' : requisites;
+    }
     if (value == null || value!.isEmpty) return '';
-    if (type == 'Текст' || title.contains('Коэффициент')) return '$value';
+    if (type != 'Число' || title.contains('Коэффициент')) return '$value';
     return formatNumber(value ?? '0', unit);
+  }
+
+  bool isDate() {
+    return title == 'Дата приобретения' || title == 'Срок действия договора';
+  }
+
+  bool showInCreating() {
+    return title != 'Рыночная стоимость помещения' &&
+        title != 'Фактическая Налоговая нагрузка' && title != 'Арендная плата' && title != 'Текущая аренда';
   }
 }

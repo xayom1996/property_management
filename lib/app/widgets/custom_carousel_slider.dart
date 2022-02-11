@@ -17,8 +17,10 @@ class CustomCarouselSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List fixedList = Iterable<int>.generate(places!.length).toList();
+    // context.read<CharacteristicsCubit>().changeSelectedPlaceId(context.read<CharacteristicsCubit>().state.selectedPlaceId, isJump: true);
+
     return BlocConsumer<CharacteristicsCubit, CharacteristicsState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.isJump) {
           carouselController!.jumpToPage(state.selectedPlaceId);
         }
@@ -30,9 +32,12 @@ class CustomCarouselSlider extends StatelessWidget {
               viewportFraction: 316 / MediaQuery.of(context).size.width,
               height: 83,
               enableInfiniteScroll: false,
-              // initialPage: state.selectedPlaceId,
+              // initialPage: 2,
               onPageChanged: (int index, CarouselPageChangedReason reason) {
-                context.read<CharacteristicsCubit>().changeSelectedPlaceId(index);
+                if (index != state.selectedPlaceId) {
+                  context.read<CharacteristicsCubit>().changeSelectedPlaceId(
+                      index);
+                }
               },
           ),
           items: fixedList.map((index) {

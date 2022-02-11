@@ -6,7 +6,7 @@ import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/widgets/box_text.dart';
 
 class BoxInputField extends StatefulWidget {
-  final TextEditingController? controller;
+  TextEditingController? controller;
   final Function(String)? onChanged;
   final String placeholder;
   final String title;
@@ -20,6 +20,7 @@ class BoxInputField extends StatefulWidget {
   final bool? disableSpace;
   final void Function()?trailingTapped;
   final Function()? onTap;
+  final bool autoFocus;
   final TextInputType? keyboardType;
 
 
@@ -36,6 +37,7 @@ class BoxInputField extends StatefulWidget {
     this.trailingTapped,
     this.password = false,
     this.isError = false,
+    this.autoFocus = false,
     this.backgroundColor,
     this.keyboardType,
     this.errorText, this.onTap,
@@ -52,9 +54,15 @@ class _BoxInputFieldState extends State<BoxInputField> {
   bool isFocused = false;
   bool showPassword = false;
   final FocusNode _focus = new FocusNode();
+  TextEditingController? _controller;
 
   @override
   void initState() {
+    if (widget.controller != null) {
+      widget.controller!.selection = TextSelection.fromPosition(TextPosition(offset: widget.controller!.text.length));
+    } else {
+      _controller = null;
+    }
     super.initState();
     _focus.addListener(_onFocusChange);
   }
@@ -102,7 +110,38 @@ class _BoxInputFieldState extends State<BoxInputField> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         BoxText.caption(widget.title),
-                        TextField(
+                        widget.title == 'Отмеченный клиент' && widget.controller!.text.isNotEmpty
+                        ? Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30) //                 <--- border radius here
+                                      ),
+                                      // color: color,
+                                    ),
+                                    child: Center(
+                                      child: Container(
+                                        height: 22,
+                                        width: 22,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(22) //                 <--- border radius here
+                                          ),
+                                          color: Color(int.parse(widget.controller!.text)),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )
+                        : TextField(
                           inputFormatters: widget.disableSpace == true
                             ? [FilteringTextInputFormatter.deny(RegExp(r"\s\b|\b\s"))]
                             : [],
@@ -115,6 +154,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
                           onChanged: widget.onChanged,
                           style: body,
                           focusNode: _focus,
+                          autofocus: widget.autoFocus,
                           obscureText: widget.password ? !showPassword : false,
                           decoration: InputDecoration(
                             hintText: widget.placeholder,

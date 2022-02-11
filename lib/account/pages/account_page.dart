@@ -62,107 +62,110 @@ class AccountPage extends StatelessWidget {
       ),
       body: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
-          return CustomScrollView(
-              slivers: [
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
-                    child: Column(
-                      children: [
-                        Text(
-                          state.user.getFullName(),
-                          textAlign: TextAlign.center,
-                          style: state.user.getFullName() == 'Фамилия Имя Отчество'
-                              ? title2.copyWith(
-                                  color: Color(0xffC7C9CC),
-                                  fontSize: 22,
-                                )
-                              : title2.copyWith(
-                                  color: Color(0xff151515),
-                                  fontSize: 20,
-                                ),
-                        ),
-                        SizedBox(
-                          height: 32,
-                        ),
-                        ContainerForTransition(
-                          title: 'Личная информация',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => PersonalInformationPage()),
-                            );
-                          },
-                        ),
-                        ContainerForTransition(
-                          title: 'Изменить пароль',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ChangePasswordPage()),
-                            );
-                          },
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                                context: context,
-                                backgroundColor: Colors.transparent, isScrollControlled: false,
-                                builder: (context) {
-                                  return ChangeProfileBottomSheet();
-                                }
-                            );
-                          },
-                          child: Text(
-                            'Сменить аккаунт',
-                            textAlign: TextAlign.center,
-                            style: body,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 49,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => LogoutAlertDialog()
-                            );
-                          },
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/logout.svg',
-                                  color: Color(0xff5589F1),
-                                  height: 16,
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  'Выйти',
-                                  textAlign: TextAlign.center,
-                                  style: body.copyWith(
-                                      color: Color(0xff5589F1)
-                                  ),
-                                ),
-                              ],
+          print(state.status);
+          return state.status == AppStatus.loading
+              ? Center(child: CircularProgressIndicator(),)
+              : CustomScrollView(
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
+                        child: Column(
+                          children: [
+                            Text(
+                              state.user.getFullName(),
+                              textAlign: TextAlign.center,
+                              style: state.user.getFullName() == 'Фамилия Имя Отчество'
+                                  ? title2.copyWith(
+                                      color: Color(0xffC7C9CC),
+                                      fontSize: 22,
+                                    )
+                                  : title2.copyWith(
+                                      color: Color(0xff151515),
+                                      fontSize: 20,
+                                    ),
                             ),
-                          ),
+                            SizedBox(
+                              height: 32,
+                            ),
+                            ContainerForTransition(
+                              title: 'Личная информация',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => PersonalInformationPage()),
+                                );
+                              },
+                            ),
+                            ContainerForTransition(
+                              title: 'Изменить пароль',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+                                );
+                              },
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    backgroundColor: Colors.transparent, isScrollControlled: true,
+                                    builder: (context) {
+                                      return ChangeProfileBottomSheet();
+                                    }
+                                );
+                              },
+                              child: Text(
+                                'Сменить аккаунт',
+                                textAlign: TextAlign.center,
+                                style: body,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 49,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => LogoutAlertDialog()
+                                );
+                              },
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/logout.svg',
+                                      color: Color(0xff5589F1),
+                                      height: 16,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Выйти',
+                                      textAlign: TextAlign.center,
+                                      style: body.copyWith(
+                                          color: Color(0xff5589F1)
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 40,
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          height: 40,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            );
+                  ],
+                );
         },
       ),
     );

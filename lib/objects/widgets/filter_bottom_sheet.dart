@@ -10,14 +10,21 @@ import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:provider/src/provider.dart';
 
 class FilterBottomSheet extends StatefulWidget {
-  const FilterBottomSheet({Key? key}) : super(key: key);
+  final String filterBy;
+  const FilterBottomSheet({Key? key, required this.filterBy}) : super(key: key);
 
   @override
   State<FilterBottomSheet> createState() => _FilterBottomSheetState();
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  String currentFilter = 'По названию';
+  String filterBy = 'name';
+
+  @override
+  void initState() {
+    filterBy = widget.filterBy;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +73,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                           padding: const EdgeInsets.all(12.0),
                           child: InkWell(
                             onTap: () {
-                              context.read<ObjectsBloc>().add(const ChangeFilterObjectsEvent(filterBy: 'address'));
+                              filterBy = 'address';
+                              setState(() {});
+                              // context.read<ObjectsBloc>().add(const ChangeFilterObjectsEvent(filterBy: 'address'));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,7 +84,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                   'По адресу',
                                   style: body,
                                 ),
-                                if (state.filterBy == 'address')
+                                if (filterBy == 'address')
                                   Icon(
                                     Icons.check,
                                     size: 22,
@@ -90,7 +99,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                           padding: const EdgeInsets.all(12.0),
                           child: InkWell(
                             onTap: () {
-                              context.read<ObjectsBloc>().add(const ChangeFilterObjectsEvent(filterBy: 'name'));
+                              setState(() {
+                                filterBy = 'name';
+                              });
+                              // context.read<ObjectsBloc>().add(const ChangeFilterObjectsEvent(filterBy: 'name'));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,7 +111,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                   'По названию',
                                   style: body,
                                 ),
-                                if (state.filterBy == 'name')
+                                if (filterBy == 'name')
                                   Icon(
                                     Icons.check,
                                     size: 22,
@@ -122,7 +134,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       child: BoxButton(
                         title: 'Применить',
                         onTap: (){
-                          context.read<ObjectsBloc>().add(GetFilteredObjectsEvent());
+                          context.read<ObjectsBloc>().add(GetFilteredObjectsEvent(filterBy: filterBy));
                           Navigator.of(context).pop();
                         },
                       ),
