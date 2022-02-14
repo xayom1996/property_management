@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/characteristics/widgets/document_page.dart';
 import 'package:property_management/exploitation/pages/create_details_tenant_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/cubit/add_tenant/add_tenant_cubit.dart';
@@ -105,8 +106,8 @@ class EditTenantPage extends StatelessWidget {
                                       MaterialPageRoute(builder: (context) => item.title == 'Реквизиты арендатора'
                                           ? RequisitesItemPage(
                                               item: item,
-                                              onChange: (int id, List<String> details) {
-                                                context.read<EditTenantCubit>().changeDetails(id, details);
+                                              onChange: (int id, List<String> details, String documentUrl) {
+                                                context.read<EditTenantCubit>().changeDetails(id, details, documentUrl);
                                               },
                                             )
                                           : ItemPage(
@@ -118,11 +119,25 @@ class EditTenantPage extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  trailing: const Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 14,
-                                    color: Color(0xff5589F1),
-                                  ),
+                                  trailing: item.documentUrl != null && item.documentUrl!.isNotEmpty
+                                      ? BoxIcon(
+                                        iconPath: 'assets/icons/document.svg',
+                                        iconColor: Color(0xff5589F1),
+                                        backgroundColor: Colors.white,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => DocumentPage(
+                                              documentUrl: item.documentUrl!,
+                                            )),
+                                          );
+                                        },
+                                      )
+                                      : const Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 14,
+                                          color: Color(0xff5589F1),
+                                        ),
                                   // isError: isError,
                                 ),
                             SizedBox(

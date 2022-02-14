@@ -69,6 +69,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
   bool isPinned = false;
 
   ScrollController _controller = ScrollController();
+  // PageStorageKey controllerKey = PageStorageKey<String>('controllerA');
 
   _scrollListener() {
     if (_controller.offset >= 110 + 35){
@@ -98,10 +99,14 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
       backgroundColor: Color(0xffF5F7F9),
       body:  BlocConsumer<ObjectsBloc, ObjectsState>(
           listener: (context, state) {
-            // TODO: implement listener
+            if (state.status == ObjectsStatus.fetched && _controller.positions.isNotEmpty) {
+              _controller.jumpTo(0);
+            }
           },
           builder: (context, state) {
+            print(state);
             return NestedScrollView(
+              // key: controllerKey,
               controller: _controller,
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[

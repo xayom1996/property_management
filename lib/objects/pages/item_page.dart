@@ -91,10 +91,14 @@ class _ItemPageState extends State<ItemPage> {
               iconPath: 'assets/icons/check.svg',
               iconColor: Colors.black,
               backgroundColor: Colors.white,
-              onTap: () {
-                widget.onChange(widget.item.id, textController.text, documentUrl);
-                // context.read<AddObjectCubit>().changeItemValue(widget.item.id, textController.text);
-                Navigator.pop(context);
+              onTap: () async {
+                if (loadingDocument == true){
+                  showSnackBar(context, 'Дождитесь загрузки документа...', color: Colors.blue);
+                } else {
+                  widget.onChange(
+                      widget.item.id, textController.text, documentUrl);
+                  Navigator.pop(context);
+                }
               },
             ),
           ],
@@ -162,14 +166,16 @@ class _ItemPageState extends State<ItemPage> {
                                 },
                                 child: BoxInputField(
                                   controller: textController,
-                                  autoFocus: true,
+                                  // autoFocus: true,
                                   placeholder: widget.item.placeholder ?? '',
                                   title: widget.item.title,
                                   enabled: !widget.item.isDate(),
                                   disableSpace: widget.item.type == 'Число',
-                                  keyboardType: widget.item.type == 'Число'
-                                      ? const TextInputType.numberWithOptions(decimal: true, signed: true)
-                                      : null,
+                                  keyboardType: widget.item.title == 'Номер телефона'
+                                    ? TextInputType.phone
+                                      : widget.item.type == 'Число'
+                                          ? const TextInputType.numberWithOptions(decimal: true, signed: true)
+                                          : null,
                                 ),
                               ),
                               hasDocument == false
@@ -195,13 +201,12 @@ class _ItemPageState extends State<ItemPage> {
                                                   await firebase_storage.FirebaseStorage.instance
                                                       .ref('documents/$fileName')
                                                       .putFile(file);
-                                                  String _documentUrl = await firebase_storage.FirebaseStorage.instance
-                                                      .ref('documents/$fileName')
-                                                      .getDownloadURL();
+                                                  // String _documentUrl = await firebase_storage.FirebaseStorage.instance
+                                                  //     .ref('documents/$fileName')
+                                                  //     .getDownloadURL();
                                                   setState(() {
-                                                    documentUrl = _documentUrl;
+                                                    documentUrl = 'documents/$fileName';
                                                   });
-                                                  print(documentUrl);
                                                 } on firebase_core.FirebaseException catch (e) {
                                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                                     content: const Text('Произошла ошибка'),
@@ -232,7 +237,15 @@ class _ItemPageState extends State<ItemPage> {
                                               Navigator.pop(context);
                                               Navigator.push(
                                                 context,
-                                                MaterialPageRoute(builder: (context) => UploadDocumentPage()),
+                                                MaterialPageRoute(builder: (context) => UploadDocumentPage(
+                                                  onUpload: (String _documentUrl) {
+                                                    print(documentUrl);
+                                                    setState(() {
+                                                      hasDocument = true;
+                                                      documentUrl = _documentUrl;
+                                                    });
+                                                  },
+                                                )),
                                               );
                                             },
                                           ),
@@ -258,6 +271,7 @@ class _ItemPageState extends State<ItemPage> {
                                       ),
                                     )
                                   : DocumentCard(
+                                      key: UniqueKey(),
                                       url: documentUrl,
                                       isLoading: loadingDocument,
                                       onDelete: (){

@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/objects/pages/change_field_page.dart';
@@ -7,11 +11,42 @@ import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
-class UploadDocumentPage extends StatelessWidget {
-  UploadDocumentPage({Key? key}) : super(key: key);
+class UploadDocumentPage extends StatefulWidget {
+  final Function onUpload;
+  UploadDocumentPage({Key? key, required this.onUpload}) : super(key: key);
 
+  @override
+  State<UploadDocumentPage> createState() => _UploadDocumentPageState();
+}
+
+class _UploadDocumentPageState extends State<UploadDocumentPage> {
+  String errorMessage = '';
   final TextEditingController textController = TextEditingController();
+  bool isLoading = false;
+
+  Future<Uint8List?> downloadFile(String url) async {
+    HttpClient httpClient = new HttpClient();
+    Uint8List? bytes;
+
+    try {
+      var request = await httpClient.getUrl(Uri.parse(url));
+      var response = await request.close();
+      if(response.statusCode == 200) {
+        bytes = await consolidateHttpClientResponseBytes(response);
+      }
+      else {
+        throw Exception('Введите корректную ссылку');
+      }
+    }
+    catch(ex){
+      throw Exception('Введите корректную ссылку');
+    }
+
+    return bytes;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +91,8 @@ class UploadDocumentPage extends StatelessWidget {
                       controller: textController,
                       placeholder: 'site.com/doc.pdf',
                       title: 'Ссылка на документ',
+                      isError: errorMessage.isNotEmpty,
+                      errorText: errorMessage,
                     ),
                   ],
                 ),
@@ -70,6 +107,40 @@ class UploadDocumentPage extends StatelessWidget {
                 width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
                 child: BoxButton(
                   title: 'Загрузить',
+                  busy: isLoading,
+                  onTap: () async {
+                    Uint8List? bytes;
+
+                    setState(() {
+                      errorMessage = '';
+                      isLoading = true;
+                    });
+
+                    String fileName = textController.text.split('/').last;
+
+                    try {
+                      bytes = await downloadFile(textController.text);
+                    } catch (e) {
+                      setState(() {
+                        errorMessage = 'Введите корректную ссылку';
+                      });
+                    }
+                    if (bytes != null) {
+                      try {
+                        await firebase_storage.FirebaseStorage.instance
+                            .ref('documents/$fileName')
+                            .putData(bytes);
+                        Navigator.pop(context);
+                        widget.onUpload('documents/$fileName');
+                      } on firebase_core.FirebaseException catch (e) {
+                        print(e);
+                      }
+                    }
+
+                    setState(() {
+                      isLoading = false;
+                    });
+                  },
                 ),
               ),
             ),
@@ -78,5 +149,4 @@ class UploadDocumentPage extends StatelessWidget {
       ),
     );
   }
-
 }

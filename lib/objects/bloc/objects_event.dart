@@ -32,10 +32,11 @@ class GetFilteredObjectsEvent extends ObjectsEvent {
 }
 
 class DeleteObjectEvent extends ObjectsEvent {
-  final int index;
+  final int? index;
+  final String? docId;
 
-  const DeleteObjectEvent({required this.index});
+  const DeleteObjectEvent({this.docId, this.index});
 
   @override
-  List<Object?> get props => [index];
+  List<Object?> get props => [docId];
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/characteristics/widgets/document_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/cubit/add_object/add_object_cubit.dart';
 import 'package:property_management/objects/pages/change_field_page.dart';
@@ -101,7 +102,21 @@ class CreateObjectPage extends StatelessWidget {
                                       )),
                                     );
                                   },
-                                  trailing: const Icon(
+                                  trailing: item.documentUrl != null && item.documentUrl!.isNotEmpty
+                                      ? BoxIcon(
+                                    iconPath: 'assets/icons/document.svg',
+                                    iconColor: Color(0xff5589F1),
+                                    backgroundColor: Colors.white,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => DocumentPage(
+                                          documentUrl: item.documentUrl!,
+                                        )),
+                                      );
+                                    },
+                                  )
+                                      : const Icon(
                                     Icons.arrow_forward_ios,
                                     size: 14,
                                     color: Color(0xff5589F1),

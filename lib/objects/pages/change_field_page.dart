@@ -118,7 +118,11 @@ class _ChangeFieldPageState extends State<ChangeFieldPage> {
                               Navigator.pop(context);
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => UploadDocumentPage()),
+                                MaterialPageRoute(builder: (context) => UploadDocumentPage(
+                                  onUpload: (){
+
+                                  },
+                                )),
                               );
                             },
                           ),

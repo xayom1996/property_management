@@ -55,6 +55,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
   bool showPassword = false;
   final FocusNode _focus = new FocusNode();
   TextEditingController? _controller;
+  List<TextInputFormatter> inputFormatters = [];
 
   @override
   void initState() {
@@ -63,6 +64,16 @@ class _BoxInputFieldState extends State<BoxInputField> {
     } else {
       _controller = null;
     }
+    if (widget.disableSpace == true || widget.keyboardType == TextInputType.number
+      || widget.keyboardType == TextInputType.numberWithOptions(decimal: true, signed: true)
+      || widget.keyboardType == TextInputType.phone) {
+      inputFormatters.add(FilteringTextInputFormatter.deny(RegExp(r"\s\b|\b\s")));
+    }
+    if (widget.keyboardType == TextInputType.numberWithOptions(decimal: true, signed: true)) {
+      inputFormatters.add(DecimalTextInputFormatter());
+      inputFormatters.add(FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')));
+    }
+
     super.initState();
     _focus.addListener(_onFocusChange);
   }
@@ -142,9 +153,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
                             ),
                           )
                         : TextField(
-                          inputFormatters: widget.disableSpace == true
-                            ? [FilteringTextInputFormatter.deny(RegExp(r"\s\b|\b\s"))]
-                            : [],
+                          inputFormatters: inputFormatters,
                           keyboardType: widget.keyboardType != null
                               ? widget.keyboardType
                               : widget.enabled == true ? null : TextInputType.multiline,
@@ -214,5 +223,14 @@ class _BoxInputFieldState extends State<BoxInputField> {
         ),
       ),
     );
+  }
+}
+
+class DecimalTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final regEx = RegExp(r'^\d*\.?\d*');
+    final String newString = regEx.stringMatch(newValue.text) ?? '';
+    return newString == newValue.text ? newValue : oldValue;
   }
 }

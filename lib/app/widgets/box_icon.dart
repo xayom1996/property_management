@@ -31,7 +31,7 @@ class BoxIcon extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               // spreadRadius: 5,
-              blurRadius: 20,
+              blurRadius: 4,
               offset: Offset(0, 4), // changes position of shadow
             ),
           ],

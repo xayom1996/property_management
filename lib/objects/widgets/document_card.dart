@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/document_view.dart';
 
 class DocumentCard extends StatelessWidget {
   final String url;
@@ -36,9 +37,9 @@ class DocumentCard extends StatelessWidget {
                         color: Color(0xffE9ECEE),
                         height: 40,
                       )
-                    : Image.network(
-                        url,
-                        // height: 40,
+                    : DocumentView(
+                        key: UniqueKey(),
+                        documentUrl: url
                       ),
             ),
           ),

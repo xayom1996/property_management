@@ -47,7 +47,7 @@ class ObjectCard extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => EditObjectPage(id: id,)),
+                    MaterialPageRoute(builder: (context) => EditObjectPage(docId: place!.id,)),
                   );
                 },
                 backgroundColor: Colors.white,
@@ -71,7 +71,7 @@ class ObjectCard extends StatelessWidget {
                       builder: (context) => CustomAlertDialog(
                         title: 'Вы действительно хотите удалить карточку объекта?',
                         onApprove: () {
-                          context.read<ObjectsBloc>().add(DeleteObjectEvent(index: id));
+                          context.read<ObjectsBloc>().add(DeleteObjectEvent(docId: place!.id));
                         }
                       )
                   );

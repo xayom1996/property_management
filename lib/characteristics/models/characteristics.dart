@@ -74,8 +74,12 @@ class Characteristics {
       return requisites.isEmpty ? '' : requisites;
     }
     if (value == null || value!.isEmpty) return '';
-    if (type != 'Число' || title.contains('Коэффициент')) return '$value';
-    return formatNumber(value ?? '0', unit);
+    if (type != 'Число' || title.contains('Коэффициент') || (type == 'Число' && value!.contains('.'))) return '$value';
+    try {
+      return formatNumber(value ?? '0', unit);
+    } catch (e) {
+      return value!;
+    }
   }
 
   bool isDate() {

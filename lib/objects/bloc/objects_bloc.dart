@@ -50,8 +50,11 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
     if (filterBy == 'address'){
       filterField = 'Адрес объекта';
     }
-    places.sort((a, b) => a.objectItems[filterField]!.value!.compareTo(b.objectItems[filterField]!.value!));
-    emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: 'name'));
+    places.sort((a, b) =>
+        a.objectItems[filterField]!.getFullValue().toLowerCase()
+            .compareTo(b.objectItems[filterField]!.getFullValue().toLowerCase())
+    );
+    emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
   }
 
   void _onGetFilteredObjects(GetFilteredObjectsEvent event, Emitter<ObjectsState> emit) async {
@@ -62,7 +65,10 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
     if (filterBy == 'address'){
       filterField = 'Адрес объекта';
     }
-    places.sort((a, b) => a.objectItems[filterField]!.value!.compareTo(b.objectItems[filterField]!.value!));
+    places.sort((a, b) =>
+        a.objectItems[filterField]!.getFullValue().toLowerCase()
+            .compareTo(b.objectItems[filterField]!.getFullValue().toLowerCase())
+    );
     emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
   }
 
@@ -71,11 +77,15 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
   }
 
   void _onDeleteObject(DeleteObjectEvent event, Emitter<ObjectsState> emit) async {
-    List<Place> places = state.places;
     emit(state.copyWith(status: ObjectsStatus.loading));
     try{
-      await _fireStoreService.deleteObject(places[event.index].id);
-      places.removeAt(event.index);
+      int? index = event.index;
+      if (event.index == null) {
+        index = state.places.indexWhere((element) => element.id == event.docId);
+      }
+      List<Place> places = state.places;
+      await _fireStoreService.deleteObject(places[index!].id);
+      places.removeAt(index);
       emit(state.copyWith(status: ObjectsStatus.fetched, places: places));
     } catch(e) {
       print(e);

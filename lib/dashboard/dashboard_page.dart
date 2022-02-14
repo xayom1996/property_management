@@ -25,34 +25,18 @@ import 'package:property_management/app/widgets/box_icon.dart';
 class DashboardPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // int currentIndex = 0;
-  //
-  // late List<Widget> pages;
-  // [
-  //   ListObjectsPage(
-  //     goToCharacteristicsPage: () {
-  //       setState(() {
-  //         currentIndex = 0;
-  //       });
-  //     },
-  //   ),
-  //   CharacteristicsPage(),
-  //   ExploitationPage(),
-  //   AnalyticsPage(),
-  //   TotalPage(),
-  // ];
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ObjectsBloc, ObjectsState>(
         listener: (context, state) {
         },
         builder: (context, state) {
+          print(state);
           if (state.status == ObjectsStatus.fetched){
             context.read<CharacteristicsCubit>().fetchObjects(state.places);
           }
           return Scaffold(
-            key: _scaffoldKey,
+            // key: _scaffoldKey,
             body: BlocBuilder<DashboardCubit, DashboardState>(
               builder: (context, dashboardState) {
                 return SafeArea(

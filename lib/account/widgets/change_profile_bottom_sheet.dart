@@ -62,7 +62,7 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
           child: Container(
             // height: 335,
             constraints: BoxConstraints(
-              maxHeight: (245 + 40 * 3).toDouble(),
+              maxHeight: min(MediaQuery.of(context).size.height - 60, (245 + 40 * 3).toDouble()),
               // maxHeight: (600).toDouble(),
             ),
             decoration: BoxDecoration(
@@ -101,7 +101,7 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
                         height: 26,
                       ),
                       Container(
-                        height: 150,
+                        height: min(MediaQuery.of(context).size.height - 60, (245 + 40 * 3).toDouble()) / 3,
                         child: ListView(
                           scrollDirection: Axis.vertical,
                           children: [

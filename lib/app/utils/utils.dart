@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
@@ -242,4 +243,18 @@ List<Map> totalTableItems = [
 
 String formatNumber(String value, String? symbol) {
   return NumberFormat.currency(locale: 'ru', symbol: symbol ?? '', decimalDigits: 0).format(double.parse(value));
+}
+
+void showSnackBar(BuildContext context, String text, {String? label, Color? color}) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(text),
+    backgroundColor: color ?? Colors.red,
+    action: SnackBarAction(
+      label: label ?? 'Ok',
+      textColor: Colors.white,
+      onPressed: () {
+        // Some code to undo the change.
+      },
+    ),
+  ));
 }

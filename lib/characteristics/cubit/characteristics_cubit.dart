@@ -22,11 +22,10 @@ class CharacteristicsCubit extends Cubit<CharacteristicsState> {
       if (id != null) {
         index = state.places.indexWhere((element) => element.id == id);
       }
-      print(index);
       emit(state.copyWith(
         selectedPlaceId: index,
         isJump: isJump,
-        currentIndexTab: 0,
+        // currentIndexTab: 0,
       ));
     }
 

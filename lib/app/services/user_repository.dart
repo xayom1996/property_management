@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meta/meta.dart';
 import 'package:property_management/account/models/user.dart';
 import 'package:property_management/app/utils/cache.dart';
@@ -192,23 +193,37 @@ class UserRepository {
 
   Future<void> changePassword(String currentPassword, String newPassword) async {
     final user = _firebaseAuth.currentUser;
+    var box = await Hive.openBox('accountsBox');
+    Map currentAccount = box.get('account');
+    if (currentPassword != currentAccount['password']){
+      throw const LogInWithEmailAndPasswordFailure('Неверный текущий пароль');
+    }
     final cred = EmailAuthProvider.credential(
         email: user!.email!, password: currentPassword
     );
-    try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-          email: user.email!, password: currentPassword
-      );
+    user.reauthenticateWithCredential(cred).then((value) {
       user.updatePassword(newPassword).then((_) {
         print('Пароль изменен');
       }).catchError((error) {
         print(error);
       });
-    } on FirebaseAuthException catch (e) {
-      throw const LogInWithEmailAndPasswordFailure('Неверный текущий пароль');
-    } catch (_) {
+    }).catchError((err) {
       throw const LogInWithEmailAndPasswordFailure();
-    }
+    });
+    // try {
+    //   await _firebaseAuth.signInWithEmailAndPassword(
+    //       email: user.email!, password: currentPassword
+    //   );
+    //   user.updatePassword(newPassword).then((_) {
+    //     print('Пароль изменен');
+    //   }).catchError((error) {
+    //     print(error);
+    //   });
+    // } on FirebaseAuthException catch (e) {
+    //   throw const LogInWithEmailAndPasswordFailure('Неверный текущий пароль');
+    // } catch (_) {
+    //   throw const LogInWithEmailAndPasswordFailure();
+    // }
   }
 
   Future<void> resetPassword(String email) async {

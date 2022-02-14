@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
@@ -28,9 +29,18 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
   final searchedController = TextEditingController();
   List<Place> searchedPlaces = [];
   List<Place> places = [];
+  late StreamSubscription _objectsSubscription;
 
   @override
   void initState() {
+    places = context.read<ObjectsBloc>().state.places;
+    _objectsSubscription = context.read<ObjectsBloc>().stream.listen(
+            (state){
+            if (state.status == ObjectsStatus.fetched){
+              places = state.places;
+              changedSearchText(searchedController.text);
+            }
+        });
     super.initState();
   }
 
@@ -42,7 +52,7 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
       }
       else {
         isLoading = true;
-        searchedPlaces = List.from(context.read<ObjectsBloc>().state.places.where((element) => element.isContains(searchText)));
+        searchedPlaces = List.from(places.where((element) => element.isContains(searchText)));
       }
     });
     Timer(const Duration(milliseconds: 300), () {

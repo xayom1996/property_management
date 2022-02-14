@@ -47,12 +47,13 @@ class EditTenantCubit extends Cubit<EditTenantState> {
     ));
   }
 
-  void changeDetails(int id, List<String> details) {
+  void changeDetails(int id, List<String> details, String documentUrl) {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
     List<Characteristics> _items = List<Characteristics>.from(state.items.map((item) => item));
     _items[id].details = details;
+    _items[id].documentUrl = documentUrl;
     emit(state.copyWith(
       items: _items,
       status: isTenantItemsValid(_items)

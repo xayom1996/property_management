@@ -98,19 +98,11 @@ class _RequisitesItemPageState extends State<RequisitesItemPage> {
               iconColor: Colors.black,
               backgroundColor: Colors.white,
               onTap: () {
-                if (textController1.text.isEmpty || textController2.text.isEmpty
+                if (loadingDocument == true){
+                  showSnackBar(context, 'Дождитесь загрузки документа...', color: Colors.blue);
+                } else if (textController1.text.isEmpty || textController2.text.isEmpty
                 || textController3.text.isEmpty || textController4.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: const Text('Заполните все реквизиты'),
-                    backgroundColor: Colors.red,
-                    action: SnackBarAction(
-                      label: 'Ok',
-                      textColor: Colors.white,
-                      onPressed: () {
-                        // Some code to undo the change.
-                      },
-                    ),
-                  ));
+                  showSnackBar(context, 'Заполните все реквизиты');
                 }
                 else {
                   widget.onChange(
@@ -148,6 +140,7 @@ class _RequisitesItemPageState extends State<RequisitesItemPage> {
                                 controller: textController1,
                                 placeholder: 'Введите получателя',
                                 title: 'Получатель',
+                                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
                               ),
                               BoxInputField(
                                 controller: textController2,
@@ -163,8 +156,9 @@ class _RequisitesItemPageState extends State<RequisitesItemPage> {
                               ),
                               BoxInputField(
                                 controller: textController4,
-                                placeholder: '92323223',
+                                placeholder: 'Введите ИНН получателя',
                                 title: 'ИНН получателя',
+                                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
                                 // isError: isError,
                               ),
                               hasDocument == false
@@ -190,11 +184,11 @@ class _RequisitesItemPageState extends State<RequisitesItemPage> {
                                             await firebase_storage.FirebaseStorage.instance
                                                 .ref('documents/$fileName')
                                                 .putFile(file);
-                                            String _documentUrl = await firebase_storage.FirebaseStorage.instance
-                                                .ref('documents/$fileName')
-                                                .getDownloadURL();
+                                            // String _documentUrl = await firebase_storage.FirebaseStorage.instance
+                                            //     .ref('documents/$fileName')
+                                            //     .getDownloadURL();
                                             setState(() {
-                                              documentUrl = _documentUrl;
+                                              documentUrl = 'documents/$fileName';
                                             });
                                           } on firebase_core.FirebaseException catch (e) {
                                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -227,7 +221,14 @@ class _RequisitesItemPageState extends State<RequisitesItemPage> {
                                         Navigator.pop(context);
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => UploadDocumentPage()),
+                                          MaterialPageRoute(builder: (context) => UploadDocumentPage(
+                                            onUpload: (String documentUrl) {
+                                              setState(() {
+                                                documentUrl = documentUrl;
+                                                hasDocument = true;
+                                              });
+                                            },
+                                          )),
                                         );
                                       },
                                     ),

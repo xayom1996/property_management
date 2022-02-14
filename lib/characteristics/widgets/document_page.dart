@@ -1,16 +1,15 @@
+import 'dart:io';
+
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:property_management/account/pages/account_page.dart';
-import 'package:property_management/objects/pages/edit_object_page.dart';
-import 'package:property_management/settings/pages/characteristic_items_page.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
-import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
-import 'package:property_management/app/widgets/container_for_transition.dart';
-import 'package:property_management/app/widgets/custom_alert_dialog.dart';
+import 'package:property_management/app/widgets/document_view.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 class DocumentPage extends StatelessWidget {
   final String documentUrl;
@@ -43,7 +42,23 @@ class DocumentPage extends StatelessWidget {
                     iconPath: 'assets/icons/download.svg',
                     iconColor: Colors.black,
                     backgroundColor: Colors.white,
-                    onTap: () {
+                    onTap: () async {
+                      // Directory? appDocDir = await getExternalStorageDirectory();
+                      // String fileName = documentUrl.split('documents/').last;
+                      // String ext = fileName.split('.').last;
+                      // print('${appDocDir!.path}/$fileName');
+                      // File downloadToFile = File('${appDocDir.path}/$fileName');
+                      // await firebase_storage.FirebaseStorage.instance
+                      //     .ref(documentUrl)
+                      //     .writeToFile(downloadToFile);
+
+                      // await FileSaver.instance.saveAs(fileName, downloadToFile.readAsBytes(), ext, MimeType.PDF);
+                      // File file;
+                      // file.writeAsBytes([]);
+
+                      // if (outputFile == null) {
+                      //   // User canceled the picker
+                      // }
                       Navigator.pop(context);
                     },
                   ),
@@ -68,18 +83,11 @@ class DocumentPage extends StatelessWidget {
             hasScrollBody: true,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Image.network(
-                documentUrl,
-                // fit: BoxFit.cover,
-                width: ScreenUtil().orientation == Orientation.portrait
-                    ? 1.sw
-                    : 0.5.sw,
-              ),
+              child: DocumentView(documentUrl: documentUrl),
             ),
           ),
         ],
       ),
     );
   }
-
 }

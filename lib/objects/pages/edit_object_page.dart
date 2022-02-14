@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/characteristics/widgets/document_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/cubit/add_object/add_object_cubit.dart';
 import 'package:property_management/objects/cubit/edit_object/edit_object_cubit.dart';
+import 'package:property_management/objects/models/place.dart';
 import 'package:property_management/objects/pages/change_field_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/app/theme/colors.dart';
@@ -16,13 +18,24 @@ import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/objects/pages/item_page.dart';
 
 class EditObjectPage extends StatelessWidget {
-  final int id;
-  const EditObjectPage({Key? key, required this.id}) : super(key: key);
+  final String? docId;
+  final int? id;
+  const EditObjectPage({Key? key, this.docId, this.id}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var place = context.read<ObjectsBloc>().state.places[id];
-    context.read<EditObjectCubit>().getItems(place.objectItems, place.id);
+    int index;
+    var places = context
+        .read<ObjectsBloc>()
+        .state
+        .places;
+    if (id != null) {
+      index = id!;
+    }
+    else {
+      index = places.indexWhere((element) => element.id == docId);
+    }
+    context.read<EditObjectCubit>().getItems(places[index].objectItems, places[index].id);
 
     return Scaffold(
       backgroundColor: kBackgroundColor,
@@ -106,11 +119,25 @@ class EditObjectPage extends StatelessWidget {
                                 )),
                               );
                             },
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 14,
-                              color: Color(0xff5589F1),
-                            ),
+                            trailing: item.documentUrl != null && item.documentUrl!.isNotEmpty
+                                ? BoxIcon(
+                                    iconPath: 'assets/icons/document.svg',
+                                    iconColor: Color(0xff5589F1),
+                                    backgroundColor: Colors.white,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => DocumentPage(
+                                          documentUrl: item.documentUrl!,
+                                        )),
+                                      );
+                                    },
+                                  )
+                                : const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 14,
+                                    color: Color(0xff5589F1),
+                                  ),
                             // isError: isError,
                           ),
                       SizedBox(
