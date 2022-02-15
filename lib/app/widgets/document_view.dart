@@ -9,8 +9,8 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class DocumentView extends StatelessWidget {
   final String documentUrl;
-
-  const DocumentView({Key? key, required this.documentUrl}) : super(key: key);
+  final bool minimize;
+  const DocumentView({Key? key, required this.documentUrl, this.minimize = false}) : super(key: key);
 
   Future<String> getUrl() async {
     return await firebase_storage.FirebaseStorage.instance
@@ -48,15 +48,20 @@ class DocumentView extends StatelessWidget {
                         'assets/icons/view_unavailable.svg',
                         height: 85,
                       ),
-                      SizedBox(
-                        height: 24,
-                      ),
-                      Text(
-                        'Просмотр недоступен',
-                        style: body.copyWith(
-                          color: Color(0xffC7C9CC),
+                      if (!minimize)
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 24,
+                            ),
+                            Text(
+                              'Просмотр недоступен',
+                              style: body.copyWith(
+                                color: Color(0xffC7C9CC),
+                              ),
+                            )
+                          ],
                         ),
-                      )
                     ],
                   );
           },

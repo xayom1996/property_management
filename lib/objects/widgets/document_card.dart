@@ -39,7 +39,8 @@ class DocumentCard extends StatelessWidget {
                       )
                     : DocumentView(
                         key: UniqueKey(),
-                        documentUrl: url
+                        documentUrl: url,
+                        minimize: true,
                       ),
             ),
           ),
