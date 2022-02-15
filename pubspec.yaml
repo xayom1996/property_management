@@ -58,7 +58,7 @@ dependencies:
       ref: master
   photo_view: ^0.13.0
   syncfusion_flutter_pdfviewer: ^19.4.50-beta
-  file_saver: ^0.0.12
+  url_launcher: ^6.0.20
 
 dev_dependencies:
   flutter_test:

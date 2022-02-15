@@ -117,9 +117,17 @@ class _UploadDocumentPageState extends State<UploadDocumentPage> {
                     });
 
                     String fileName = textController.text.split('/').last;
+                    String url = textController.text;
+
+                    if (url.contains('drive.google')){
+                      List lst = url.split('/');
+                      String fileId = lst[lst.length - 2];
+                      url = 'https://drive.google.com/uc?export=view&id=$fileId';
+                      fileName = fileId;
+                    }
 
                     try {
-                      bytes = await downloadFile(textController.text);
+                      bytes = await downloadFile(url);
                     } catch (e) {
                       setState(() {
                         errorMessage = 'Введите корректную ссылку';

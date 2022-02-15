@@ -33,6 +33,7 @@ class EditTenantCubit extends Cubit<EditTenantState> {
   }
 
   void changeItemValue(int id, String value, String documentUrl) {
+    print(id);
     emit(state.copyWith(
       status: StateStatus.loading,
     ));

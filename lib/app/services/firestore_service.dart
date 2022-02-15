@@ -90,6 +90,16 @@ class FireStoreService {
         .catchError((error) => throw Exception('Error adding'));
   }
 
+  Future<void> updateColorObject({required String docId, required String value}) async {
+    await _fireStore.collection('objects')
+        .doc(docId)
+        .update({
+          'tenantItems.Отмеченный клиент.value': value,
+        })
+        .then((value) => print("Object updated"))
+        .catchError((error) => throw Exception('Error adding'));
+  }
+
   Future<void> deleteObject(String docId) async {
     await _fireStore.collection('objects')
         .doc(docId)

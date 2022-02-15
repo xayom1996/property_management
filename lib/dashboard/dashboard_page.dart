@@ -30,8 +30,11 @@ class DashboardPage extends StatelessWidget {
     return BlocConsumer<ObjectsBloc, ObjectsState>(
         listener: (context, state) {
         },
+        buildWhen: (previousState, state) {
+          return previousState.places != state.places;
+        },
         builder: (context, state) {
-          print(state);
+          // print(state);
           if (state.status == ObjectsStatus.fetched){
             context.read<CharacteristicsCubit>().fetchObjects(state.places);
           }

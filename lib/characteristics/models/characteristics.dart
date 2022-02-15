@@ -25,69 +25,72 @@ class Characteristics {
     this.details,
   });
 
-  factory Characteristics.fromJson(Map<String, dynamic> json) => Characteristics(
-    id: json["id"],
-    title: json["title"],
-    placeholder: json["placeholder"],
-    additionalInfo: json["additionalInfo"],
-    type: json["type"],
-    unit: json["unit"],
-    value: json["value"],
-    documentUrl: json["documentUrl"] ?? '',
-    choices: json["choices"] != null
-        ? List.from(json["choices"].map((choice) => choice))
-        : [],
-    details: json["details"] != null
-        ? List.from(json["details"].map((detail) => detail))
-        : [],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "title": title,
-    "placeholder": placeholder,
-    "additionalInfo": additionalInfo,
-    "type": type,
-    "unit": unit,
-    "value": value,
-    "documentUrl": documentUrl ?? '',
-    "choices": choices ?? [],
-    "details": details ?? [],
-  };
-
-  @override
-  String toString() {
-    return '$id $title $value';
+  factory Characteristics.fromJson(Map<String, dynamic> json) {
+    return Characteristics(
+      id: json["id"],
+      title: json["title"],
+      placeholder: json["placeholder"],
+      additionalInfo: json["additionalInfo"],
+      type: json["type"],
+      unit: json["unit"],
+      value: json["value"],
+      documentUrl: json["documentUrl"] ?? '',
+      choices: json["choices"] != null
+          ? List.from(json["choices"].map((choice) => choice))
+          : [],
+      details: json["details"] != null
+          ? List.from(json["details"].map((detail) => detail))
+          : [],
+    );
   }
 
-  String getFullValue () {
-    if (details != null && details!.isNotEmpty) {
-      String requisites = '';
-      for (var i = 0; i < details!.length; i++) {
-        if (details![i].isNotEmpty) {
-          requisites += details![i];
-          if (i != details!.length - 1){
-            requisites += '\n';
+    Map<String, dynamic> toJson() => {
+      "id": id,
+      "title": title,
+      "placeholder": placeholder,
+      "additionalInfo": additionalInfo,
+      "type": type,
+      "unit": unit,
+      "value": value,
+      "documentUrl": documentUrl ?? '',
+      "choices": choices ?? [],
+      "details": details ?? [],
+    };
+
+    @override
+    String toString() {
+      return '$id $title $value';
+    }
+
+    String getFullValue () {
+      if (details != null && details!.isNotEmpty) {
+        String requisites = '';
+        for (var i = 0; i < details!.length; i++) {
+          if (details![i].isNotEmpty) {
+            requisites += details![i];
+            if (i != details!.length - 1){
+              requisites += '\n';
+            }
           }
         }
+        return requisites.isEmpty ? '' : requisites;
       }
-      return requisites.isEmpty ? '' : requisites;
+      if (value == null || value!.isEmpty) return '';
+      if (type != 'Число' || title.contains('Коэффициент') || (type == 'Число' && value!.contains('.'))) return '$value';
+      try {
+        return formatNumber(value ?? '0', unit);
+      } catch (e) {
+        return value!;
+      }
     }
-    if (value == null || value!.isEmpty) return '';
-    if (type != 'Число' || title.contains('Коэффициент') || (type == 'Число' && value!.contains('.'))) return '$value';
-    try {
-      return formatNumber(value ?? '0', unit);
-    } catch (e) {
-      return value!;
+
+    bool isDate() {
+      return title == 'Дата приобретения' || title == 'Срок действия договора';
     }
-  }
 
-  bool isDate() {
-    return title == 'Дата приобретения' || title == 'Срок действия договора';
-  }
-
-  bool showInCreating() {
-    return title != 'Рыночная стоимость помещения' &&
-        title != 'Фактическая Налоговая нагрузка' && title != 'Арендная плата' && title != 'Текущая аренда';
-  }
+    bool showInCreating() {
+      return title != 'Рыночная стоимость помещения' &&
+          title != 'Фактическая Налоговая нагрузка' && title != 'Арендная плата'
+          && title != 'Текущая аренда' && title != 'Отмеченный клиент';
+    }
 }

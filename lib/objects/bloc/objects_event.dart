@@ -23,6 +23,15 @@ class ChangeFilterObjectsEvent extends ObjectsEvent {
   List<Object?> get props => [filterBy];
 }
 
+class ChangeColorObjectEvent extends ObjectsEvent {
+  final int id;
+  final String value;
+
+  const ChangeColorObjectEvent({required this.id, required this.value});
+  @override
+  List<Object?> get props => [id, value];
+}
+
 class GetFilteredObjectsEvent extends ObjectsEvent {
   final String filterBy;
 

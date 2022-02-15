@@ -22,6 +22,7 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
         on<ObjectsGetEvent>(_onGetObjects);
         on<GetFilteredObjectsEvent>(_onGetFilteredObjects);
         on<ChangeFilterObjectsEvent>(_onChangeFilterObjects);
+        on<ChangeColorObjectEvent>(_onChangeColorObjectEvent);
         on<DeleteObjectEvent>(_onDeleteObject);
         _appBlocSubscription = _appBloc.stream.listen(
               (state){
@@ -70,6 +71,16 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
             .compareTo(b.objectItems[filterField]!.getFullValue().toLowerCase())
     );
     emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
+  }
+
+  void _onChangeColorObjectEvent(ChangeColorObjectEvent event, Emitter<ObjectsState> emit) async {
+    try {
+      await _fireStoreService.updateColorObject(
+          docId: state.places[event.id].id, value: event.value);
+      add(ObjectsGetEvent(user: _appBloc.state.user, owners: _appBloc.state.owners));
+    }catch(e){
+
+    }
   }
 
   void _onChangeFilterObjects(ChangeFilterObjectsEvent event, Emitter<ObjectsState> emit) async {

@@ -1,18 +1,11 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:file_saver/file_saver.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
-import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/document_view.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 class DocumentPage extends StatelessWidget {
   final String documentUrl;
@@ -48,16 +41,10 @@ class DocumentPage extends StatelessWidget {
               iconColor: Colors.black,
               backgroundColor: Colors.white,
               onTap: () async {
-                Directory? appDocDir = await getExternalStorageDirectory();
-                String fileName = documentUrl.split('documents/').last;
-                String ext = fileName.split('.').last;
-                File downloadToFile = File('${appDocDir!.path}/$fileName');
-                await firebase_storage.FirebaseStorage.instance
+                String url = await firebase_storage.FirebaseStorage.instance
                     .ref(documentUrl)
-                    .writeToFile(downloadToFile);
-                Uint8List bytes = downloadToFile.readAsBytesSync();
-                await FileSaver.instance.saveAs(fileName, bytes, ext, MimeType.OTHER);
-                // Navigator.pop(context);
+                    .getDownloadURL();
+                await launch(url);
               },
             ),
           ],

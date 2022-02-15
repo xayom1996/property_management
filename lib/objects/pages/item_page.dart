@@ -130,17 +130,6 @@ class _ItemPageState extends State<ItemPage> {
                                       });
                                     },
                                   ),
-                              if (widget.item.choices!.isNotEmpty)
-                                CustomCheckBox(
-                                  choices: widget.item.choices!,
-                                  checkedColor: checkedItem,
-                                  onChange: (String value) {
-                                    textController.text = value;
-                                    setState(() {
-                                      checkedItem = value;
-                                    });
-                                  },
-                                ),
                             ],
                           )
                         : Column(
