@@ -31,9 +31,10 @@ class Place {
   );
 
   bool isContains(String value) {
-    return objectItems['Название объекта']!.getFullValue().contains(value) ||
-        objectItems['Адрес объекта']!.getFullValue().contains(value) ||
-        objectItems['Площадь объекта']!.getFullValue().contains(value);
+    String _value = value.toLowerCase();
+    return objectItems['Название объекта']!.getFullValue().toLowerCase().contains(_value) ||
+        objectItems['Адрес объекта']!.getFullValue().toLowerCase().contains(_value) ||
+        objectItems['Площадь объекта']!.getFullValue().toLowerCase().contains(_value);
   }
 }
 

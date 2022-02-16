@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class BoxIcon extends StatelessWidget {
   const BoxIcon({Key? key, required this.backgroundColor, this.iconColor,
-    required this.iconPath, this.gradient, this.gradientIcon, this.onTap, this.size, this.iconSize}) : super(key: key);
+    required this.iconPath, this.gradient, this.gradientIcon, this.onTap, this.size, this.iconSize, this.isLoading = false}) : super(key: key);
 
   final Color backgroundColor;
   final Color? iconColor;
@@ -15,6 +15,7 @@ class BoxIcon extends StatelessWidget {
   final Function()? onTap;
   final double? size;
   final double? iconSize;
+  final bool? isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -37,23 +38,28 @@ class BoxIcon extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: gradientIcon == null
-              ? SvgPicture.asset(
-                  iconPath,
-                  color: iconColor,
-                  height: iconSize,
+          child: isLoading == true
+              ? Container(
+                  height: 16, width: 16,
+                  child: CircularProgressIndicator()
                 )
-              : ShaderMask(
-                  blendMode: BlendMode.srcIn,
-                  shaderCallback: (bounds) => gradientIcon!.createShader(
-                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                  ),
-                  child: SvgPicture.asset(
+              : gradientIcon == null
+                ? SvgPicture.asset(
                     iconPath,
                     color: iconColor,
                     height: iconSize,
                   )
-                )
+                : ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: (bounds) => gradientIcon!.createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                    child: SvgPicture.asset(
+                      iconPath,
+                      color: iconColor,
+                      height: iconSize,
+                    )
+                  )
         ),
       ),
     );

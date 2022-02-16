@@ -50,6 +50,13 @@ class AddObjectCubit extends Cubit<AddObjectState> {
     }
     _addItems[id].value = value;
     _addItems[id].documentUrl = documentUrl;
+    if (id == 13 || id == 14) { //Арендная плата или коэфициент капитализации
+      if (_addItems[13].getFullValue().isNotEmpty && _addItems[14].getFullValue().isNotEmpty) {
+        _addItems[15].value = (double.parse(_addItems[13].value!) ~/ double.parse(_addItems[14].value!)).toString();
+      } else {
+        _addItems[15].value = '';
+      }
+    }
     emit(state.copyWith(
       addItems: _addItems,
       status: isObjectItemsValid(_addItems)

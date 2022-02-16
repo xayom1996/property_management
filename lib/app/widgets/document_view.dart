@@ -94,10 +94,9 @@ class _DocumentViewState extends State<DocumentView> {
         gaplessPlayback: false,
         // customSize: MediaQuery.of(context).size,
         // scaleStateChangedCallback: this.onScaleStateChanged,
-        enableRotation: true,
         // controller:  controller,
         minScale: PhotoViewComputedScale.contained * 0.8,
-        maxScale: PhotoViewComputedScale.covered * 1.8,
+        maxScale: PhotoViewComputedScale.covered * 2.0,
         initialScale: PhotoViewComputedScale.contained,
         basePosition: Alignment.center,
         // scaleStateCycle: scaleStateCycle

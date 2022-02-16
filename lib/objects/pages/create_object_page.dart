@@ -85,22 +85,24 @@ class CreateObjectPage extends StatelessWidget {
                         child: Column(
                           children: [
                             for (var item in state.addItems)
-                              if (item.showInCreating())
+                              if (item.showInCreating() || item.getFullValue().isNotEmpty)
                                 BoxInputField(
                                   controller: TextEditingController(text: item.getFullValue()),
                                   placeholder: item.placeholder ?? '',
                                   title: item.title,
                                   enabled: false,
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => ItemPage(
-                                        item: item,
-                                        onChange: (int id, String value, String documentUrl) {
-                                          context.read<AddObjectCubit>().changeItemValue(id, value, documentUrl);
-                                        },
-                                      )),
-                                    );
+                                    if (item.title != 'Рыночная стоимость помещения') {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => ItemPage(
+                                          item: item,
+                                          onChange: (int id, String value, String documentUrl) {
+                                            context.read<AddObjectCubit>().changeItemValue(id, value, documentUrl);
+                                          },
+                                        )),
+                                      );
+                                    }
                                   },
                                   trailing: item.documentUrl != null && item.documentUrl!.isNotEmpty
                                       ? BoxIcon(

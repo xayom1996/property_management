@@ -35,7 +35,11 @@ class CustomCheckBox extends StatelessWidget {
                     splashRadius: 3,
                     value: isChecked,
                     onChanged: (bool? value) {
-
+                      if (isChecked) {
+                        onChange('');
+                      } else {
+                        onChange(choices.first);
+                      }
                     },
                   ),
                 ),

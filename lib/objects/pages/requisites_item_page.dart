@@ -140,12 +140,12 @@ class _RequisitesItemPageState extends State<RequisitesItemPage> {
                                 controller: textController1,
                                 placeholder: 'Введите получателя',
                                 title: 'Получатель',
-                                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
                               ),
                               BoxInputField(
                                 controller: textController2,
                                 placeholder: 'Введите счет получателя',
                                 title: 'Счет получателя',
+                                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
                                 // isError: isError,
                               ),
                               BoxInputField(
