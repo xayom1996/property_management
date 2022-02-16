@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:property_management/theme/styles.dart';
+import 'package:property_management/authentication/pages/authorization_page.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/services/user_repository.dart';
+import 'package:provider/src/provider.dart';
 
 class LogoutAlertDialog extends StatelessWidget {
   const LogoutAlertDialog({Key? key}) : super(key: key);
@@ -59,8 +62,12 @@ class LogoutAlertDialog extends StatelessWidget {
                     ),
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
+                        onTap: () async {
+                          await context.read<UserRepository>().logOut();
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) =>
+                              AuthorizationPage()), (Route<dynamic> route) => false
+                          );
                         },
                         child: Container(
                           padding: EdgeInsets.all(12),

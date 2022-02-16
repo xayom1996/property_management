@@ -1,25 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:property_management/analytics/pages/analytics_charts.dart';
-import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
-import 'package:property_management/objects/widgets/object_card.dart';
-import 'package:property_management/objects/widgets/object_skeleton.dart';
-import 'package:property_management/theme/colors.dart';
-import 'package:property_management/theme/styles.dart';
+import 'package:property_management/app/theme/colors.dart';
+import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/total/pages/total_charts.dart';
-import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_button.dart';
-import 'package:property_management/widgets/box_icon.dart';
-import 'package:property_management/widgets/container_for_transition.dart';
-import 'package:property_management/widgets/custom_tab_container.dart';
-import 'package:property_management/widgets/input_field.dart';
-import 'package:property_management/widgets/object_carousel_card.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/container_for_transition.dart';
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate({

@@ -13,17 +13,17 @@ import 'package:property_management/analytics/pages/create_plan_page.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
-import 'package:property_management/theme/colors.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_button.dart';
-import 'package:property_management/widgets/box_icon.dart';
-import 'package:property_management/widgets/container_for_transition.dart';
-import 'package:property_management/widgets/custom_alert_dialog.dart';
-import 'package:property_management/widgets/custom_carousel_slider.dart';
-import 'package:property_management/widgets/custom_tab_container.dart';
-import 'package:property_management/widgets/input_field.dart';
-import 'package:property_management/widgets/object_carousel_card.dart';
+import 'package:property_management/app/theme/colors.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/box_button.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/container_for_transition.dart';
+import 'package:property_management/app/widgets/custom_alert_dialog.dart';
+import 'package:property_management/app/widgets/custom_carousel_slider.dart';
+import 'package:property_management/app/widgets/custom_tab_container.dart';
+import 'package:property_management/app/widgets/input_field.dart';
+import 'package:property_management/app/widgets/object_carousel_card.dart';
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate({
@@ -143,7 +143,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
         },
         body: currentIndexTab == 0
             ? CustomTabView(
-          objectItems: firstTabObjectItems,
+          objectItems: {},
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
@@ -155,18 +155,25 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                       motion: ScrollMotion(),
                       children: [
                         Spacer(),
-                        BoxIcon(
-                          iconPath: 'assets/icons/trash.svg',
-                          iconColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => CustomAlertDialog(
-                                  title: 'Вы действительно хотите удалить план?',
-                                )
-                            );
-                          },
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: BoxIcon(
+                              iconPath: 'assets/icons/trash.svg',
+                              iconColor: Colors.black,
+                              backgroundColor: Colors.white,
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => CustomAlertDialog(
+                                      title: 'Вы действительно хотите удалить план?',
+                                    )
+                                );
+                              },
+
+                            ),
+                          ),
                         ),
                         SizedBox(
                           width: 10,
@@ -294,7 +301,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               : null,
         )
             : CustomTabView(
-          objectItems: secondTabObjectItems,
+          objectItems: {},
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),

@@ -5,11 +5,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:property_management/theme/colors.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_icon.dart';
-import 'package:property_management/widgets/expenses.dart';
+import 'package:property_management/app/theme/colors.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/expenses.dart';
 
 class TotalCharts extends StatefulWidget {
   final String title;

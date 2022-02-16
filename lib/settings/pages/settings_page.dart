@@ -4,12 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/account/pages/account_page.dart';
 import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/settings/pages/characteristic_items_page.dart';
-import 'package:property_management/theme/colors.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_icon.dart';
-import 'package:property_management/widgets/container_for_transition.dart';
-import 'package:property_management/widgets/custom_alert_dialog.dart';
+import 'package:property_management/app/theme/colors.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/container_for_transition.dart';
+import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);

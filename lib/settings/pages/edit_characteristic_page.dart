@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:property_management/objects/pages/change_field_page.dart';
-import 'package:property_management/theme/colors.dart';
-import 'package:property_management/theme/styles.dart';
-import 'package:property_management/utils/utils.dart';
-import 'package:property_management/widgets/box_icon.dart';
-import 'package:property_management/widgets/input_field.dart';
+import 'package:property_management/app/theme/colors.dart';
+import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/input_field.dart';
 
 class EditCharacteristicPage extends StatelessWidget {
   final String title;

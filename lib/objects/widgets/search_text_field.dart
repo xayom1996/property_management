@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:property_management/objects/pages/search_objects_page.dart';
-import 'package:property_management/theme/styles.dart';
+import 'package:property_management/app/theme/styles.dart';
 
 class SearchTextField extends StatelessWidget {
   @override
