@@ -11,47 +11,38 @@ import 'package:property_management/objects/models/place.dart';
 
 class CustomCarouselSlider extends StatelessWidget {
   final List<Place>? places;
+  final int? selectedPlaceId;
+  final Function(int)? onPageChanged;
   final CarouselController? carouselController;
-  CustomCarouselSlider({Key? key, this.places = const [], this.carouselController}) : super(key: key);
+  CustomCarouselSlider({Key? key, this.places = const [], this.selectedPlaceId, this.onPageChanged, this.carouselController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final List fixedList = Iterable<int>.generate(places!.length).toList();
-    // context.read<CharacteristicsCubit>().changeSelectedPlaceId(context.read<CharacteristicsCubit>().state.selectedPlaceId, isJump: true);
 
-    return BlocConsumer<CharacteristicsCubit, CharacteristicsState>(
-      listener: (context, state) async {
-        if (state.isJump) {
-          carouselController!.jumpToPage(state.selectedPlaceId);
-        }
-      },
-      builder: (context, state) {
-        return CarouselSlider(
-          carouselController: carouselController,
-          options: CarouselOptions(
-              viewportFraction: 316 / MediaQuery.of(context).size.width,
-              height: 83,
-              enableInfiniteScroll: false,
-              // initialPage: 2,
-              onPageChanged: (int index, CarouselPageChangedReason reason) {
-                if (index != state.selectedPlaceId) {
-                  context.read<CharacteristicsCubit>().changeSelectedPlaceId(
-                      index);
-                }
-              },
-          ),
-          items: fixedList.map((index) {
-            return Builder(
-              builder: (BuildContext context) {
-                return ObjectCarouselCard(
-                  place: places![index],
-                  bordered: state.selectedPlaceId == index,
-                );
-              },
+    return CarouselSlider(
+      carouselController: carouselController,
+      options: CarouselOptions(
+        viewportFraction: 316 / MediaQuery.of(context).size.width,
+        height: 83,
+        enableInfiniteScroll: false,
+        // initialPage: 2,
+        onPageChanged: (int index, CarouselPageChangedReason reason) {
+          if (index != selectedPlaceId) {
+            onPageChanged!(index);
+          }
+        },
+      ),
+      items: fixedList.map((index) {
+        return Builder(
+          builder: (BuildContext context) {
+            return ObjectCarouselCard(
+              place: places![index],
+              bordered: selectedPlaceId == index,
             );
-          }).toList(),
+          },
         );
-      },
+      }).toList(),
     );
   }
 }

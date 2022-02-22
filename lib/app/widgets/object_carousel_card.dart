@@ -14,7 +14,7 @@ class ObjectCarouselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Container(
         height: 75,
         width: 300,
@@ -32,7 +32,7 @@ class ObjectCarouselCard extends StatelessWidget {
             ),
           ],
         ),
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -57,6 +57,7 @@ class ObjectCarouselCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     '${place.objectItems['Площадь объекта']!.getFullValue()}',
+                    overflow: TextOverflow.ellipsis,
                     style: body,
                     textAlign: TextAlign.center,
                   ),

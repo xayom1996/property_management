@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
+import 'package:property_management/exploitation/pages/exploitation_page.dart';
 import 'package:property_management/objects/pages/list_objects_page.dart';
 
 part 'dashboard_state.dart';
@@ -14,7 +15,7 @@ class DashboardCubit extends Cubit<DashboardState> {
   List<Widget> pages = [
     const ListObjectsPage(),
     CharacteristicsPage(),
-    Container(),
+    ExploitationPage(),
     Container(),
     Container(),
     // ExploitationPage(),

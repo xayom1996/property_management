@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
+import 'package:property_management/characteristics/widgets/characteristics_carousel_slider.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/pages/create_tenant_page.dart';
@@ -144,15 +145,15 @@ class CharacteristicsPage extends StatelessWidget {
               delegate: _SliverAppBarDelegate(
                 minHeight: 83,
                 maxHeight: 83,
-                child: BlocBuilder<CharacteristicsCubit, CharacteristicsState>(
+                child: BlocBuilder<ObjectsBloc, ObjectsState>(
                     buildWhen: (previousState, state) {
                       return previousState.places != state.places;
                     },
                     builder: (context, state) {
-                      return CustomCarouselSlider(
+                      return CharacteristicsCarouselSlider(
                           key: const Key('carousel'),
+                          places: state.places,
                           carouselController: carouselController,
-                          places: state.places
                       );
                     }
                 ),

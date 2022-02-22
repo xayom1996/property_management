@@ -55,11 +55,12 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
         searchedPlaces = List.from(places.where((element) => element.isContains(searchText)));
       }
     });
-    Timer(const Duration(milliseconds: 300), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
+    isLoading = false;
+    // Timer(const Duration(milliseconds: 300), () {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    // });
   }
 
   @override

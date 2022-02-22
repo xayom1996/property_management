@@ -35,7 +35,9 @@ class EditObjectPage extends StatelessWidget {
     else {
       index = places.indexWhere((element) => element.id == docId);
     }
-    context.read<EditObjectCubit>().getItems(places[index].objectItems, places[index].id);
+    if (context.read<EditObjectCubit>().state.docId != docId) {
+      context.read<EditObjectCubit>().getItems(places[index].objectItems, places[index].id);
+    }
 
     return Scaffold(
       backgroundColor: kBackgroundColor,

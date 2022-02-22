@@ -94,7 +94,7 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
       if (event.index == null) {
         index = state.places.indexWhere((element) => element.id == event.docId);
       }
-      List<Place> places = state.places;
+      List<Place> places = List.from(state.places.map((e) => e));
       await _fireStoreService.deleteObject(places[index!].id);
       places.removeAt(index);
       emit(state.copyWith(status: ObjectsStatus.fetched, places: places));

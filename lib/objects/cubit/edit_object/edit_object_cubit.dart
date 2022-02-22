@@ -20,7 +20,8 @@ class EditObjectCubit extends Cubit<EditObjectState> {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _items = List<Characteristics>.from(objectItems.values.map((item) => item));
+    // List<Characteristics> _items = List<Characteristics>.from(objectItems.values.map((item) => item));
+    List<Characteristics> _items = List<Characteristics>.from(objectItems.values.map((item) => Characteristics.fromJson(item.toJson())));
     _items.sort((a, b) => a.id.compareTo(b.id));
     emit(state.copyWith(
       items: _items,
@@ -40,7 +41,7 @@ class EditObjectCubit extends Cubit<EditObjectState> {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _items = List<Characteristics>.from(state.items.map((item) => item));
+    List<Characteristics> _items = state.items;
     _items[id].value = value;
     _items[id].documentUrl = documentUrl;
     if (id == 13 || id == 14) { //Арендная плата или коэфициент капитализации

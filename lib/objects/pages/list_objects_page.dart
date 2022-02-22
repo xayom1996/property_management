@@ -104,7 +104,6 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
             }
           },
           builder: (context, state) {
-            print(state);
             return NestedScrollView(
               // key: controllerKey,
               controller: _controller,
@@ -149,7 +148,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                           ),
                       ],
                     ),
-                    expandedHeight: state.places.isNotEmpty ? 110 : 70,
+                    expandedHeight: 110,
                     toolbarHeight: 70,
                     collapsedHeight: 70,
                     pinned: true,
@@ -172,7 +171,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                       );
                     })
                   ),
-                  if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty)
+                  // if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty)
                     SliverPersistentHeader(
                       pinned: false,
                       delegate: _SliverAppBarDelegate(
@@ -187,7 +186,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                   PageRouteBuilder(
                                     pageBuilder: (context, animation1, animation2) => SearchObjectsPage(
                                       onTapObject: (String id) {
-                                        context.read<CharacteristicsCubit>().changeSelectedPlaceId(null, id: id, isJump: true);
+                                        context.read<CharacteristicsCubit>().changeSelectedPlaceId(null, state.places, id: id, isJump: true);
                                         context.read<DashboardCubit>().getNavBarItem(DashboardItem.characteristics);
                                       }
                                     ),
@@ -200,7 +199,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                         ),
                       ),
                     ),
-                  if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty)
+                  // if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty)
                     SliverPersistentHeader(
                       pinned: false,
                       delegate: _SliverAppBarDelegate(
@@ -304,34 +303,34 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                 child: state.places.isEmpty && state.status == ObjectsStatus.fetched
                     ? Stack(
                       children: [
-                        CustomScrollView(
-                            slivers: [
-                              SliverFillRemaining(
-                                hasScrollBody: false,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/home_white.svg',
-                                      color: Color(0xffE9ECEE),
-                                      height: 80,
-                                    ),
-                                    SizedBox(
-                                      height: 32,
-                                    ),
-                                    Text(
-                                      'У Вас пока не добавлен ни один объект',
-                                      textAlign: TextAlign.center,
-                                      style: body.copyWith(
-                                        color: Color(0xffC7C9CC),
+                          CustomScrollView(
+                              slivers: [
+                                SliverFillRemaining(
+                                  hasScrollBody: false,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/home_white.svg',
+                                        color: Color(0xffE9ECEE),
+                                        height: 80,
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(
+                                        height: 32,
+                                      ),
+                                      Text(
+                                        'У Вас пока не добавлен ни один объект',
+                                        textAlign: TextAlign.center,
+                                        style: body.copyWith(
+                                          color: Color(0xffC7C9CC),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
                         if (context.read<AppBloc>().state.user.isAdminOrManager() && state.status == ObjectsStatus.fetched && state.places.isEmpty)
                           Positioned(
                             bottom: 24,
@@ -435,24 +434,33 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                             height: 16,
                           ),
                           Expanded(
-                            child: ListView.builder(
-                                itemCount: state.status == ObjectsStatus.loading
-                                    ? 10
-                                    : state.places.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                                    child: state.status == ObjectsStatus.loading
-                                        ? ObjectSkeleton()
-                                        : GestureDetector(
-                                            onTap: () {
-                                              context.read<CharacteristicsCubit>().changeSelectedPlaceId(index, isJump: true);
-                                              context.read<DashboardCubit>().getNavBarItem(DashboardItem.characteristics);
-                                            },
-                                            child: ObjectCard(id: index, place: state.places[index], isLast: index == state.places.length - 1,)
-                                          ),
-                                  );
-                                }
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                var user = context.read<AppBloc>().state.user;
+                                var owners = context.read<AppBloc>().state.owners;
+                                context.read<ObjectsBloc>().add(ObjectsGetEvent(user: user, owners: owners));
+                              },
+                              color: Colors.white,
+                              backgroundColor: Colors.blue,
+                              child: ListView.builder(
+                                  itemCount: state.status == ObjectsStatus.loading
+                                      ? 10
+                                      : state.places.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                                      child: state.status == ObjectsStatus.loading
+                                          ? ObjectSkeleton()
+                                          : GestureDetector(
+                                              onTap: () {
+                                                context.read<CharacteristicsCubit>().changeSelectedPlaceId(index, state.places, isJump: true);
+                                                context.read<DashboardCubit>().getNavBarItem(DashboardItem.characteristics);
+                                              },
+                                              child: ObjectCard(id: index, place: state.places[index], isLast: index == state.places.length - 1,)
+                                            ),
+                                    );
+                                  }
+                              ),
                             ),
                           ),
                         ],

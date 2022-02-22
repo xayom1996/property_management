@@ -19,6 +19,7 @@ import 'package:property_management/bloc_observer.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
+import 'package:property_management/exploitation/cubit/exploitation_cubit.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/cubit/add_object/add_object_cubit.dart';
 import 'package:property_management/objects/cubit/add_tenant/add_tenant_cubit.dart';
@@ -96,6 +97,7 @@ class App extends StatelessWidget {
           BlocProvider(create: (_) => ObjectsBloc(appBloc: _appBloc,
             fireStoreService: _fireStoreService)),
           BlocProvider(create: (_) => CharacteristicsCubit()),
+          BlocProvider(create: (_) => ExploitationCubit()),
           BlocProvider(create: (_) => AddObjectCubit(fireStoreService: _fireStoreService,
               appBloc: _appBloc)),
           BlocProvider(create: (_) => EditObjectCubit(fireStoreService: _fireStoreService)),
