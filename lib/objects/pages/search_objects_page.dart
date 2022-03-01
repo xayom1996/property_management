@@ -45,6 +45,8 @@ class _SearchObjectsPageState extends State<SearchObjectsPage> {
   }
 
   void changedSearchText(String text) {
+    if (!mounted) return;
+
     setState(() {
       searchText = text;
       if (searchText == '') {

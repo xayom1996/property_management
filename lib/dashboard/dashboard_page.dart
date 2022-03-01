@@ -13,6 +13,7 @@ import 'package:property_management/authentication/pages/authorization_page.dart
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
 import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
+import 'package:property_management/exploitation/cubit/exploitation_cubit.dart';
 import 'package:property_management/exploitation/pages/exploitation_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/pages/list_objects_page.dart';
@@ -29,15 +30,16 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ObjectsBloc, ObjectsState>(
         buildWhen: (previousState, state) {
-          if (state.status == ObjectsStatus.fetched){
-            context.read<CharacteristicsCubit>().fetchObjects(state.places);
+          // if (state.status == ObjectsStatus.fetched){
+          //   context.read<CharacteristicsCubit>().fetchObjects(state.places);
+          // }
+          if (state.status == ObjectsStatus.loading){
+            context.read<ExploitationCubit>().changeSelectedPlaceId(0, state.places, isJump: true);
+            context.read<CharacteristicsCubit>().changeSelectedPlaceId(0, state.places, isJump: true);
           }
           return previousState.places.length != state.places.length;
         },
         builder: (context, state) {
-          if (state.status == ObjectsStatus.fetched){
-            context.read<CharacteristicsCubit>().fetchObjects(state.places);
-          }
           return Scaffold(
             // key: _scaffoldKey,
             body: BlocBuilder<DashboardCubit, DashboardState>(

@@ -150,6 +150,7 @@ class CharacteristicsPage extends StatelessWidget {
                       return previousState.places != state.places;
                     },
                     builder: (context, state) {
+                      // context.read<CharacteristicsCubit>().changeSelectedPlaceId(0, state.places);
                       return CharacteristicsCarouselSlider(
                           key: const Key('carousel'),
                           places: state.places,
@@ -202,77 +203,81 @@ class CharacteristicsPage extends StatelessWidget {
                   previousState.places != state.places || previousState.selectedPlaceId != state.selectedPlaceId;
             },
             builder: (context, state) {
-              return state.currentIndexTab == 0
-                  ? CustomTabView(
-                objectItems: state.places.isEmpty
-                    ? {}
-                    : state.places[state.selectedPlaceId].objectItems,
-              )
-                  : CustomTabView(
-                      objectItems: state.places.isEmpty
-                          ? {}
-                          : state.places[state.selectedPlaceId].tenantItems ?? {},
-                      checkbox: true,
-                      textButton: state.places[state.selectedPlaceId].tenantItems == null
-                          ? context.read<AppBloc>().state.user.isAdminOrManager()
-                            ? GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => CreateTenantPage(docId: state.places[state.selectedPlaceId].id)),
-                                  );
-                                },
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/plus.svg',
-                                      color: Color(0xff4B81EF),
-                                      height: 16,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Добавить характеристики арендатора',
-                                      style: title2.copyWith(
-                                          color: Color(0xff4B81EF),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : CustomScrollView(
-                                slivers: [
-                                  SliverFillRemaining(
-                                    hasScrollBody: false,
-                                    child: Column(
+              return BlocBuilder<ObjectsBloc, ObjectsState>(
+                  builder: (context, objectState) {
+                  return state.currentIndexTab == 0
+                      ? CustomTabView(
+                          objectItems: objectState.places.isEmpty
+                              ? {}
+                              : objectState.places[state.selectedPlaceId].objectItems,
+                        )
+                      : CustomTabView(
+                          objectItems: objectState.places.isEmpty
+                              ? {}
+                              : objectState.places[state.selectedPlaceId].tenantItems ?? {},
+                          checkbox: true,
+                          textButton: objectState.places[state.selectedPlaceId].tenantItems == null
+                              ? context.read<AppBloc>().state.user.isAdminOrManager()
+                                ? GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => CreateTenantPage(docId: objectState.places[state.selectedPlaceId].id)),
+                                      );
+                                    },
+                                    child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         SvgPicture.asset(
-                                          'assets/icons/home_white.svg',
-                                          color: Color(0xffE9ECEE),
-                                          height: 80,
+                                          'assets/icons/plus.svg',
+                                          color: Color(0xff4B81EF),
+                                          height: 16,
                                         ),
-                                        SizedBox(
-                                          height: 32,
-                                        ),
+                                        SizedBox(width: 10),
                                         Text(
-                                          'Данные не заполнены, обратитесь к вашему менеджеру',
-                                          textAlign: TextAlign.center,
-                                          style: body.copyWith(
-                                            color: Color(0xffC7C9CC),
+                                          'Добавить характеристики арендатора',
+                                          style: title2.copyWith(
+                                              color: Color(0xff4B81EF),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              )
-                          : null,
-                    );
+                                  )
+                                : CustomScrollView(
+                                    slivers: [
+                                      SliverFillRemaining(
+                                        hasScrollBody: false,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/icons/home_white.svg',
+                                              color: Color(0xffE9ECEE),
+                                              height: 80,
+                                            ),
+                                            SizedBox(
+                                              height: 32,
+                                            ),
+                                            Text(
+                                              'Данные не заполнены, обратитесь к вашему менеджеру',
+                                              textAlign: TextAlign.center,
+                                              style: body.copyWith(
+                                                color: Color(0xffC7C9CC),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                              : null,
+                        );
+                }
+              );
             }
         ),
       )
