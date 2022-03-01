@@ -67,7 +67,7 @@ class _ChangeProfileBottomSheetState extends State<ChangeProfileBottomSheet> {
             ),
             decoration: BoxDecoration(
               color: kBackgroundColor,
-              borderRadius: BorderRadius.all(Radius.circular(22)),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(22), topRight: Radius.circular(22)),
             ),
             child: Column(
               children: [
