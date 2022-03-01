@@ -18,7 +18,8 @@ void main() {
 
   return runApp(
     DevicePreview(
-      enabled: !kReleaseMode,
+      // enabled: !kReleaseMode,
+      enabled: false,
       builder: (context) => MyApp(), // Wrap your app
     ),
   );
@@ -44,7 +45,15 @@ class MyApp extends StatelessWidget {
         ),
         // useInheritedMediaQuery: true,
         locale: DevicePreview.locale(context),
-        builder: DevicePreview.appBuilder,
+        builder: kReleaseMode
+            ? (context, child) {
+                final mediaQueryData = MediaQuery.of(context);
+                return MediaQuery(
+                  data: mediaQueryData.copyWith(textScaleFactor: 1.0),
+                  child: child!,
+                );
+              }
+            : DevicePreview.appBuilder,
         home: SplashPage(),
         // home: DashboardPage(),
         // home: TotalCharts(title: ''),

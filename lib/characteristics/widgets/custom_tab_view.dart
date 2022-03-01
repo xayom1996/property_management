@@ -44,38 +44,35 @@ class CustomTabView extends StatelessWidget {
                                   },
                                 )
                               : item['value'] == ''
-                                ? Padding(
-                                  padding: EdgeInsets.only(right: 16),
-                                  child: Tooltip(
-                                      padding: EdgeInsets.all(16),
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: horizontalPadding(context, 60, portraitPadding: 40)
-                                      ),
-                                      textStyle: body.copyWith(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.black,
-                                      ),
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      preferBelow: false,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.9),
-                                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.12),
-                                            blurRadius: 20,
-                                            offset: Offset(0, 8), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      message: 'Данные не заполнены, обратитесь к вашему менеджеру',
-                                      child: SvgPicture.asset(
-                                        'assets/icons/question.svg',
-                                        color: Color(0xff5589F1),
-                                        height: 16,
-                                      ),
+                                ? Tooltip(
+                                    padding: EdgeInsets.all(16),
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: horizontalPadding(context, 60, portraitPadding: 40)
                                     ),
-                                )
+                                    textStyle: body.copyWith(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.black,
+                                    ),
+                                    triggerMode: TooltipTriggerMode.tap,
+                                    preferBelow: false,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.9),
+                                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.12),
+                                          blurRadius: 20,
+                                          offset: Offset(0, 8), // changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    message: 'Данные не заполнены, обратитесь к вашему менеджеру',
+                                    child: BoxIcon(
+                                      iconPath: 'assets/icons/question.svg',
+                                      iconColor: Color(0xff5589F1),
+                                      backgroundColor: Colors.white,
+                                    )
+                                  )
                                 : null,
                         ),
                       if (checkbox != false)
