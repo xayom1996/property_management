@@ -1,4 +1,5 @@
-part of 'add_tenant_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:property_management/characteristics/models/characteristics.dart';
 
 enum StateStatus {
   initial,
@@ -9,8 +10,8 @@ enum StateStatus {
   error,
 }
 
-class AddTenantState extends Equatable {
-  const AddTenantState({
+class AddingState extends Equatable {
+  AddingState({
       this.items = const [],
       this.addItems = const [],
       this.status = StateStatus.initial,
@@ -23,12 +24,12 @@ class AddTenantState extends Equatable {
   @override
   List<Object> get props => [items, addItems, status];
 
-  AddTenantState copyWith({
+  AddingState copyWith({
     List<Characteristics>? items,
     List<Characteristics>? addItems,
     StateStatus? status,
   }) {
-    return AddTenantState(
+    return AddingState(
       items: items ?? this.items,
       addItems: addItems ?? this.addItems,
       status: status ?? this.status,

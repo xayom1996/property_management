@@ -9,7 +9,7 @@ class CharacteristicsCubit extends Cubit<CharacteristicsState> {
 
   void fetchObjects(List<Place> places) {
     emit(state.copyWith(
-      places: List.from(places.map((e) => e)),
+      // places: List.from(places.map((e) => e)),
       // currentIndexTab: 1,
       selectedPlaceId: state.selectedPlaceId > places.length - 1
           ? 0

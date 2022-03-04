@@ -10,9 +10,9 @@ import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/characteristics/models/characteristics.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
-  AppBloc({required UserRepository userRepository, required FireStoreService fireStoreService,})
+  AppBloc({required UserRepository userRepository, required FireStoreService fireStore,})
       : _userRepository = userRepository,
-        _fireStoreService = fireStoreService,
+        fireStoreService = fireStore,
         super(
         // userRepository.currentUser.isNotEmpty
         //     ? AppState.authenticated(userRepository.currentUser)
@@ -27,23 +27,31 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   status: AppStatus.loading,
                 ));
                 User _user = await _userRepository.getUser();
-                List<String> owners = await _fireStoreService.getOwners(_user);
+                List<String> owners = await fireStoreService.getOwners(_user);
                 List<Characteristics> objectItems = [];
                 List<Characteristics> tenantItems = [];
-                if (_user.isAdminOrManager()) {
-                  objectItems = await _fireStoreService
-                      .getCharacteristics('object_characteristics');
-                  tenantItems = await _fireStoreService
-                      .getCharacteristics('tenant_characteristics');
-                }
-                add(AppUserChanged(_user, owners, objectItems, tenantItems));
+                List<Characteristics> expensesItems = [];
+                List<Characteristics> expensesArticleItems = [];
+
+                // if (_user.isAdminOrManager()) {
+                objectItems = await fireStoreService
+                    .getCharacteristics('object_characteristics');
+                tenantItems = await fireStoreService
+                    .getCharacteristics('tenant_characteristics');
+                expensesItems = await fireStoreService
+                    .getCharacteristics('expense_characteristics');
+                expensesArticleItems = await fireStoreService
+                    .getCharacteristics('expense_article_characteristics');
+                // }
+                add(AppUserChanged(_user, owners, objectItems, tenantItems,
+                    expensesItems, expensesArticleItems));
               },
           );
           // _userRepository.getObjects(state.user);
         }
 
   final UserRepository _userRepository;
-  final FireStoreService _fireStoreService;
+  final FireStoreService fireStoreService;
   late final StreamSubscription<User> _userSubscription;
 
   void _onUserChanged(AppUserChanged event, Emitter<AppState> emit) async {
@@ -55,6 +63,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       owners: event.owners,
       objectItems: event.objectItems,
       tenantItems: event.tenantItems,
+      expensesItems: event.expensesItems,
+      expensesArticleItems: event.expensesArticleItems,
     ));
   }
 

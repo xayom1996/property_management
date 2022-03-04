@@ -33,9 +33,16 @@ class DashboardPage extends StatelessWidget {
           // if (state.status == ObjectsStatus.fetched){
           //   context.read<CharacteristicsCubit>().fetchObjects(state.places);
           // }
-          if (state.status == ObjectsStatus.loading){
-            context.read<ExploitationCubit>().changeSelectedPlaceId(0, state.places, isJump: true);
-            context.read<CharacteristicsCubit>().changeSelectedPlaceId(0, state.places, isJump: true);
+          if (state.status == ObjectsStatus.fetched){
+            if (context.read<ExploitationCubit>().state.selectedPlaceId > state.places.length - 1) {
+              context.read<ExploitationCubit>().changeSelectedPlaceId(
+                  0, state.places, isJump: true);
+            }
+            if (context.read<CharacteristicsCubit>().state.selectedPlaceId > state.places.length - 1) {
+              context.read<CharacteristicsCubit>().changeSelectedPlaceId(
+                  0, state.places, isJump: true);
+            }
+
           }
           return previousState.places.length != state.places.length;
         },

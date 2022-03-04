@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:property_management/app/utils/utils.dart';
 
 class Characteristics {
@@ -76,7 +77,7 @@ class Characteristics {
         return requisites.isEmpty ? '' : requisites;
       }
       if (value == null || value!.isEmpty) return '';
-      if (type != 'Число' || title.contains('Коэффициент') || (type == 'Число' && value!.contains('.'))) return '$value';
+      if (type != 'Число' || title.contains('Коэффициент') || (type == 'Число' && value!.contains('.'))) return '$value $unit';
       try {
         return formatNumber(value ?? '0', unit);
       } catch (e) {
@@ -84,8 +85,13 @@ class Characteristics {
       }
     }
 
+    String getMonthAndYear() {
+      DateTime parse = DateFormat('MM.yyyy').parse(getFullValue());
+      return capitalize(DateFormat('MMMM', 'RU').format(parse)) + DateFormat(' yyyy', 'RU').format(parse);
+    }
+
     bool isDate() {
-      return title == 'Дата приобретения' || title == 'Срок действия договора';
+      return title == 'Дата приобретения' || title == 'Срок действия договора' || type == 'Дата';
     }
 
     bool showInCreating() {

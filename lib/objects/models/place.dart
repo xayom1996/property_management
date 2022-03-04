@@ -1,15 +1,20 @@
+import 'package:intl/intl.dart';
 import 'package:property_management/characteristics/models/characteristics.dart';
 
 class Place {
   final String id;
   final Map<String, Characteristics> objectItems;
   Map<String, Characteristics>? tenantItems;
+  Map<String, Characteristics>? expensesArticleItems;
+  List<Map<String, Characteristics>>? expensesItems;
   final String? createdDate;
 
   Place({
     required this.id,
     required this.objectItems,
     this.tenantItems,
+    this.expensesArticleItems,
+    this.expensesItems,
     this.createdDate,
   });
 
@@ -27,6 +32,13 @@ class Place {
     tenantItems: json["tenantItems"] != null
         ? Map<String, Characteristics>.from(json["tenantItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value))))
         : json["tenantItems"],
+    expensesArticleItems: json["expensesArticleItems"] != null
+        ? Map<String, Characteristics>.from(json["expensesArticleItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value))))
+        : json["expensesArticleItems"],
+    expensesItems: json["expensesItems"] != null
+        ? List<Map<String, Characteristics>>.from(json["expensesItems"].map((expense) =>
+          Map<String, Characteristics>.from(expense.map((key, value) => MapEntry(key, Characteristics.fromJson(value))))))
+        : json["expensesItems"],
     createdDate: json["ownerId"],
   );
 
@@ -36,6 +48,16 @@ class Place {
         objectItems['Адрес объекта']!.getFullValue().toLowerCase().contains(_value) ||
         objectItems['Площадь объекта']!.getFullValue().toLowerCase().contains(_value);
   }
+
+  void getQuarters() {
+    List<Map<String, Characteristics>> items = expensesItems ?? [];
+    items.sort((a, b) {
+      DateTime dateA = DateFormat('MM.yyyy').parse(a['Месяц, Год']!.getFullValue());
+      DateTime dateB = DateFormat('MM.yyyy').parse(b['Месяц, Год']!.getFullValue());
+      return dateA.compareTo(dateB);
+    });
+  }
+
 }
 
 // class Object {

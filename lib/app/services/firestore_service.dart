@@ -16,21 +16,21 @@ class FireStoreService {
   final CacheClient _cache;
   final FirebaseFirestore _fireStore;
 
-  // Future<void> addTenantCharacteristics() async {
-  //   Map<String, dynamic> tenantCharacteristics = {};
-  //   for (var i = 0; i < tenantItems.length; i++) {
-  //     tenantCharacteristics[tenantItems[i]['title']] = {
+  // Future<void> addExpensesCharacteristics() async {
+  //   Map<String, dynamic> characteristics = {};
+  //   for (var i = 0; i < expensesArticleItems.length; i++) {
+  //     characteristics[expensesArticleItems[i]['title']] = {
   //       'id': i,
-  //       'title': tenantItems[i]['title'],
-  //       'placeholder': tenantItems[i]['placeholder'],
-  //       'type': tenantItems[i]['type'],
-  //       'unit': tenantItems[i]['unit'],
+  //       'title': expensesArticleItems[i]['title'],
+  //       'placeholder': expensesArticleItems[i]['placeholder'],
+  //       'type': expensesArticleItems[i]['type'],
+  //       'unit': expensesArticleItems[i]['unit'],
   //     };
   //   }
   //   await _fireStore.collection('characteristics')
-  //       .doc('tenant_characteristics')
-  //       .set(tenantCharacteristics)
-  //       .then((value) => print("tenant_characteristics Added"))
+  //       .doc('expense_article_characteristics')
+  //       .set(characteristics)
+  //       .then((value) => print("expense_article_characteristics Added"))
   //       .catchError((error) => throw Exception('Error adding'));
   // }
 
@@ -65,6 +65,55 @@ class FireStoreService {
             'tenantItems': tenantMap,
         })
         .then((value) => print("Object Added"))
+        .catchError((error) => throw Exception('Error adding'));
+  }
+
+  Future<void> addExpenseArticle({required List<Characteristics> expenseArticleItems, required String docId}) async {
+    Map<String, dynamic> expensesArticleMap = {for (var item in expenseArticleItems) item.title : item.toJson()};
+    await _fireStore.collection('objects')
+        .doc(docId)
+        .update({
+          'expensesArticleItems': expensesArticleMap,
+        })
+        .then((value) => print("expensesArticleItems Added"))
+        .catchError((error) => throw Exception('Error adding'));
+  }
+
+  Future<void> addExpense({required List<Characteristics> expenseItems, required String docId, int? monthIndex}) async {
+    Map<String, dynamic> expensesMap = {for (var item in expenseItems) item.title : item.toJson()};
+    DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
+
+    var object = snapshot.data() as Map<String, dynamic>;
+    List expensesItems = [];
+    if (object['expensesItems'] != null) {
+      expensesItems = object['expensesItems'];
+    }
+    // print(object['tenantItems']);
+    // print(object['tenantItems']['Процент от товарооборота']['value']);
+    // print(expensesMap['Фактический товарооборот']['value']);
+    // print(expensesMap);
+    if (object['tenantItems'] != null && object['tenantItems']['Процент от товарооборота']['value'] != null) {
+      try {
+        expensesMap['Сумма Аренды от товарооборота']['value'] =
+            int.parse(expensesMap['Фактический товарооборот']['value']) *
+                (100 - int.parse(object['tenantItems']['Процент от товарооборота']['value'])) / 100;
+        expensesMap['Сумма Аренды от товарооборота']['value'] = expensesMap['Сумма Аренды от товарооборота']['value'].toString();
+      } catch(e) {
+        print(e);
+      }
+    }
+    if (monthIndex != null) {
+      expensesItems[monthIndex] = expensesMap;
+    } else {
+      expensesItems.add(expensesMap);
+    }
+
+    await _fireStore.collection('objects')
+        .doc(docId)
+        .update({
+          'expensesItems': expensesItems,
+        })
+        .then((value) => print("expensesItems Added"))
         .catchError((error) => throw Exception('Error adding'));
   }
 

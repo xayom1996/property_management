@@ -92,9 +92,9 @@ class CharacteristicsPage extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(builder: (context) => state.currentIndexTab == 0
                                               ? EditObjectPage(id: state.selectedPlaceId)
-                                              : state.places[state.selectedPlaceId].tenantItems != null
+                                              : context.read<ObjectsBloc>().state.places[state.selectedPlaceId].tenantItems != null
                                                 ? EditTenantPage(id: state.selectedPlaceId)
-                                                : CreateTenantPage(docId: state.places[state.selectedPlaceId].id),
+                                                : CreateTenantPage(docId: context.read<ObjectsBloc>().state.places[state.selectedPlaceId].id),
                                           ),
                                         );
                                       },
@@ -147,6 +147,8 @@ class CharacteristicsPage extends StatelessWidget {
                 maxHeight: 83,
                 child: BlocBuilder<ObjectsBloc, ObjectsState>(
                     buildWhen: (previousState, state) {
+                      print(previousState.places.hashCode);
+                      print(state.places.hashCode);
                       return previousState.places != state.places;
                     },
                     builder: (context, state) {
@@ -200,7 +202,7 @@ class CharacteristicsPage extends StatelessWidget {
         body: BlocBuilder<CharacteristicsCubit, CharacteristicsState>(
             buildWhen: (previousState, state) {
               return previousState.currentIndexTab != state.currentIndexTab ||
-                  previousState.places != state.places || previousState.selectedPlaceId != state.selectedPlaceId;
+                  previousState.selectedPlaceId != state.selectedPlaceId;
             },
             builder: (context, state) {
               return BlocBuilder<ObjectsBloc, ObjectsState>(

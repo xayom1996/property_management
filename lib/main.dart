@@ -19,6 +19,10 @@ import 'package:property_management/bloc_observer.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
+import 'package:property_management/exploitation/cubit/add_expense_article_cubit.dart';
+import 'package:property_management/exploitation/cubit/add_expense_cubit.dart';
+import 'package:property_management/exploitation/cubit/edit_expense_article_cubit.dart';
+import 'package:property_management/exploitation/cubit/edit_expense_cubit.dart';
 import 'package:property_management/exploitation/cubit/exploitation_cubit.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/cubit/add_object/add_object_cubit.dart';
@@ -49,7 +53,7 @@ Future<void> main() async {
 
   final fireStoreService = FireStoreService();
 
-  final appBloc = AppBloc(userRepository: userRepository, fireStoreService: fireStoreService);
+  final appBloc = AppBloc(userRepository: userRepository, fireStore: fireStoreService);
 
   return BlocOverrides.runZoned(
     () => runApp(
@@ -104,6 +108,12 @@ class App extends StatelessWidget {
           BlocProvider(create: (_) => AddTenantCubit(fireStoreService: _fireStoreService,
               appBloc: _appBloc)),
           BlocProvider(create: (_) => EditTenantCubit(fireStoreService: _fireStoreService)),
+          BlocProvider(create: (_) => AddExpenseCubit(fireStoreService: _fireStoreService,
+              appBloc: _appBloc)),
+          BlocProvider(create: (_) => EditExpenseCubit(fireStoreService: _fireStoreService)),
+          BlocProvider(create: (_) => AddExpenseArticleCubit(fireStoreService: _fireStoreService,
+              appBloc: _appBloc)),
+          BlocProvider(create: (_) => EditExpenseArticleCubit(fireStoreService: _fireStoreService)),
         ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),

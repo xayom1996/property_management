@@ -142,13 +142,21 @@ class _ItemPageState extends State<ItemPage> {
                                         showTitleActions: true,
                                         onConfirm: (date) {
                                           setState(() {
-                                            textController.text =
-                                                DateFormat('dd.MM.yyyy').format(date);
+                                            if (widget.item.title == 'Месяц, Год'){
+                                              textController.text =
+                                                  DateFormat('MM.yyyy')
+                                                      .format(date);
+                                            } else {
+                                              textController.text =
+                                                  DateFormat('dd.MM.yyyy')
+                                                      .format(date);
+                                            }
                                           });
                                         },
                                         pickerModel: CustomPicker(
-                                            currentTime: DateTime.now(),
-                                            locale: LocaleType.ru),
+                                          currentTime: DateTime.now(),
+                                          locale: LocaleType.ru,
+                                        ),
                                         locale: LocaleType.ru
                                     );
                                   }
@@ -309,7 +317,7 @@ class CustomPicker extends CommonPickerModel {
   @override
   String? middleStringAtIndex(int index) {
     if (index >= 1 && index <= 12) {
-      return this.digits(index, 2);
+      return capitalize(DateFormat('MMMM', 'ru').format(DateTime(0, index)));
     } else {
       return null;
     }

@@ -1,7 +1,9 @@
-part of 'edit_tenant_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:property_management/app/cubit/adding/adding_state.dart';
+import 'package:property_management/characteristics/models/characteristics.dart';
 
-class EditTenantState extends Equatable {
-  const EditTenantState({
+class EditingState extends Equatable {
+  const EditingState({
     this.items = const [],
     this.docId = '',
     this.status = StateStatus.initial,
@@ -14,12 +16,12 @@ class EditTenantState extends Equatable {
   @override
   List<Object> get props => [items, status, docId];
 
-  EditTenantState copyWith({
+  EditingState copyWith({
     List<Characteristics>? items,
     String? docId,
     StateStatus? status,
   }) {
-    return EditTenantState(
+    return EditingState(
       items: items ?? this.items,
       docId: docId ?? this.docId,
       status: status ?? this.status,

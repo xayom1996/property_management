@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
 import 'package:property_management/exploitation/pages/exploitation_page.dart';
 import 'package:property_management/objects/pages/list_objects_page.dart';
+import 'package:property_management/total/pages/total_page.dart';
 
 part 'dashboard_state.dart';
 
@@ -17,7 +18,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     CharacteristicsPage(),
     ExploitationPage(),
     Container(),
-    Container(),
+    TotalPage(),
     // ExploitationPage(),
     // AnalyticsPage(),
     // TotalPage(),

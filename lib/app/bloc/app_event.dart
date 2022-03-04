@@ -14,15 +14,17 @@ class AppLogoutRequested extends AppEvent {}
 
 class AppUserChanged extends AppEvent {
   @visibleForTesting
-  const AppUserChanged(this.user, this.owners, this.objectItems, this.tenantItems);
+  const AppUserChanged(this.user, this.owners, this.objectItems, this.tenantItems, this.expensesItems, this.expensesArticleItems);
 
   final User user;
   final List<String> owners;
   final List<Characteristics> objectItems;
   final List<Characteristics> tenantItems;
+  final List<Characteristics> expensesItems;
+  final List<Characteristics> expensesArticleItems;
 
   @override
-  List<Object> get props => [user, owners, objectItems, tenantItems];
+  List<Object> get props => [user, owners, objectItems, tenantItems, expensesItems, expensesArticleItems];
 }
 
 class AppUserUpdated extends AppEvent {

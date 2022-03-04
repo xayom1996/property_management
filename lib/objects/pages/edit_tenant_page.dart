@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/account/pages/successfull_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/cubit/adding/adding_state.dart';
+import 'package:property_management/app/cubit/editing/editing_state.dart';
 import 'package:property_management/characteristics/widgets/document_page.dart';
 import 'package:property_management/exploitation/pages/create_details_tenant_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
@@ -58,7 +60,7 @@ class EditTenantPage extends StatelessWidget {
           ],
         ),
       ),
-      body: BlocConsumer<EditTenantCubit, EditTenantState>(
+      body: BlocConsumer<EditTenantCubit, EditingState>(
         listener: (context, state) {
           if (state.status == StateStatus.success) {
             var user = context.read<AppBloc>().state.user;
