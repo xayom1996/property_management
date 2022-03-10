@@ -7,7 +7,6 @@ import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
-import 'package:provider/src/provider.dart';
 
 class FilterBottomSheet extends StatefulWidget {
   final String filterBy;

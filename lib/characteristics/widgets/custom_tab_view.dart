@@ -12,8 +12,7 @@ import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/custom_checkbox.dart';
 import 'package:property_management/app/widgets/input_field.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
-import 'package:property_management/objects/cubit/edit_tenant/edit_tenant_cubit.dart';
-import 'package:provider/src/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomTabView extends StatelessWidget {
   final Map<String, Characteristics> objectItems;

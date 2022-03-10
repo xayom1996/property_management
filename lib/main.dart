@@ -128,7 +128,10 @@ class App extends StatelessWidget {
               ),
             ),
             // useInheritedMediaQuery: true,
-            locale: DevicePreview.locale(context),
+            locale: const Locale('ru', 'RU'),
+            // supportedLocales: const [
+            //   Locale('ru', 'RU'),
+            // ],
             builder: kReleaseMode
                 ? (context, child) {
                     final mediaQueryData = MediaQuery.of(context);

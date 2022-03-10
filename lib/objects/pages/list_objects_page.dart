@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -16,13 +15,10 @@ import 'package:property_management/objects/pages/search_objects_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/objects/widgets/search_text_field.dart';
 import 'package:property_management/settings/pages/settings_page.dart';
-import 'package:property_management/app/services/user_repository.dart';
 import 'package:property_management/app/utils/utils.dart';
-import 'package:provider/src/provider.dart';
 import 'create_object_page.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
-import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 

@@ -4,8 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
-import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/models/place.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
@@ -13,7 +11,6 @@ import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
-import 'package:provider/src/provider.dart';
 
 class SearchObjectsPage extends StatefulWidget {
   final Function(String) onTapObject;

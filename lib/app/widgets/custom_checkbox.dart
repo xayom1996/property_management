@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/theme/styles.dart';
-import 'package:property_management/app/utils/utils.dart';
-import 'package:provider/src/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomCheckBox extends StatelessWidget {
   final List<String> choices;

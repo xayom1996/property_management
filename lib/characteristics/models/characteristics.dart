@@ -1,3 +1,4 @@
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:property_management/app/utils/utils.dart';
 
@@ -77,7 +78,7 @@ class Characteristics {
         return requisites.isEmpty ? '' : requisites;
       }
       if (value == null || value!.isEmpty) return '';
-      if (type != 'Число' || title.contains('Коэффициент') || (type == 'Число' && value!.contains('.'))) return '$value $unit';
+      if (type != 'Число' || title.contains('Коэффициент') || (type == 'Число' && value!.contains('.'))) return '$value${unit == '' ? '' : ' $unit'}';
       try {
         return formatNumber(value ?? '0', unit);
       } catch (e) {
@@ -86,8 +87,9 @@ class Characteristics {
     }
 
     String getMonthAndYear() {
+      initializeDateFormatting('ru');
       DateTime parse = DateFormat('MM.yyyy').parse(getFullValue());
-      return capitalize(DateFormat('MMMM', 'RU').format(parse)) + DateFormat(' yyyy', 'RU').format(parse);
+      return capitalize(DateFormat('MMMM', 'ru').format(parse)) + DateFormat(' yyyy', 'ru').format(parse);
     }
 
     bool isDate() {
@@ -97,6 +99,6 @@ class Characteristics {
     bool showInCreating() {
       return title != 'Рыночная стоимость помещения' &&
           title != 'Фактическая Налоговая нагрузка' && title != 'Текущая аренда'
-          && title != 'Отмеченный клиент';
+          && title != 'Отмеченный клиент' && title != 'Сумма Аренды от товарооборота';
     }
 }

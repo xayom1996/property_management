@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
@@ -316,6 +317,7 @@ class CustomPicker extends CommonPickerModel {
 
   @override
   String? middleStringAtIndex(int index) {
+    initializeDateFormatting('ru');
     if (index >= 1 && index <= 12) {
       return capitalize(DateFormat('MMMM', 'ru').format(DateTime(0, index)));
     } else {
