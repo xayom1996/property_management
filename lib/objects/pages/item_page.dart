@@ -317,9 +317,9 @@ class CustomPicker extends CommonPickerModel {
 
   @override
   String? middleStringAtIndex(int index) {
-    initializeDateFormatting('ru');
+    // initializeDateFormatting('ru');
     if (index >= 1 && index <= 12) {
-      return capitalize(DateFormat('MMMM', 'ru').format(DateTime(0, index)));
+      return this.digits(index, 2);
     } else {
       return null;
     }

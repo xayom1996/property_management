@@ -35,6 +35,7 @@ import 'package:property_management/total/pages/total_charts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:property_management/app/services/user_repository.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:device_preview_screenshot/device_preview_screenshot.dart';
 
 Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -60,6 +61,10 @@ Future<void> main() async {
         DevicePreview(
           enabled: !kReleaseMode,
           // enabled: false,
+          tools: [
+            ...DevicePreview.defaultTools,
+            const DevicePreviewScreenshot(),
+          ],
           builder: (context) => App(
               userRepository: userRepository,
               fireStoreService: fireStoreService,
@@ -118,6 +123,7 @@ class App extends StatelessWidget {
         child: ScreenUtilInit(
           designSize: const Size(375, 812),
           builder: () => MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Управление недвижимостью',
             theme: ThemeData(
               // primarySwatch: Colors.blue,
