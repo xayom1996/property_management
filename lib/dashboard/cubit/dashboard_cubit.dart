@@ -16,7 +16,7 @@ class DashboardCubit extends Cubit<DashboardState> {
   List<Widget> pages = [
     const ListObjectsPage(),
     CharacteristicsPage(),
-    Container(),
+    ExploitationPage(),
     Container(),
     Container(),
     // ExploitationPage(),
