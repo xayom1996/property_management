@@ -59,8 +59,8 @@ Future<void> main() async {
   return BlocOverrides.runZoned(
     () => runApp(
         DevicePreview(
-          // enabled: !kReleaseMode,
-          enabled: true,
+          enabled: !kReleaseMode,
+          // enabled: true,
           tools: [
             ...DevicePreview.defaultTools,
             const DevicePreviewScreenshot(),
