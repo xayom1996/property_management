@@ -88,7 +88,8 @@ dev_dependencies:
 flutter_icons:
   ios: true
   android: true
-  image_path_ios: "assets/icons/maskable_icon.png"
+  remove_alpha_ios: true
+  image_path_ios: "assets/icons/ios_icon.png"
   image_path_android: "assets/icons/logo.png"
   adaptive_icon_background: "#ffffff"
 
