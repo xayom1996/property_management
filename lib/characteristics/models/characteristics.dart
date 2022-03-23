@@ -88,7 +88,7 @@ class Characteristics {
 
     String getMonthAndYear() {
       DateTime parse = DateFormat('MM.yyyy').parse(getFullValue());
-      return months[parse.month - 1] + DateFormat(' yyyy', 'ru').format(parse);
+      return months[parse.month - 1] + DateFormat(' yyyy').format(parse);
     }
 
     bool isDate() {
