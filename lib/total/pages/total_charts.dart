@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,8 @@ import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/expenses.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
+import 'package:property_management/objects/models/place.dart';
 
 class TotalCharts extends StatefulWidget {
   final String title;
@@ -96,6 +99,10 @@ class _TotalChartsState extends State<TotalCharts> {
 
   @override
   Widget build(BuildContext context) {
+    List<Place> places = context.read<ObjectsBloc>().state.places;
+    headerTitles = List.generate(places.length, (index) => places[index].objectItems['Название объекта']!.getFullValue());
+    headerTitles.add('Всего');
+
     List<charts.Series<DeveloperSeries, String>> series = [
       charts.Series(
           id: "money",
@@ -184,7 +191,7 @@ class _TotalChartsState extends State<TotalCharts> {
             slivers: [
               SliverFillRemaining(
                 hasScrollBody: false,
-                child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
+                child: true == false && MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -249,7 +256,8 @@ class _TotalChartsState extends State<TotalCharts> {
                                     padding: EdgeInsets.only(left: 24, right: 24, bottom: 8),
                                     child: ExpensesContainer(
                                       title: item['title'],
-                                      expenses: item['objects'],
+                                      // expenses: item['objects'],
+                                      expenses: List.generate(headerTitles.length, (index) => item['objects'][0]),
                                       width: 128,
                                       height: 32,
                                       isLastElementBold: true,
