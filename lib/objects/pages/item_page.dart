@@ -317,9 +317,8 @@ class CustomPicker extends CommonPickerModel {
 
   @override
   String? middleStringAtIndex(int index) {
-    initializeDateFormatting('ru');
     if (index >= 1 && index <= 12) {
-      return capitalize(DateFormat('MMMM', 'ru').format(DateTime(0, index)));
+      return months[index - 1];
     } else {
       return null;
     }
@@ -328,7 +327,7 @@ class CustomPicker extends CommonPickerModel {
   @override
   String? rightStringAtIndex(int index) {
     if (index >= 2000 && index <= 2025) {
-      return this.digits(index, 2);
+      return digits(index, 2);
     } else {
       return null;
     }

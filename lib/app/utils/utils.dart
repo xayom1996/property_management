@@ -28,6 +28,13 @@ double horizontalPadding(BuildContext context, double landscapePadding, {double 
   // return landscapePadding;
 }
 
+List<String> months = [
+  'Январь', 'Февраль', 'Март',
+  'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь',
+  'Октябрь',  'Ноябрь', 'Декабрь'
+];
+
 List<Map> characteristicItems = [
   {'title': 'Название характеристики', 'placeholder': 'Введите название характеристике'},
   {'title': 'Дополнительная информация', 'placeholder': 'Введите дополнительную информацию'},
