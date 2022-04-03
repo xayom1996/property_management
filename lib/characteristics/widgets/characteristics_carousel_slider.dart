@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/app/widgets/custom_carousel_slider.dart';
 import 'package:property_management/app/widgets/object_carousel_card.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
+import 'package:property_management/exploitation/cubit/exploitation_cubit.dart';
 import 'package:property_management/objects/models/place.dart';
 
 class CharacteristicsCarouselSlider extends StatelessWidget {
@@ -30,6 +31,7 @@ class CharacteristicsCarouselSlider extends StatelessWidget {
           selectedPlaceId: state.selectedPlaceId,
           onPageChanged: (int index) {
             context.read<CharacteristicsCubit>().changeSelectedPlaceId(index, places);
+            context.read<ExploitationCubit>().changeSelectedPlaceId(index, places, isJump: true);
           },
         );
       },

@@ -53,7 +53,10 @@ Future<void> main() async {
 
   final fireStoreService = FireStoreService();
 
-  final appBloc = AppBloc(userRepository: userRepository, fireStore: fireStoreService);
+  final appBloc = AppBloc(
+      userRepository: userRepository,
+      fireStore: fireStoreService
+  );
 
   return BlocOverrides.runZoned(
     () => runApp(

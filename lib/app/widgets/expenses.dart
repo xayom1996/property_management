@@ -77,7 +77,15 @@ class ExpensesContainer extends StatelessWidget {
                       ),
                     ),
                   ),
-                )
+                ),
+              if (width == null)
+                for (var index = 0; index < 3 - expenses.length; index++)
+                  Expanded(
+                    child: Padding(
+                        padding: const EdgeInsets.only(right: 9),
+                        child: Container()
+                    ),
+                  ),
             ],
           ),
         ),

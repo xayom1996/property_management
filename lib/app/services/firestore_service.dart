@@ -97,11 +97,18 @@ class FireStoreService {
         expensesMap['Сумма Аренды от товарооборота']['value'] =
             int.parse(expensesMap['Фактический товарооборот']['value']) *
                 (100 - int.parse(object['tenantItems']['Процент от товарооборота']['value'])) / 100;
-        expensesMap['Сумма Аренды от товарооборота']['value'] = expensesMap['Сумма Аренды от товарооборота']['value'].toString();
+        expensesMap['Сумма Аренды от товарооборота']['value'] = expensesMap['Сумма Аренды от товарооборота']['value'].round().toString();
       } catch(e) {
         print(e);
       }
     }
+
+    for (var i = 0; i < expensesItems.length; i++) {
+      if (expensesItems[i]['Месяц, Год']['value'] == expensesMap['Месяц, Год']['value'] && i != monthIndex){
+        throw Exception('Эксплуатация за этот месяц уже существует');
+      }
+    }
+
     if (monthIndex != null) {
       expensesItems[monthIndex] = expensesMap;
     } else {

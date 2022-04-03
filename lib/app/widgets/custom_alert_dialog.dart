@@ -4,8 +4,10 @@ import 'package:property_management/app/theme/styles.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   final String title;
+  final String? firstButtonTitle;
+  final String? secondButtonTitle;
   final Function()? onApprove;
-  const CustomAlertDialog({Key? key, required this.title, this.onApprove}) : super(key: key);
+  const CustomAlertDialog({Key? key, required this.title, this.onApprove, this.firstButtonTitle = 'Удалить', this.secondButtonTitle = 'Отмена'}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,56 +41,61 @@ class CustomAlertDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          if (onApprove != null) {
-                            onApprove!();
-                          }
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
-                              right: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
-                              // bottom: BorderSide(color: Color(0xffE9ECEE)),
+                    if (firstButtonTitle != null)
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (onApprove != null) {
+                              onApprove!();
+                            }
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
+                                right: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
+                                // bottom: BorderSide(color: Color(0xffE9ECEE)),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            "Удалить",
-                            textAlign: TextAlign.center,
-                            style: body,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
-                              left: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
-                            ),
-                          ),
-                          child: Text(
-                            "Отмена",
-                            textAlign: TextAlign.center,
-                            style: body.copyWith(
-                              color: Color(0xff5589F1),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
+                            child: Text(
+                              firstButtonTitle!,
+                              textAlign: TextAlign.center,
+                              style: body.copyWith(
+                                color: Color(0xff5589F1),
+                                fontWeight: FontWeight.bold
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    if (secondButtonTitle != null)
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
+                                left: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
+                              ),
+                            ),
+                            child: Text(
+                              secondButtonTitle!,
+                              textAlign: TextAlign.center,
+                              style: body.copyWith(
+                                color: Color(0xff5589F1),
+                                fontSize: 17,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 )
               ],

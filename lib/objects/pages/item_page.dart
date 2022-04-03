@@ -139,6 +139,12 @@ class _ItemPageState extends State<ItemPage> {
                               GestureDetector(
                                 onTap: () {
                                   if (widget.item.isDate()) {
+                                    DateTime maxTime = DateTime(2025, 12, 31);
+                                    DateTime minTime = DateTime(2000, 1, 1);
+                                    if (widget.item.title == 'Месяц, Год'){
+                                      maxTime = DateTime(DateTime.now().year + 1, 12, 31);
+                                      minTime = DateTime(DateTime.now().year - 1, 1, 1);
+                                    }
                                     DatePicker.showPicker(context,
                                         showTitleActions: true,
                                         onConfirm: (date) {
@@ -157,6 +163,8 @@ class _ItemPageState extends State<ItemPage> {
                                         pickerModel: CustomPicker(
                                           currentTime: DateTime.now(),
                                           locale: LocaleType.ru,
+                                          maxTime: maxTime,
+                                          minTime: minTime,
                                         ),
                                         locale: LocaleType.ru
                                     );
@@ -294,11 +302,21 @@ class _ItemPageState extends State<ItemPage> {
 }
 
 class CustomPicker extends CommonPickerModel {
+  late DateTime maxTime;
+  late DateTime minTime;
+
   String digits(int value, int length) {
     return '$value'.padLeft(length, "0");
   }
 
-  CustomPicker({DateTime? currentTime, required LocaleType locale}) : super(locale: locale) {
+  CustomPicker({
+    DateTime? currentTime,
+    DateTime? maxTime,
+    DateTime? minTime,
+    required LocaleType locale
+  }) : super(locale: locale) {
+    this.maxTime = maxTime ?? DateTime(2025, 12, 31);
+    this.minTime = minTime ?? DateTime(2000, 1, 1);
     this.currentTime = currentTime ?? DateTime.now();
     this.setLeftIndex(this.currentTime.day);
     this.setMiddleIndex(this.currentTime.month);
@@ -326,7 +344,7 @@ class CustomPicker extends CommonPickerModel {
 
   @override
   String? rightStringAtIndex(int index) {
-    if (index >= 2000 && index <= 2025) {
+    if (index >= minTime.year && index <= maxTime.year) {
       return digits(index, 2);
     } else {
       return null;
