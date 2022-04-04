@@ -17,7 +17,7 @@ class EditTenantCubit extends Cubit<EditingState> {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _items = List<Characteristics>.from(tenantItems.values.map((item) => item));
+    List<Characteristics> _items = List<Characteristics>.from(tenantItems.values.map((item) => Characteristics.fromJson(item.toJson())));
     _items.sort((a, b) => a.id.compareTo(b.id));
     emit(state.copyWith(
       items: _items,

@@ -26,10 +26,10 @@ class EditTenantPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var place = context.read<ObjectsBloc>().state.places[id];
-    if (place.tenantItems != null) {
-      context.read<EditTenantCubit>().getItems(place.tenantItems!, place.id);
-    }
+    // var place = context.read<ObjectsBloc>().state.places[id];
+    // if (place.tenantItems != null) {
+    //   context.read<EditTenantCubit>().getItems(place.tenantItems!, place.id);
+    // }
 
     return Scaffold(
       backgroundColor: kBackgroundColor,

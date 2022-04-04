@@ -24,20 +24,20 @@ class EditObjectPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int index;
-    var places = context
-        .read<ObjectsBloc>()
-        .state
-        .places;
-    if (id != null) {
-      index = id!;
-    }
-    else {
-      index = places.indexWhere((element) => element.id == docId);
-    }
-    if (context.read<EditObjectCubit>().state.docId != docId) {
-      context.read<EditObjectCubit>().getItems(places[index].objectItems, places[index].id);
-    }
+    // int index;
+    // var places = context
+    //     .read<ObjectsBloc>()
+    //     .state
+    //     .places;
+    // if (id != null) {
+    //   index = id!;
+    // }
+    // else {
+    //   index = places.indexWhere((element) => element.id == docId);
+    // }
+    // if (context.read<EditObjectCubit>().state.docId != docId) {
+    //   context.read<EditObjectCubit>().getItems(places[index].objectItems, places[index].id);
+    // }
 
     return Scaffold(
       backgroundColor: kBackgroundColor,

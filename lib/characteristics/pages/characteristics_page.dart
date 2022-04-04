@@ -11,6 +11,8 @@ import 'package:property_management/characteristics/cubit/characteristics_cubit.
 import 'package:property_management/characteristics/widgets/characteristics_carousel_slider.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
+import 'package:property_management/objects/cubit/edit_object/edit_object_cubit.dart';
+import 'package:property_management/objects/cubit/edit_tenant/edit_tenant_cubit.dart';
 import 'package:property_management/objects/pages/create_tenant_page.dart';
 import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/objects/pages/edit_tenant_page.dart';
@@ -85,6 +87,14 @@ class CharacteristicsPage extends StatelessWidget {
                                       iconColor: Colors.black,
                                       backgroundColor: Colors.white,
                                       onTap: () {
+                                        var place = context.read<ObjectsBloc>().state.places[state.selectedPlaceId];
+                                        if (state.currentIndexTab == 0) {
+                                          context.read<EditObjectCubit>().getItems(place.objectItems, place.id);
+                                        }
+                                        if (place.tenantItems != null && state.currentIndexTab == 1) {
+                                          context.read<EditTenantCubit>().getItems(place.tenantItems!, place.id);
+                                        }
+
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (context) => state.currentIndexTab == 0

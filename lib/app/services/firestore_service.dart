@@ -92,7 +92,8 @@ class FireStoreService {
     // print(object['tenantItems']['Процент от товарооборота']['value']);
     // print(expensesMap['Фактический товарооборот']['value']);
     // print(expensesMap);
-    if (object['tenantItems'] != null && object['tenantItems']['Процент от товарооборота']['value'] != null) {
+    if (object['tenantItems'] != null && object['tenantItems']['Процент от товарооборота']['value'] != null
+        && expensesMap['Фактический товарооборот']['value'] != null) {
       try {
         expensesMap['Сумма Аренды от товарооборота']['value'] =
             int.parse(expensesMap['Фактический товарооборот']['value']) *
@@ -174,6 +175,42 @@ class FireStoreService {
     List<Place> places = querySnapshot.docs.map((doc) {
       var place = doc.data() as Map<String, dynamic>;
       place['id'] = doc.id;
+      int sumTaxes = 0;
+      int sumCurrentRent = 0;
+      for (var item in place['expensesItems'] ?? []) {
+        if (item['Месяц, Год']['value'] == DateFormat('MM.yyyy').format(DateTime.now())) {
+          if (place['tenantItems'] != null) {
+            place['tenantItems']['Текущая аренда']['value'] = item['Текущая арендная плата']['value'];
+          }
+          if (place['objectItems'] != null) {
+            if (place['objectItems']['Арендная плата']['value'] == null
+                || place['objectItems']['Арендная плата']['value'] == '') {
+              place['objectItems']['Арендная плата']['value'] =
+              item['Текущая арендная плата']['value'];
+            }
+          }
+        }
+
+        /// Сумма налогов и арендной платы за последний год
+        DateTime date = DateFormat('MM.yyyy').parse(item['Месяц, Год']['value']);
+        DateTime now = DateTime.now();
+        if (date.isAfter(DateTime(now.year - 1, now.month, now.day))
+            && date.isBefore(now)){
+          if (item['Налоги']['value'] != null && item['Налоги']['value'] != '') {
+            sumTaxes = sumTaxes + int.parse(item['Налоги']['value']);
+          }
+          if (item['Текущая арендная плата']['value'] != null
+              && item['Текущая арендная плата']['value'] != '') {
+            sumCurrentRent = sumCurrentRent +
+                int.parse(item['Текущая арендная плата']['value']);
+          }
+        }
+      }
+      if (sumCurrentRent != 0 && sumTaxes != 0) {
+        if (place['objectItems'] != null) {
+          place['objectItems']['Фактическая Налоговая нагрузка']['value'] = (sumTaxes / sumCurrentRent).toString();
+        }
+      }
       return Place.fromJson(place);
     }).toList();
     return places;

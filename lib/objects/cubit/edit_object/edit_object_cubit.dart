@@ -41,7 +41,7 @@ class EditObjectCubit extends Cubit<EditObjectState> {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _items = state.items;
+    List<Characteristics> _items = List<Characteristics>.from(state.items.map((item) => item));
     _items[id].value = value;
     _items[id].documentUrl = documentUrl;
     if (id == 13 || id == 14) { //Арендная плата или коэфициент капитализации

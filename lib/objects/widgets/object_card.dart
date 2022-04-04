@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
+import 'package:property_management/objects/cubit/edit_object/edit_object_cubit.dart';
 import 'package:property_management/objects/models/place.dart';
 import 'package:property_management/objects/pages/edit_object_page.dart';
 import 'package:property_management/app/theme/styles.dart';
@@ -42,6 +43,7 @@ class ObjectCard extends StatelessWidget {
                     ]
                 ),
                 onTap: () {
+                  context.read<EditObjectCubit>().getItems(place!.objectItems, place!.id);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => EditObjectPage(docId: place!.id,)),
