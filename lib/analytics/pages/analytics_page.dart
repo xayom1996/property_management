@@ -4,13 +4,16 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:property_management/analytics/pages/analytics_charts.dart';
 import 'package:property_management/analytics/pages/create_plan_page.dart';
+import 'package:property_management/characteristics/widgets/characteristics_carousel_slider.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
 import 'package:property_management/objects/widgets/object_skeleton.dart';
 import 'package:property_management/app/theme/colors.dart';
@@ -71,6 +74,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
   List<Map> secondTabObjectItems = [];
 
+  final CarouselController carouselController = CarouselController();
+
   @override
   void initState() {
     super.initState();
@@ -111,7 +116,19 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               delegate: _SliverAppBarDelegate(
                 minHeight: 83,
                 maxHeight: 83,
-                child: CustomCarouselSlider(),
+                child: BlocBuilder<ObjectsBloc, ObjectsState>(
+                    buildWhen: (previousState, state) {
+                      return previousState.places != state.places;
+                    },
+                    builder: (context, state) {
+                      // context.read<CharacteristicsCubit>().changeSelectedPlaceId(0, state.places);
+                      return CharacteristicsCarouselSlider(
+                        key: const Key('carousel'),
+                        places: state.places,
+                        carouselController: carouselController,
+                      );
+                    }
+                ),
               ),
             ),
             SliverPersistentHeader(

@@ -54,8 +54,8 @@ class CustomAlertDialog extends StatelessWidget {
                             padding: EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               border: Border(
-                                top: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
-                                right: BorderSide(width:0.5, color: Color(0xffE9ECEE)),
+                                top: BorderSide(width: 0.5, color: Color(0xffE9ECEE)),
+                                // right: BorderSide(width: secondButtonTitle != null ? 0.5 : 0, color: Color(0xffE9ECEE)),
                                 // bottom: BorderSide(color: Color(0xffE9ECEE)),
                               ),
                             ),

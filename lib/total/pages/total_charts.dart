@@ -95,13 +95,31 @@ class _TotalChartsState extends State<TotalCharts> {
     ),
   ];
 
-  List headerTitles = ['ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'Всего'];
+  // List headerTitles = ['ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'Всего'];
+  List headerTitles = [];
+
+  String getRangeDate() {
+    DateTime date1 = DateTime.now();
+    DateTime date2 = DateTime(date1.year - 2, date1.month, date1.day);
+
+    return 'с ${DateFormat('MM.yyyy').format(date2)} по ${DateFormat('MM.yyyy').format(date1)}';
+  }
+
+  bool isHandedObject(Place place) {
+    return widget.title == 'Объекты спекулятивного типа' ? false : true;
+  }
 
   @override
   Widget build(BuildContext context) {
     List<Place> places = context.read<ObjectsBloc>().state.places;
-    headerTitles = List.generate(places.length, (index) => places[index].objectItems['Название объекта']!.getFullValue());
-    headerTitles.add('Всего');
+    for (var place in places) {
+      if (isHandedObject(place)) {
+        headerTitles.add(place.objectItems['Название объекта']!.getFullValue());
+      }
+    }
+    if (headerTitles.isNotEmpty) {
+      headerTitles.add('Всего');
+    }
 
     List<charts.Series<DeveloperSeries, String>> series = [
       charts.Series(
@@ -162,8 +180,9 @@ class _TotalChartsState extends State<TotalCharts> {
                       widget.title,
                       style: body,
                     ),
+                    if (widget.title == 'Объекты спекулятивного типа')
                     Text(
-                      'с 07.2018 по 12.2020',
+                      getRangeDate(),
                       style: caption,
                     ),
                   ],
@@ -251,18 +270,19 @@ class _TotalChartsState extends State<TotalCharts> {
                                     ),
                                   ),
                                 ),
-                                for (var item in totalTableItems)
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 24, right: 24, bottom: 8),
-                                    child: ExpensesContainer(
-                                      title: item['title'],
-                                      // expenses: item['objects'],
-                                      expenses: List.generate(headerTitles.length, (index) => item['objects'][0]),
-                                      width: 128,
-                                      height: 32,
-                                      isLastElementBold: true,
-                                    ),
-                                  )
+                                if (headerTitles.isNotEmpty)
+                                  for (var item in totalTableItems)
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 24, right: 24, bottom: 8),
+                                      child: ExpensesContainer(
+                                        title: item['title'],
+                                        // expenses: item['objects'],
+                                        expenses: List.generate(headerTitles.length, (index) => item['objects'][0]),
+                                        width: 128,
+                                        height: 32,
+                                        isLastElementBold: true,
+                                      ),
+                                    )
                               ],
                             ),
                           ),
