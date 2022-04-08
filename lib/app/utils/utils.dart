@@ -257,6 +257,10 @@ String capitalize(String value) {
   return "${value[0].toUpperCase()}${value.substring(1).toLowerCase()}";
 }
 
+bool isNotEmpty(var value) {
+  return value != null && value != '';
+}
+
 void showSnackBar(BuildContext context, String text, {String? label, Color? color}) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(text),

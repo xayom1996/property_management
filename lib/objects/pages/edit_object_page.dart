@@ -111,7 +111,8 @@ class EditObjectPage extends StatelessWidget {
                             title: item.title,
                             enabled: false,
                             onTap: () {
-                              if (item.title != 'Рыночная стоимость помещения') {
+                              if (item.title != 'Рыночная стоимость помещения'
+                                  && item.title != 'Фактическая Налоговая нагрузка') {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => ItemPage(

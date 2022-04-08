@@ -106,7 +106,24 @@ class _TotalChartsState extends State<TotalCharts> {
   }
 
   bool isHandedObject(Place place) {
-    return widget.title == 'Объекты спекулятивного типа' ? false : true;
+    int count = 0;
+    DateTime now = DateTime.now();
+    String date1 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 1, now.day));
+    String date2 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 2, now.day));
+    String date3 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 3, now.day));
+    for (var expense in place.expensesItems ?? []){
+      String date = expense['Месяц, Год']!.getFullValue();
+
+      if (date == date1 || date == date2 || date == date3){
+        if (isNotEmpty(expense['Текущая арендная плата']!.getFullValue())) {
+          if (int.parse(expense['Текущая арендная плата']!.value) > 0) {
+            count++;
+          }
+        }
+      }
+    }
+    return (widget.title == 'Объекты в эксплуатации' && count == 3)
+        || (widget.title == 'Объекты спекулятивного типа' && count != 3);
   }
 
   @override
@@ -238,7 +255,7 @@ class _TotalChartsState extends State<TotalCharts> {
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(

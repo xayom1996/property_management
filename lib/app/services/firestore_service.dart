@@ -59,11 +59,38 @@ class FireStoreService {
 
   Future<void> addTenant({required List<Characteristics> tenantItems, required String docId}) async {
     Map<String, dynamic> tenantMap = {for (var item in tenantItems) item.title : item.toJson()}; // 2016-01-25
+
+    DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
+
+    var object = snapshot.data() as Map<String, dynamic>;
+
+    object['tenantItems'] = tenantMap;
+
+    if (object['expensesItems'] != null) {
+      for (var i = 0; i < object['expensesItems'].length; i++){
+        if (object['tenantItems'] != null && isNotEmpty(object['tenantItems']['Процент от товарооборота']['value'])
+            && isNotEmpty(object['expensesItems'][i]['Фактический товарооборот']['value'])) {
+          try {
+            object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] =
+                int.parse(
+                    object['expensesItems'][i]['Фактический товарооборот']['value']) *
+                    (100 - double.parse(
+                        object['tenantItems']['Процент от товарооборота']['value'])) /
+                    100;
+            object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] =
+                object['expensesItems'][i]['Сумма Аренды от товарооборота']['value']
+                    .toStringAsFixed(2);
+          } catch (e) {
+            print(e);
+          }
+        } else {
+          object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] = '0';
+        }
+      }
+    }
     await _fireStore.collection('objects')
         .doc(docId)
-        .update({
-            'tenantItems': tenantMap,
-        })
+        .update(object)
         .then((value) => print("Object Added"))
         .catchError((error) => throw Exception('Error adding'));
   }
@@ -92,16 +119,18 @@ class FireStoreService {
     // print(object['tenantItems']['Процент от товарооборота']['value']);
     // print(expensesMap['Фактический товарооборот']['value']);
     // print(expensesMap);
-    if (object['tenantItems'] != null && object['tenantItems']['Процент от товарооборота']['value'] != null
-        && expensesMap['Фактический товарооборот']['value'] != null) {
+    if (object['tenantItems'] != null && isNotEmpty(object['tenantItems']['Процент от товарооборота']['value'])
+        && isNotEmpty(expensesMap['Фактический товарооборот']['value'])) {
       try {
         expensesMap['Сумма Аренды от товарооборота']['value'] =
             int.parse(expensesMap['Фактический товарооборот']['value']) *
-                (100 - int.parse(object['tenantItems']['Процент от товарооборота']['value'])) / 100;
-        expensesMap['Сумма Аренды от товарооборота']['value'] = expensesMap['Сумма Аренды от товарооборота']['value'].round().toString();
+                (100 - double.parse(object['tenantItems']['Процент от товарооборота']['value'])) / 100;
+        expensesMap['Сумма Аренды от товарооборота']['value'] = expensesMap['Сумма Аренды от товарооборота']['value'].toStringAsFixed(2);
       } catch(e) {
         print(e);
       }
+    } else {
+      expensesMap['Сумма Аренды от товарооборота']['value'] = '0';
     }
 
     for (var i = 0; i < expensesItems.length; i++) {
@@ -138,12 +167,39 @@ class FireStoreService {
 
   Future<void> editTenant({required List<Characteristics> filledItems, required String docId}) async {
     Map<String, dynamic> tenantMap = {for (var item in filledItems) item.title : item.toJson()}; // 2016-01-25
+
+    DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
+
+    var object = snapshot.data() as Map<String, dynamic>;
+
+    object['tenantItems'] = tenantMap;
+
+    if (object['expensesItems'] != null) {
+      for (var i = 0; i < object['expensesItems'].length; i++){
+        if (object['tenantItems'] != null && isNotEmpty(object['tenantItems']['Процент от товарооборота']['value'])
+            && isNotEmpty(object['expensesItems'][i]['Фактический товарооборот']['value'])) {
+          try {
+            object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] =
+                int.parse(
+                    object['expensesItems'][i]['Фактический товарооборот']['value']) *
+                    (100 - double.parse(
+                        object['tenantItems']['Процент от товарооборота']['value'])) /
+                    100;
+            object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] =
+                object['expensesItems'][i]['Сумма Аренды от товарооборота']['value']
+                    .toStringAsFixed(2);
+          } catch (e) {
+            print(e);
+          }
+        } else {
+          object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] = '0';
+        }
+      }
+    }
     await _fireStore.collection('objects')
         .doc(docId)
-        .update({
-          'tenantItems': tenantMap,
-        })
-        .then((value) => print("Object updated"))
+        .update(object)
+        .then((value) => print("Object Added"))
         .catchError((error) => throw Exception('Error adding'));
   }
 
@@ -208,7 +264,7 @@ class FireStoreService {
       }
       if (sumCurrentRent != 0 && sumTaxes != 0) {
         if (place['objectItems'] != null) {
-          place['objectItems']['Фактическая Налоговая нагрузка']['value'] = (sumTaxes / sumCurrentRent).toString();
+          place['objectItems']['Фактическая Налоговая нагрузка']['value'] = (sumTaxes / sumCurrentRent).toStringAsFixed(2);
         }
       }
       return Place.fromJson(place);
