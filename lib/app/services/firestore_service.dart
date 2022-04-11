@@ -72,14 +72,14 @@ class FireStoreService {
             && isNotEmpty(object['expensesItems'][i]['Фактический товарооборот']['value'])) {
           try {
             object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] =
-                int.parse(
+                double.parse(
                     object['expensesItems'][i]['Фактический товарооборот']['value']) *
                     (100 - double.parse(
                         object['tenantItems']['Процент от товарооборота']['value'])) /
                     100;
             object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] =
-                object['expensesItems'][i]['Сумма Аренды от товарооборота']['value']
-                    .toStringAsFixed(2);
+                double.parse(object['expensesItems'][i]['Сумма Аренды от товарооборота']['value']
+                    .toStringAsFixed(2)).toString();
           } catch (e) {
             print(e);
           }
@@ -106,7 +106,8 @@ class FireStoreService {
         .catchError((error) => throw Exception('Error adding'));
   }
 
-  Future<void> addExpense({required List<Characteristics> expenseItems, required String docId, int? monthIndex}) async {
+  Future<void> addExpense({required List<Characteristics> expenseItems,
+    required String docId, int? monthIndex, List<Characteristics>? defaultExpenseItems}) async {
     Map<String, dynamic> expensesMap = {for (var item in expenseItems) item.title : item.toJson()};
     DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
 
@@ -115,15 +116,11 @@ class FireStoreService {
     if (object['expensesItems'] != null) {
       expensesItems = object['expensesItems'];
     }
-    // print(object['tenantItems']);
-    // print(object['tenantItems']['Процент от товарооборота']['value']);
-    // print(expensesMap['Фактический товарооборот']['value']);
-    // print(expensesMap);
     if (object['tenantItems'] != null && isNotEmpty(object['tenantItems']['Процент от товарооборота']['value'])
         && isNotEmpty(expensesMap['Фактический товарооборот']['value'])) {
       try {
         expensesMap['Сумма Аренды от товарооборота']['value'] =
-            int.parse(expensesMap['Фактический товарооборот']['value']) *
+            double.parse(expensesMap['Фактический товарооборот']['value']) *
                 (100 - double.parse(object['tenantItems']['Процент от товарооборота']['value'])) / 100;
         expensesMap['Сумма Аренды от товарооборота']['value'] = expensesMap['Сумма Аренды от товарооборота']['value'].toStringAsFixed(2);
       } catch(e) {
@@ -133,16 +130,40 @@ class FireStoreService {
       expensesMap['Сумма Аренды от товарооборота']['value'] = '0';
     }
 
-    for (var i = 0; i < expensesItems.length; i++) {
-      if (expensesItems[i]['Месяц, Год']['value'] == expensesMap['Месяц, Год']['value'] && i != monthIndex){
-        throw Exception('Эксплуатация за этот месяц уже существует');
-      }
+    List expensesDates = [for (var i = 0; i < expensesItems.length; i++) if (i != monthIndex) expensesItems[i]['Месяц, Год']['value']];
+
+    if (expensesDates.contains(expensesMap['Месяц, Год']['value'])){
+      throw Exception('Эксплуатация за этот месяц уже существует');
     }
 
     if (monthIndex != null) {
       expensesItems[monthIndex] = expensesMap;
     } else {
       expensesItems.add(expensesMap);
+
+      DateTime newDate = DateTime.now();
+      DateTime currentDate = DateFormat('MM.yyyy').parse(expensesMap['Месяц, Год']['value']);
+
+      while (DateFormat('MM.yyyy').format(currentDate) != DateFormat('MM.yyyy').format(newDate)) {
+        if (!expensesDates.contains(DateFormat('MM.yyyy').format(currentDate))
+            && DateFormat('MM.yyyy').format(currentDate) != expensesMap['Месяц, Год']['value']){
+          Map<String, dynamic> defaultExpensesMap = {for (var item in defaultExpenseItems!) item.title : item.toJson()};
+          defaultExpensesMap['Месяц, Год']['value'] = DateFormat('MM.yyyy').format(currentDate);
+          expensesItems.add(defaultExpensesMap);
+        }
+        if (newDate.isBefore(currentDate)) {
+          currentDate = DateTime(currentDate.year, currentDate.month - 1);
+        } else {
+          currentDate = DateTime(currentDate.year, currentDate.month + 1);
+        }
+      }
+
+      if (!expensesDates.contains(DateFormat('MM.yyyy').format(currentDate))
+          && DateFormat('MM.yyyy').format(currentDate) != expensesMap['Месяц, Год']['value']){
+        Map<String, dynamic> defaultExpensesMap = {for (var item in defaultExpenseItems!) item.title : item.toJson()};
+        defaultExpensesMap['Месяц, Год']['value'] = DateFormat('MM.yyyy').format(currentDate);
+        expensesItems.add(defaultExpensesMap);
+      }
     }
 
     await _fireStore.collection('objects')
@@ -180,14 +201,14 @@ class FireStoreService {
             && isNotEmpty(object['expensesItems'][i]['Фактический товарооборот']['value'])) {
           try {
             object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] =
-                int.parse(
+                double.parse(
                     object['expensesItems'][i]['Фактический товарооборот']['value']) *
                     (100 - double.parse(
                         object['tenantItems']['Процент от товарооборота']['value'])) /
                     100;
             object['expensesItems'][i]['Сумма Аренды от товарооборота']['value'] =
-                object['expensesItems'][i]['Сумма Аренды от товарооборота']['value']
-                    .toStringAsFixed(2);
+                double.parse(object['expensesItems'][i]['Сумма Аренды от товарооборота']['value']
+                    .toStringAsFixed(2)).toString();
           } catch (e) {
             print(e);
           }
@@ -231,8 +252,8 @@ class FireStoreService {
     List<Place> places = querySnapshot.docs.map((doc) {
       var place = doc.data() as Map<String, dynamic>;
       place['id'] = doc.id;
-      int sumTaxes = 0;
-      int sumCurrentRent = 0;
+      double sumTaxes = 0;
+      double sumCurrentRent = 0;
       for (var item in place['expensesItems'] ?? []) {
         if (item['Месяц, Год']['value'] == DateFormat('MM.yyyy').format(DateTime.now())) {
           if (place['tenantItems'] != null) {
@@ -253,18 +274,18 @@ class FireStoreService {
         if (date.isAfter(DateTime(now.year - 1, now.month, now.day))
             && date.isBefore(now)){
           if (item['Налоги']['value'] != null && item['Налоги']['value'] != '') {
-            sumTaxes = sumTaxes + int.parse(item['Налоги']['value']);
+            sumTaxes = sumTaxes + double.parse(item['Налоги']['value']);
           }
           if (item['Текущая арендная плата']['value'] != null
               && item['Текущая арендная плата']['value'] != '') {
             sumCurrentRent = sumCurrentRent +
-                int.parse(item['Текущая арендная плата']['value']);
+                double.parse(item['Текущая арендная плата']['value']);
           }
         }
       }
       if (sumCurrentRent != 0 && sumTaxes != 0) {
         if (place['objectItems'] != null) {
-          place['objectItems']['Фактическая Налоговая нагрузка']['value'] = (sumTaxes / sumCurrentRent).toStringAsFixed(2);
+          place['objectItems']['Фактическая Налоговая нагрузка']['value'] = double.parse((sumTaxes / sumCurrentRent).toStringAsFixed(2)).toString();
         }
       }
       return Place.fromJson(place);

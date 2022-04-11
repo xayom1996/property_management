@@ -20,6 +20,7 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
         _appBloc = appBloc,
         super(const ObjectsState()) {
         on<ObjectsGetEvent>(_onGetObjects);
+        on<ObjectsUpdateEvent>(_onUpdateObjects);
         on<GetFilteredObjectsEvent>(_onGetFilteredObjects);
         on<ChangeFilterObjectsEvent>(_onChangeFilterObjects);
         on<ChangeColorObjectEvent>(_onChangeColorObjectEvent);
@@ -46,6 +47,22 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
     } else {
       places = await _fireStoreService.getObjects(event.user, event.owners);
     }
+    String filterBy = state.filterBy;
+    String filterField = 'Название объекта';
+    if (filterBy == 'address'){
+      filterField = 'Адрес объекта';
+    }
+    places.sort((a, b) =>
+        a.objectItems[filterField]!.getFullValue().toLowerCase()
+            .compareTo(b.objectItems[filterField]!.getFullValue().toLowerCase())
+    );
+    emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
+  }
+
+  void _onUpdateObjects(ObjectsUpdateEvent event, Emitter<ObjectsState> emit) async {
+    emit(state.copyWith(status: ObjectsStatus.loading));
+    List<Place> places;
+    places = await _fireStoreService.getObjects(_appBloc.state.user, _appBloc.state.owners);
     String filterBy = state.filterBy;
     String filterField = 'Название объекта';
     if (filterBy == 'address'){

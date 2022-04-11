@@ -15,6 +15,15 @@ class ObjectsGetEvent extends ObjectsEvent {
   List<Object?> get props => [user, owners];
 }
 
+class ObjectsUpdateEvent extends ObjectsEvent {
+
+  const ObjectsUpdateEvent();
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
 class ChangeFilterObjectsEvent extends ObjectsEvent {
   final String filterBy;
 
