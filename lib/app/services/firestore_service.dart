@@ -122,7 +122,7 @@ class FireStoreService {
         expensesMap['Сумма Аренды от товарооборота']['value'] =
             double.parse(expensesMap['Фактический товарооборот']['value']) *
                 (100 - double.parse(object['tenantItems']['Процент от товарооборота']['value'])) / 100;
-        expensesMap['Сумма Аренды от товарооборота']['value'] = expensesMap['Сумма Аренды от товарооборота']['value'].toStringAsFixed(2);
+        expensesMap['Сумма Аренды от товарооборота']['value'] = double.parse(expensesMap['Сумма Аренды от товарооборота']['value'].toStringAsFixed(2)).toString();
       } catch(e) {
         print(e);
       }

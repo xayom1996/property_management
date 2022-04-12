@@ -9,6 +9,7 @@ import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 import 'package:property_management/app/widgets/input_field.dart';
 
 class PersonalInformationPage extends StatelessWidget {
@@ -51,6 +52,10 @@ class PersonalInformationPage extends StatelessWidget {
               iconColor: Colors.black,
               backgroundColor: Colors.white,
               onTap: () {
+                if (_firstName.text.replaceAll(' ', '').isEmpty
+                    || _secondName.text.replaceAll(' ', '').isEmpty) {
+                  return;
+                }
                 if (user.firstName != _firstName.text ||
                     user.secondName != _secondName.text || user.patronymic != _patronymic.text){
                   context.read<AppBloc>().add(

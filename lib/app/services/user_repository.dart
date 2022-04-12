@@ -69,6 +69,7 @@ class UserRepository {
 
   Stream<User> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
+      firebaseUser?.reload();
       final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
       _cache.write(key: userCacheKey, value: user);
       return user;
@@ -86,7 +87,8 @@ class UserRepository {
           'firstName': 'firstName',
           'secondName': 'secondName',
           'patronymic': 'patronymic',
-          'role': 'user'
+          'role': 'user',
+          'updateAt': Timestamp.fromDate(DateTime.now().toUtc()),
         })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -156,8 +158,11 @@ class UserRepository {
 
   Future<void> updateUser(User user) async {
     String documentId = currentUser.id;
+    Map<String, dynamic> userJs = user.toJson();
+    userJs['updateAt'] = Timestamp.fromDate(DateTime.now().toUtc());
+
     await _fireStore.collection('users').doc(documentId)
-        .update(user.toJson())
+        .update(userJs)
         .then((value) => print("User Updated"))
         .catchError((error) => print("Failed to update user: $error"));
   }
@@ -195,12 +200,19 @@ class UserRepository {
     final user = _firebaseAuth.currentUser;
     var box = await Hive.openBox('accountsBox');
     Map currentAccount = box.get('account');
+
     if (currentPassword != currentAccount['password']){
       throw const LogInWithEmailAndPasswordFailure('Неверный текущий пароль');
     }
+
+    if (newPassword.length < 6) {
+      throw const LogInWithEmailAndPasswordFailure('Пароль должен быть минимум 6 символов');
+    }
+
     final cred = EmailAuthProvider.credential(
         email: user!.email!, password: currentPassword
     );
+
     user.reauthenticateWithCredential(cred).then((value) {
       user.updatePassword(newPassword).then((_) {
         print('Пароль изменен');

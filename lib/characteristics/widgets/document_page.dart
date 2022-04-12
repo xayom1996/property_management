@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:file_saver/file_saver.dart';
@@ -82,14 +83,17 @@ class _DocumentPageState extends State<DocumentPage> {
               style: body,
             ),
             Spacer(),
-            BoxIcon(
-              iconPath: 'assets/icons/download.svg',
-              iconColor: Colors.black,
-              backgroundColor: Colors.white,
-              isLoading: isDownloadingFile,
-              onTap: !isDownloadingFile
-                  ? downloadFile
-                  : null,
+            Transform.rotate(
+              angle: pi,
+              child: BoxIcon(
+                iconPath: 'assets/icons/download.svg',
+                iconColor: Colors.black,
+                backgroundColor: Colors.white,
+                isLoading: isDownloadingFile,
+                onTap: !isDownloadingFile
+                    ? downloadFile
+                    : null,
+              ),
             ),
           ],
         ),
