@@ -69,7 +69,6 @@ class UserRepository {
 
   Stream<User> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
-      firebaseUser?.reload();
       final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
       _cache.write(key: userCacheKey, value: user);
       return user;
@@ -88,7 +87,7 @@ class UserRepository {
           'secondName': 'secondName',
           'patronymic': 'patronymic',
           'role': 'user',
-          'updateAt': Timestamp.fromDate(DateTime.now().toUtc()),
+          'updatedAt': Timestamp.fromDate(DateTime.now().toUtc()),
         })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -159,7 +158,7 @@ class UserRepository {
   Future<void> updateUser(User user) async {
     String documentId = currentUser.id;
     Map<String, dynamic> userJs = user.toJson();
-    userJs['updateAt'] = Timestamp.fromDate(DateTime.now().toUtc());
+    userJs['updatedAt'] = Timestamp.fromDate(DateTime.now().toUtc());
 
     await _fireStore.collection('users').doc(documentId)
         .update(userJs)

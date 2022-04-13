@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,16 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  try {
+    await FirebaseAuth.instance.currentUser?.reload();
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'user-disabled') {
+      await FirebaseAuth.instance.signOut();
+    }
+  } catch(err) {
+    print(err);
+  }
 
   final userRepository = UserRepository();
   await userRepository.user.first;

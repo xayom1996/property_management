@@ -12,12 +12,20 @@ import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 import 'package:property_management/app/widgets/input_field.dart';
 
-class PersonalInformationPage extends StatelessWidget {
+class PersonalInformationPage extends StatefulWidget {
   PersonalInformationPage({Key? key}) : super(key: key);
 
+  @override
+  State<PersonalInformationPage> createState() => _PersonalInformationPageState();
+}
+
+class _PersonalInformationPageState extends State<PersonalInformationPage> {
   TextEditingController _secondName = TextEditingController();
+
   TextEditingController _firstName = TextEditingController();
+
   TextEditingController _patronymic = TextEditingController();
+
   TextEditingController _email = TextEditingController();
 
   @override
@@ -54,6 +62,14 @@ class PersonalInformationPage extends StatelessWidget {
               onTap: () {
                 if (_firstName.text.replaceAll(' ', '').isEmpty
                     || _secondName.text.replaceAll(' ', '').isEmpty) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => const CustomAlertDialog(
+                        title: 'Имя и Фамилия должны быть заполнены',
+                        firstButtonTitle: 'Ок',
+                        secondButtonTitle: null,
+                      )
+                  );
                   return;
                 }
                 if (user.firstName != _firstName.text ||
@@ -97,13 +113,18 @@ class PersonalInformationPage extends StatelessWidget {
         listener: (context, state) {
         },
         builder: (context, state) {
-          _email.text = user.email;
-          _firstName.text = user.firstName ?? '';
-          _firstName.selection = TextSelection.fromPosition(TextPosition(offset: _firstName.text.length));
-          _secondName.text = user.secondName ?? '';
-          _secondName.selection = TextSelection.fromPosition(TextPosition(offset: _secondName.text.length));
-          _patronymic.text = user.patronymic ?? '';
-          _patronymic.selection = TextSelection.fromPosition(TextPosition(offset: _patronymic.text.length));
+          if (_email.text.isEmpty) {
+            _email.text = user.email;
+            _firstName.text = user.firstName ?? '';
+            _firstName.selection = TextSelection.fromPosition(
+                TextPosition(offset: _firstName.text.length));
+            _secondName.text = user.secondName ?? '';
+            _secondName.selection = TextSelection.fromPosition(
+                TextPosition(offset: _secondName.text.length));
+            _patronymic.text = user.patronymic ?? '';
+            _patronymic.selection = TextSelection.fromPosition(
+                TextPosition(offset: _patronymic.text.length));
+          }
 
           return CustomScrollView(
             slivers: [
