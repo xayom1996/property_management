@@ -4,21 +4,22 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
+import 'package:property_management/app/cubit/adding/adding_state.dart';
 import 'package:property_management/app/services/firestore_service.dart';
 import 'package:property_management/characteristics/models/characteristics.dart';
 
-part 'add_object_state.dart';
+// part 'add_tenant_state.dart';
 
-class AddObjectCubit extends Cubit<AddObjectState> {
-  AddObjectCubit({required FireStoreService fireStoreService, required AppBloc appBloc})
+class AddPlanCubit extends Cubit<AddingState> {
+  AddPlanCubit({required FireStoreService fireStoreService, required AppBloc appBloc})
       : _fireStoreService = fireStoreService,
         _appBloc = appBloc,
-        super(AddObjectState()) {
-          getItems(_appBloc.state.objectItems);
+        super(AddingState()) {
+          getItems(_appBloc.state.expensesItems);
           _appBlocSubscription = _appBloc.stream.listen(
                   (state){
                     if (state.status != AppStatus.loading) {
-                      getItems(state.objectItems);
+                      getItems(state.expensesItems);
                     }
                   });
         }
@@ -29,19 +30,20 @@ class AddObjectCubit extends Cubit<AddObjectState> {
 
   void getItems(List<Characteristics> items) async {
     List<Characteristics> _addItems = List.from(items.map((item) => Characteristics.fromJson(item.toJson())));
-    emit(AddObjectState(
+    emit(AddingState(
       addItems: _addItems,
       items: items,
+      status: isItemsValid(_addItems)
+          ? StateStatus.valid
+          : StateStatus.invalid,
     ));
   }
 
-  bool isObjectItemsValid(List<Characteristics> items) {
-    return items[0].getFullValue().isNotEmpty && items[1].getFullValue().isNotEmpty
-        && items[2].getFullValue().isNotEmpty && items[3].getFullValue().isNotEmpty
-        && items[6].getFullValue().isNotEmpty && items[7].getFullValue().isNotEmpty;
+  bool isItemsValid(List<Characteristics> items) {
+    return items[0].getFullValue().isNotEmpty;
   }
 
-  void changeItemValue(int id, String value, String documentUrl) {
+  void changeItemValue(int id, String value) {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
@@ -50,37 +52,30 @@ class AddObjectCubit extends Cubit<AddObjectState> {
       _addItems.add(item);
     }
     _addItems[id].value = value;
-    _addItems[id].documentUrl = documentUrl;
-    // if (id == 13 || id == 14) { //Арендная плата или коэфициент капитализации
-    //   if (_addItems[13].getFullValue().isNotEmpty && _addItems[14].getFullValue().isNotEmpty) {
-    //     _addItems[15].value = (double.parse(_addItems[13].value!) ~/ double.parse(_addItems[14].value!)).toString();
-    //   } else {
-    //     _addItems[15].value = '';
-    //   }
-    // }
     emit(state.copyWith(
       addItems: _addItems,
-      status: isObjectItemsValid(_addItems)
+      status: isItemsValid(_addItems)
           ? StateStatus.valid
           : StateStatus.invalid,
     ));
   }
 
-  void addObject() async {
+  void add(String docId) async {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
     try {
-      await _fireStoreService.addObject(filledItems: state.addItems);
+      await _fireStoreService.addExpense(expenseItems: state.addItems, docId: docId,
+          defaultExpenseItems: _appBloc.state.expensesItems);
       List<Characteristics> _addItems = List.from(state.items.map((item) => Characteristics.fromJson(item.toJson())));
       emit(state.copyWith(
         addItems: _addItems,
         status: StateStatus.success,
       ));
     } catch (e) {
-      print(e);
       emit(state.copyWith(
         status: StateStatus.error,
+        errorMessage: e.toString().replaceAll('Exception: ', ''),
       ));
     }
   }

@@ -7,6 +7,7 @@ class Place {
   Map<String, Characteristics>? tenantItems;
   Map<String, Characteristics>? expensesArticleItems;
   List<Map<String, Characteristics>>? expensesItems;
+  List<Map<String, Characteristics>>? plansItems;
   final String? createdDate;
 
   Place({
@@ -15,6 +16,7 @@ class Place {
     this.tenantItems,
     this.expensesArticleItems,
     this.expensesItems,
+    this.plansItems,
     this.createdDate,
   });
 
@@ -39,6 +41,10 @@ class Place {
         ? List<Map<String, Characteristics>>.from(json["expensesItems"].map((expense) =>
           Map<String, Characteristics>.from(expense.map((key, value) => MapEntry(key, Characteristics.fromJson(value))))))
         : json["expensesItems"],
+    plansItems: json["plansItems"] != null
+        ? List<Map<String, Characteristics>>.from(json["plansItems"].map((expense) =>
+          Map<String, Characteristics>.from(expense.map((key, value) => MapEntry(key, Characteristics.fromJson(value))))))
+        : json["plansItems"],
     createdDate: json["ownerId"],
   );
 

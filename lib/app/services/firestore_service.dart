@@ -16,21 +16,22 @@ class FireStoreService {
   final CacheClient _cache;
   final FirebaseFirestore _fireStore;
 
-  // Future<void> addExpensesCharacteristics() async {
+  // Future<void> addPlansCharacteristics() async {
   //   Map<String, dynamic> characteristics = {};
-  //   for (var i = 0; i < expensesArticleItems.length; i++) {
-  //     characteristics[expensesArticleItems[i]['title']] = {
+  //   for (var i = 0; i < planItems.length; i++) {
+  //     characteristics[planItems[i]['title']] = {
   //       'id': i,
-  //       'title': expensesArticleItems[i]['title'],
-  //       'placeholder': expensesArticleItems[i]['placeholder'],
-  //       'type': expensesArticleItems[i]['type'],
-  //       'unit': expensesArticleItems[i]['unit'],
+  //       'title': planItems[i]['title'],
+  //       'placeholder': planItems[i]['placeholder'],
+  //       'value': planItems[i]['value'],
+  //       'type': planItems[i]['type'],
+  //       'unit': planItems[i]['unit'],
   //     };
   //   }
   //   await _fireStore.collection('characteristics')
-  //       .doc('expense_article_characteristics')
+  //       .doc('plan_characteristics')
   //       .set(characteristics)
-  //       .then((value) => print("expense_article_characteristics Added"))
+  //       .then((value) => print("plan_characteristics Added"))
   //       .catchError((error) => throw Exception('Error adding'));
   // }
 
@@ -252,6 +253,7 @@ class FireStoreService {
     List<Place> places = querySnapshot.docs.map((doc) {
       var place = doc.data() as Map<String, dynamic>;
       place['id'] = doc.id;
+
       double sumTaxes = 0;
       double sumCurrentRent = 0;
       for (var item in place['expensesItems'] ?? []) {
@@ -283,6 +285,18 @@ class FireStoreService {
           }
         }
       }
+
+      if (place['objectItems']['Арендная плата']['value'] != null
+          && place['objectItems']['Арендная плата']['value'] != '') {
+        if (place['objectItems']['Коэффициент капитализации']['value'] != null
+            && place['objectItems']['Коэффициент капитализации']['value'] != '') {
+          place['objectItems']['Рыночная стоимость помещения']['value'] =
+              double.parse((double.parse(place['objectItems']['Арендная плата']['value']) ~/
+                  double.parse(
+                      place['objectItems']['Коэффициент капитализации']['value'])).toStringAsFixed(2)).toString();
+        }
+      }
+
       if (sumCurrentRent != 0 && sumTaxes != 0) {
         if (place['objectItems'] != null) {
           place['objectItems']['Фактическая Налоговая нагрузка']['value'] = double.parse((sumTaxes / sumCurrentRent).toStringAsFixed(2)).toString();

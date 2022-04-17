@@ -8,7 +8,7 @@ import 'package:property_management/app/theme/styles.dart';
 ///Затраты
 class ExpensesContainer extends StatelessWidget {
   final String title;
-  final List<String> expenses;
+  final List<dynamic> expenses;
   final double? width;
   final double? height;
   final bool isLastElementBold;

@@ -11,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:property_management/analytics/pages/analytics_charts.dart';
 import 'package:property_management/analytics/pages/create_plan_page.dart';
+import 'package:property_management/analytics/widgets/analytics_carousel_slider.dart';
 import 'package:property_management/characteristics/widgets/characteristics_carousel_slider.dart';
 import 'package:property_management/characteristics/widgets/custom_tab_view.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
@@ -122,8 +123,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                     },
                     builder: (context, state) {
                       // context.read<CharacteristicsCubit>().changeSelectedPlaceId(0, state.places);
-                      return CharacteristicsCarouselSlider(
-                        key: const Key('carousel'),
+                      return AnalyticsCarouselSlider(
+                        key: const Key('analytics_carousel'),
                         places: state.places,
                         carouselController: carouselController,
                       );

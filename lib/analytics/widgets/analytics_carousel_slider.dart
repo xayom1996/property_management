@@ -12,14 +12,14 @@ import 'package:property_management/characteristics/cubit/characteristics_cubit.
 import 'package:property_management/exploitation/cubit/exploitation_cubit.dart';
 import 'package:property_management/objects/models/place.dart';
 
-class CharacteristicsCarouselSlider extends StatelessWidget {
+class AnalyticsCarouselSlider extends StatelessWidget {
   final List<Place> places;
   final CarouselController carouselController;
-  CharacteristicsCarouselSlider({Key? key, this.places = const [], required this.carouselController}) : super(key: key);
+  AnalyticsCarouselSlider({Key? key, this.places = const [], required this.carouselController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CharacteristicsCubit, CharacteristicsState>(
+    return BlocConsumer<AnalyticsCubit, AnalyticsState>(
       listener: (context, state) async {
         if (state.isJump) {
           carouselController.jumpToPage(state.selectedPlaceId);
@@ -27,13 +27,15 @@ class CharacteristicsCarouselSlider extends StatelessWidget {
       },
       builder: (context, state) {
         return CustomCarouselSlider(
-          carouselController: carouselController,
           places: places,
-          selectedPlaceId: state.selectedPlaceId,
+          carouselController: carouselController,
+          selectedPlaceId: state.selectedPlaceId < places.length
+              ? state.selectedPlaceId
+              : 0,
           onPageChanged: (int index) {
-            context.read<CharacteristicsCubit>().changeSelectedPlaceId(index, places);
+            context.read<AnalyticsCubit>().changeSelectedPlaceId(index, places);
             context.read<ExploitationCubit>().changeSelectedPlaceId(index, places, isJump: true);
-            context.read<AnalyticsCubit>().changeSelectedPlaceId(index, places, isJump: true);
+            context.read<CharacteristicsCubit>().changeSelectedPlaceId(index, places, isJump: true);
           },
         );
       },

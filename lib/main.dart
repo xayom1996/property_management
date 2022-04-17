@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
 import 'package:property_management/account/cubit/change_password/change_password_cubit.dart';
 import 'package:property_management/account/cubit/personal_info/personal_info_cubit.dart';
+import 'package:property_management/analytics/cubit/analytics_cubit.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/services/firestore_service.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
@@ -116,6 +117,7 @@ class App extends StatelessWidget {
             fireStoreService: _fireStoreService)),
           BlocProvider(create: (_) => CharacteristicsCubit()),
           BlocProvider(create: (_) => ExploitationCubit()),
+          BlocProvider(create: (_) => AnalyticsCubit()),
           BlocProvider(create: (_) => AddObjectCubit(fireStoreService: _fireStoreService,
               appBloc: _appBloc)),
           BlocProvider(create: (_) => EditObjectCubit(fireStoreService: _fireStoreService)),

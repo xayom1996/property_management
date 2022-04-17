@@ -34,7 +34,8 @@ class EditObjectCubit extends Cubit<EditObjectState> {
 
   bool isObjectItemsValid(List<Characteristics> items) {
     return items[0].getFullValue().isNotEmpty && items[1].getFullValue().isNotEmpty
-        && items[2].getFullValue().isNotEmpty && items[3].getFullValue().isNotEmpty;
+        && items[2].getFullValue().isNotEmpty && items[3].getFullValue().isNotEmpty
+        && items[6].getFullValue().isNotEmpty && items[7].getFullValue().isNotEmpty;
   }
 
   void changeItemValue(int id, String value, String documentUrl) {
@@ -44,13 +45,13 @@ class EditObjectCubit extends Cubit<EditObjectState> {
     List<Characteristics> _items = List<Characteristics>.from(state.items.map((item) => item));
     _items[id].value = value;
     _items[id].documentUrl = documentUrl;
-    if (id == 13 || id == 14) { //Арендная плата или коэфициент капитализации
-      if (_items[13].getFullValue().isNotEmpty && _items[14].getFullValue().isNotEmpty) {
-        _items[15].value = (double.parse(_items[13].value!) ~/ double.parse(_items[14].value!)).toString();
-      } else {
-        _items[15].value = '';
-      }
-    }
+    // if (id == 13 || id == 14) { //Арендная плата или коэфициент капитализации
+    //   if (_items[13].getFullValue().isNotEmpty && _items[14].getFullValue().isNotEmpty) {
+    //     _items[15].value = (double.parse(_items[13].value!) ~/ double.parse(_items[14].value!)).toString();
+    //   } else {
+    //     _items[15].value = '';
+    //   }
+    // }
     emit(state.copyWith(
       items: _items,
       status: isObjectItemsValid(_items)
