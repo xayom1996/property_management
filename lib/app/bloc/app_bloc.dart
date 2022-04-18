@@ -14,8 +14,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       : _userRepository = userRepository,
         fireStoreService = fireStore,
         super(
-        // userRepository.currentUser.isNotEmpty
-        //     ? AppState.authenticated(userRepository.currentUser)
         const AppState(status: AppStatus.unauthenticated),
       ) {
           on<AppUserChanged>(_onUserChanged);
@@ -32,6 +30,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 List<Characteristics> tenantItems = [];
                 List<Characteristics> expensesItems = [];
                 List<Characteristics> expensesArticleItems = [];
+                List<Characteristics> planItems = [];
 
                 // if (_user.isAdminOrManager()) {
                 objectItems = await fireStoreService
@@ -42,9 +41,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                     .getCharacteristics('expense_characteristics');
                 expensesArticleItems = await fireStoreService
                     .getCharacteristics('expense_article_characteristics');
+                planItems = await fireStoreService
+                    .getCharacteristics('plan_characteristics');
                 // }
                 add(AppUserChanged(_user, owners, objectItems, tenantItems,
-                    expensesItems, expensesArticleItems));
+                    expensesItems, expensesArticleItems, planItems));
               },
           );
           // _userRepository.getObjects(state.user);
@@ -65,6 +66,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       tenantItems: event.tenantItems,
       expensesItems: event.expensesItems,
       expensesArticleItems: event.expensesArticleItems,
+      planItems: event.planItems,
     ));
   }
 

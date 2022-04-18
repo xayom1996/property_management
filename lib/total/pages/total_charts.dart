@@ -174,6 +174,7 @@ class _TotalChartsState extends State<TotalCharts> {
       color: kBackgroundColor,
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: kBackgroundColor,
           appBar: AppBar(
             centerTitle: true,
             leading: null,
@@ -338,7 +339,14 @@ class _TotalChartsState extends State<TotalCharts> {
                                     color: currentIndexTab == 0
                                         ? Color(0xff5589F1)
                                         : Colors.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(22))
+                                    borderRadius: BorderRadius.all(Radius.circular(22)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 20,
+                                        offset: Offset(0, 4), // changes position of shadow
+                                      ),
+                                    ],
                                 ),
                                 child: Text(
                                   'Распределение прибыли по годам',
@@ -366,7 +374,14 @@ class _TotalChartsState extends State<TotalCharts> {
                                   color: currentIndexTab == 1
                                       ? Color(0xff5589F1)
                                       : Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(22))
+                                  borderRadius: BorderRadius.all(Radius.circular(22)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 20,
+                                      offset: Offset(0, 4), // changes position of shadow
+                                    ),
+                                  ],
                               ),
                               child: Text(
                                 'Вклад аренды и роста стоимости в прибыль',

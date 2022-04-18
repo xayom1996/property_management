@@ -60,7 +60,9 @@ class ExpensesContainer extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              expenses[index] == '' ? '0' : expenses[index],
+                              expenses[index] == '' || expenses[index] == '0'
+                                  ? ''
+                                  : expenses[index],
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -78,14 +80,14 @@ class ExpensesContainer extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (width == null)
-                for (var index = 0; index < 3 - expenses.length; index++)
-                  Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.only(right: 9),
-                        child: Container()
-                    ),
-                  ),
+              // if (width == null)
+              //   for (var index = 0; index < 3 - expenses.length; index++)
+              //     Expanded(
+              //       child: Padding(
+              //           padding: const EdgeInsets.only(right: 9),
+              //           child: Container()
+              //       ),
+              //     ),
             ],
           ),
         ),

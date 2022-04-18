@@ -14,7 +14,7 @@ class AppLogoutRequested extends AppEvent {}
 
 class AppUserChanged extends AppEvent {
   @visibleForTesting
-  const AppUserChanged(this.user, this.owners, this.objectItems, this.tenantItems, this.expensesItems, this.expensesArticleItems);
+  const AppUserChanged(this.user, this.owners, this.objectItems, this.tenantItems, this.expensesItems, this.expensesArticleItems, this.planItems);
 
   final User user;
   final List<String> owners;
@@ -22,9 +22,10 @@ class AppUserChanged extends AppEvent {
   final List<Characteristics> tenantItems;
   final List<Characteristics> expensesItems;
   final List<Characteristics> expensesArticleItems;
+  final List<Characteristics> planItems;
 
   @override
-  List<Object> get props => [user, owners, objectItems, tenantItems, expensesItems, expensesArticleItems];
+  List<Object> get props => [user, owners, objectItems, tenantItems, expensesItems, expensesArticleItems, planItems];
 }
 
 class AppUserUpdated extends AppEvent {

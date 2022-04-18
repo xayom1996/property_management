@@ -8,16 +8,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:property_management/analytics/cubit/analytics_cubit.dart';
+import 'package:property_management/analytics/cubit/edit_plan_cubit.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:property_management/analytics/pages/edit_plan_page.dart';
 import 'package:property_management/analytics/widgets/get_irr.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 import 'package:property_management/app/widgets/expenses.dart';
+import 'package:property_management/characteristics/models/characteristics.dart';
 import 'package:property_management/exploitation/cubit/exploitation_cubit.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/models/place.dart';
@@ -26,8 +29,8 @@ import 'package:collection/collection.dart';
 
 class AnalyticCharts extends StatefulWidget {
   final String title;
-  final bool hasEditIcon;
-  const AnalyticCharts({Key? key, required this.title, this.hasEditIcon = false}) : super(key: key);
+  final int? planIndex;
+  const AnalyticCharts({Key? key, required this.title, this.planIndex}) : super(key: key);
 
   @override
   State<AnalyticCharts> createState() => _AnalyticChartsState();
@@ -48,85 +51,100 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
   }
 
   void calculationTable() {
+    setState(() {
+      isLoading = true;
+    });
+
     Place place = context.read<ObjectsBloc>().state.places[context.read<AnalyticsCubit>().state.selectedPlaceId];
     title = place.objectItems['Название объекта']!.getFullValue();
+    Map<String, Characteristics> objectItems = {};
+    Map<String, Characteristics> expensesArticleItems = {};
+
+    if (widget.planIndex != null) {
+      objectItems = place.plansItems![widget.planIndex!];
+      expensesArticleItems = place.plansItems![widget.planIndex!];
+    } else {
+      objectItems = place.objectItems;
+      expensesArticleItems = place.expensesArticleItems ?? {};
+    }
+
 
     try {
       DateTime startDateCalculation = DateFormat('dd.MM.yyyy').parse(
-          place.expensesArticleItems!['Начало даты расчета']!.getFullValue());
+          expensesArticleItems['Начало даты расчета']!.getFullValue());
       DateTime finishDateCalculation = DateFormat('dd.MM.yyyy').parse(
-          place.expensesArticleItems!['Конец даты расчета']!.getFullValue());
+          expensesArticleItems['Конец даты расчета']!.getFullValue());
       int yearsCount = (finishDateCalculation.difference(startDateCalculation).inDays / 365).ceil();
       years = new List<int>.generate(yearsCount + 1, (i) => i);
 
       table['Рыночная ставка аренды, руб/кв.м*мес.'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         if (year == 1) {
-          table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = double.parse(place.expensesArticleItems!['Рыночная ставка аренды (в месяц)']!.value!);
+          table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = double.parse(expensesArticleItems['Рыночная ставка аренды (в месяц)']!.value!);
         } else if (year > 1) {
-          table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = (table['Рыночная ставка аренды, руб/кв.м*мес.']?[year - 1]
-              * (100 + double.parse(place.expensesArticleItems!['Индексация рыночной ставки аренды']!.value!)) / 100).round();
+          table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = table['Рыночная ставка аренды, руб/кв.м*мес.']?[year - 1]
+              * (100 + double.parse(expensesArticleItems['Индексация рыночной ставки аренды']!.value!)) / 100;
         }
       }
 
       table['Потенциальный валовый доход, руб./год'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
-        table['Потенциальный валовый доход, руб./год']?[year] = (table['Рыночная ставка аренды, руб/кв.м*мес.']?[year]
-            * double.parse(place.objectItems['Площадь объекта']!.value!) * 12).round();
+        table['Потенциальный валовый доход, руб./год']?[year] = table['Рыночная ставка аренды, руб/кв.м*мес.']?[year]
+            * double.parse(objectItems['Площадь объекта']!.value!) * 12;
       }
 
       table['Потери от недозагрузки (смена арендатора), %'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(place.expensesArticleItems!['Потери от недогрузки (смена арендатора)']!.value!));
+          : double.parse(expensesArticleItems['Потери от недогрузки (смена арендатора)']!.value!));
       table['Расходы на управление, % от реального дохода'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(place.expensesArticleItems!['Расходы на управление (% от реального дохода)']!.value!));
+          : double.parse(expensesArticleItems['Расходы на управление (% от реального дохода)']!.value!));
       table['Патент на сдачу в аренду нежилых помещений для ИП, руб./год.'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(place.expensesArticleItems!['Патент на сдачу в аренду нежилых помещений для ИП']!.value!));
+          : double.parse(expensesArticleItems['Патент на сдачу в аренду нежилых помещений для ИП']!.value!));
       table['Банковское обслуживание, руб.'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(place.expensesArticleItems!['Банковское обслуживание']!.value!));
+          : double.parse(expensesArticleItems['Банковское обслуживание']!.value!));
 
       table['Чистый арендный доход, руб'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         if (year != 0) {
           table['Чистый арендный доход, руб']?[year] =
-              ((table['Потенциальный валовый доход, руб./год']?[year]
-                  * (100 - double.parse(place
-                      .expensesArticleItems!['Потери от недогрузки (смена арендатора)']!
+              (table['Потенциальный валовый доход, руб./год']?[year]
+                  * (100 - double.parse(
+                      expensesArticleItems['Потери от недогрузки (смена арендатора)']!
                       .value!)) / 100
-                  * (100 - double.parse(place
-                      .expensesArticleItems!['Расходы на управление (% от реального дохода)']!
+                  * (100 - double.parse(
+                      expensesArticleItems['Расходы на управление (% от реального дохода)']!
                       .value!)) / 100)
-                  - double.parse(place
-                      .expensesArticleItems!['Патент на сдачу в аренду нежилых помещений для ИП']!
+                  - double.parse(
+                      expensesArticleItems['Патент на сдачу в аренду нежилых помещений для ИП']!
                       .value!)
                   - double.parse(
-                      place.expensesArticleItems!['Банковское обслуживание']!
-                          .value!)).round();
+                      expensesArticleItems['Банковское обслуживание']!
+                          .value!);
         }
       }
 
-      table['Площадь объекта, кв.м'] = [double.parse(place.objectItems['Площадь объекта']!.value!)];
-      table['Начальная стоимость, руб.'] = [double.parse(place.objectItems['Начальная стоимость']!.value!)];
-      table['Услуги по приобретению, %'] = [double.parse(place.objectItems['Услуги по приобретению']!.value!)];
-      table['Расходы на сделку, руб.'] = [double.parse(place.objectItems['Расходы на сделку']!.value!)];
+      table['Площадь объекта, кв.м'] = [double.parse(objectItems['Площадь объекта']!.value!)];
+      table['Начальная стоимость, руб.'] = [double.parse(objectItems['Начальная стоимость']!.value!)];
+      table['Услуги по приобретению, %'] = [double.parse(objectItems['Услуги по приобретению']!.value!)];
+      table['Расходы на сделку, руб.'] = [double.parse(objectItems['Расходы на сделку']!.value!)];
 
       table['Рыночная стоимость помещения, руб.'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         if (year == 0) {
           table['Рыночная стоимость помещения, руб.']?[year] =
-              double.parse(place.objectItems['Начальная стоимость']!.value!)
-                * (100 + double.parse(place.objectItems['Услуги по приобретению']!.value!)) / 100
-                + double.parse(place.objectItems['Расходы на сделку']!.value!);
+              double.parse(objectItems['Начальная стоимость']!.value!)
+                * (100 + double.parse(objectItems['Услуги по приобретению']!.value!)) / 100
+                + double.parse(objectItems['Расходы на сделку']!.value!);
         }
         else {
           table['Рыночная стоимость помещения, руб.']?[year] =
               table['Рыночная ставка аренды, руб/кв.м*мес.']?[year]
                   * 12
-                  * (double.parse(place.objectItems['Площадь объекта']!.value!)
-                  / (double.parse(place.objectItems['Коэффициент капитализации']!.value!) / 100));
+                  * (double.parse(objectItems['Площадь объекта']!.value!)
+                  / (double.parse(objectItems['Коэффициент капитализации']!.value!) / 100));
         }
       }
 
@@ -145,35 +163,35 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
           table['Денежный поток']?[year] = -table['Рыночная стоимость помещения, руб.']?[year];
         } else if (year != years.length - 1) {
           table['Денежный поток']?[year] =
-              ((table['Потенциальный валовый доход, руб./год']?[year]
-                * (100 - double.parse(place
-                    .expensesArticleItems!['Потери от недогрузки (смена арендатора)']!
+              (table['Потенциальный валовый доход, руб./год']?[year]
+                * (100 - double.parse(
+                    expensesArticleItems['Потери от недогрузки (смена арендатора)']!
                     .value!)) / 100
-                * (100 - double.parse(place
-                    .expensesArticleItems!['Расходы на управление (% от реального дохода)']!
+                * (100 - double.parse(
+                    expensesArticleItems['Расходы на управление (% от реального дохода)']!
                     .value!)) / 100)
-                - double.parse(place
-                    .expensesArticleItems!['Патент на сдачу в аренду нежилых помещений для ИП']!
+                - double.parse(
+                    expensesArticleItems['Патент на сдачу в аренду нежилых помещений для ИП']!
                     .value!)
                 - double.parse(
-                    place.expensesArticleItems!['Банковское обслуживание']!
-                        .value!)).round();
+                    expensesArticleItems['Банковское обслуживание']!
+                        .value!);
         } else {
           table['Денежный поток']?[year] =
-              ((table['Потенциальный валовый доход, руб./год']?[year]
-                  * (100 - double.parse(place
-                      .expensesArticleItems!['Потери от недогрузки (смена арендатора)']!
+              (table['Потенциальный валовый доход, руб./год']?[year]
+                  * (100 - double.parse(
+                      expensesArticleItems['Потери от недогрузки (смена арендатора)']!
                       .value!)) / 100
-                  * (100 - double.parse(place
-                      .expensesArticleItems!['Расходы на управление (% от реального дохода)']!
+                  * (100 - double.parse(
+                      expensesArticleItems['Расходы на управление (% от реального дохода)']!
                       .value!)) / 100)
-                  - double.parse(place
-                      .expensesArticleItems!['Патент на сдачу в аренду нежилых помещений для ИП']!
+                  - double.parse(
+                      expensesArticleItems['Патент на сдачу в аренду нежилых помещений для ИП']!
                       .value!)
                   - double.parse(
-                      place.expensesArticleItems!['Банковское обслуживание']!
+                      expensesArticleItems['Банковское обслуживание']!
                           .value!)
-                  + table['Рыночная стоимость помещения, руб.']?[year]).round();
+                  + table['Рыночная стоимость помещения, руб.']?[year];
         }
       }
 
@@ -194,6 +212,10 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
       table['Чистая прибыль за период, руб.'] = [allRentalIncome + allAddedValue, 100];
 
       table['Внутренняя норма доходности в год'] = [internal_rate_of_return(List.generate(table['Денежный поток']!.length, (index) => table['Денежный поток']?[index]), 0, 0)];
+
+      setState(() {
+        isLoading = false;
+      });
     } catch (_) {
       print(_);
       WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -201,19 +223,17 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
             context: context,
             barrierDismissible: false,
             builder: (context) => CustomAlertDialog(
-              title: 'Заполните все поля',
+              title: context.read<AppBloc>().state.user.isAdminOrManager()
+                  ? 'Заполните необходимые данные по объекту'
+                  : 'Данные не заполнены',
               firstButtonTitle: 'Ок',
               secondButtonTitle: null,
-              onApprove: () {
-                Navigator.pop(context);
-              },
             )
-        );
+        ).then((val){
+          Navigator.pop(context);
+        });
       });
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -222,6 +242,7 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
       color: kBackgroundColor,
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: kBackgroundColor,
           appBar: AppBar(
             centerTitle: true,
             leading: null,
@@ -259,15 +280,21 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                   ),
                 ),
                 // Spacer(),
-                widget.hasEditIcon
+                widget.planIndex != null && context.read<AppBloc>().state.user.isAdminOrManager()
                 ? BoxIcon(
                     iconPath: 'assets/icons/edit.svg',
                     iconColor: Colors.black,
                     backgroundColor: Colors.white,
                     onTap: () {
+                      Place place = context.read<ObjectsBloc>().state.places[context.read<AnalyticsCubit>().state.selectedPlaceId];
+                      context.read<EditPlanCubit>().getItems(place.plansItems![widget.planIndex!], place.id);
+
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => EditPlanPage()),
+                        MaterialPageRoute(builder: (context) => EditPlanPage(
+                          planIndex: widget.planIndex!,
+                          calculateTable: calculationTable,
+                        )),
                       );
                     },
                   )
@@ -367,14 +394,19 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                                 child: ExpensesContainer(
                                   title: title,
                                   expenses: List.generate(table[title]!.length, (index) {
+                                    if (table[title]![index] == 0 && index == 0 && table[title]!.length != 1) {
+                                      return '';
+                                    }
                                     if (title == 'Внутренняя норма доходности в год'
                                         || (title == 'Чистый арендный доход(общий), руб' && index == 1)
-                                        || (title == 'Прибавка в стоимости(общий), руб.' && index == 1)
+                                        || (title == 'Прибавка в стоимости(общая), руб.' && index == 1)
                                         || (title == 'Чистая прибыль за период, руб.' && index == 1) || (title.contains('%'))) {
-                                      return double.parse(table[title]![index].toStringAsFixed(2)).toString() + '%';
+                                      return removeTrailingZeros(table[title]![index].toString()) + '%';
                                     }
-
-                                    return formatNumber(table[title]![index].toString(), '');
+                                    if (title.contains('руб') || title == 'Денежный поток') {
+                                      return formatNumber(removeTrailingZeros(table[title]![index].round().toString()), '');
+                                    }
+                                    return formatNumber(removeTrailingZeros(table[title]![index].toString()), '');
                                   }),
                                   height: 32,
                                 ),
@@ -402,7 +434,14 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                                             color: currentIndexTab == 0
                                                 ? Color(0xff5589F1)
                                                 : Colors.white,
-                                            borderRadius: BorderRadius.all(Radius.circular(22))
+                                            borderRadius: BorderRadius.all(Radius.circular(22)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(0.1),
+                                                blurRadius: 20,
+                                                offset: Offset(0, 4), // changes position of shadow
+                                              ),
+                                            ],
                                           ),
                                           child: Text(
                                             'Распределение прибыли по годам',
@@ -430,7 +469,14 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                                             color: currentIndexTab == 1
                                                 ? Color(0xff5589F1)
                                                 : Colors.white,
-                                            borderRadius: BorderRadius.all(Radius.circular(22))
+                                            borderRadius: BorderRadius.all(Radius.circular(22)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(0.1),
+                                                blurRadius: 20,
+                                                offset: Offset(0, 4), // changes position of shadow
+                                              ),
+                                            ],
                                         ),
                                         child: Text(
                                           'Вклад аренды и роста стоимости в прибыль',
@@ -520,7 +566,7 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
     final List<DeveloperSeries> data1 = List.generate(years.length - 1, (i) =>
         DeveloperSeries(
           year: "${i + 1}",
-          money: table['Чистый арендный доход, руб']?[i + 1],
+          money: table['Чистый арендный доход, руб']?[i + 1].round(),
           barColor: charts.ColorUtil.fromDartColor(Color(0xff7EB6EA)),
         )
     );
@@ -556,8 +602,11 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
       animate: true,
       barRendererDecorator: charts.BarLabelDecorator<String>(),
       domainAxis: const charts.OrdinalAxisSpec(),
+      // vertical: false,
       defaultRenderer: charts.BarRendererConfig(
-          groupingType: charts.BarGroupingType.stacked, strokeWidthPx: 1.0),
+        groupingType: charts.BarGroupingType.groupedStacked,
+        strokeWidthPx: 2.0,
+      ),
     );
   }
 
@@ -588,9 +637,10 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
     ];
     return charts.PieChart<String>(series,
         animate: true,
-        defaultRenderer: new charts.ArcRendererConfig(
-            arcWidth: 60,
-            arcRendererDecorators: [new charts.ArcLabelDecorator()])
+        defaultRenderer: charts.ArcRendererConfig(
+            arcWidth: 300,
+            arcRendererDecorators: [charts.ArcLabelDecorator()],
+        )
     );
   }
 }

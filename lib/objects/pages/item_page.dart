@@ -161,7 +161,11 @@ class _ItemPageState extends State<ItemPage> {
                                           });
                                         },
                                         pickerModel: CustomPicker(
-                                          currentTime: DateTime.now(),
+                                          currentTime: widget.item.value == null || widget.item.value == ''
+                                              ? DateTime.now()
+                                              : widget.item.title == 'Месяц, Год'
+                                                ? DateFormat('MM.yyyy').parse(widget.item.value!)
+                                                : DateFormat('dd.MM.yyyy').parse(widget.item.value!),
                                           locale: LocaleType.ru,
                                           maxTime: maxTime,
                                           minTime: minTime,

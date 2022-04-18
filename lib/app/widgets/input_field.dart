@@ -20,8 +20,11 @@ class BoxInputField extends StatefulWidget {
   final bool? disableSpace;
   final void Function()?trailingTapped;
   final Function()? onTap;
+  final Function()? onTapTextField;
+  final Function(String value)? onSubmit;
   final bool autoFocus;
   final TextInputType? keyboardType;
+  final FocusNode? focusNode;
 
 
   BoxInputField({
@@ -40,7 +43,11 @@ class BoxInputField extends StatefulWidget {
     this.autoFocus = false,
     this.backgroundColor,
     this.keyboardType,
-    this.errorText, this.onTap,
+    this.errorText,
+    this.onTap,
+    this.onTapTextField,
+    this.onSubmit,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -53,7 +60,7 @@ class _BoxInputFieldState extends State<BoxInputField> {
   );
   bool isFocused = false;
   bool showPassword = false;
-  final FocusNode _focus = new FocusNode();
+  FocusNode _focus = new FocusNode();
   TextEditingController? _controller;
   List<TextInputFormatter> inputFormatters = [];
 
@@ -73,7 +80,9 @@ class _BoxInputFieldState extends State<BoxInputField> {
       inputFormatters.add(DecimalTextInputFormatter());
       inputFormatters.add(FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')));
     }
-
+    if (widget.focusNode != null) {
+      _focus = widget.focusNode!;
+    }
     super.initState();
     _focus.addListener(_onFocusChange);
   }
@@ -154,6 +163,8 @@ class _BoxInputFieldState extends State<BoxInputField> {
                           )
                         : TextField(
                           inputFormatters: inputFormatters,
+                          onTap: widget.onTapTextField,
+                          onSubmitted: widget.onSubmit,
                           keyboardType: widget.keyboardType != null
                               ? widget.keyboardType
                               : widget.enabled == true ? null : TextInputType.multiline,

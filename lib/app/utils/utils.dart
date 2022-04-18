@@ -256,7 +256,15 @@ List<Map> totalTableItems = [
 
 
 String formatNumber(String value, String? symbol) {
-  return NumberFormat.currency(locale: 'ru', symbol: symbol ?? '', decimalDigits: 0).format(double.parse(value));
+  int decimalDigits = 2;
+  if (!value.contains('.')) {
+    decimalDigits = 0;
+  }
+  return NumberFormat.currency(locale: 'ru', symbol: symbol ?? '', decimalDigits: decimalDigits).format(double.parse(value));
+}
+
+String removeTrailingZeros(String n) {
+  return double.parse(n).toStringAsFixed(2).replaceAll(RegExp(r"([.]*0+)(?!.*\d)"), "");
 }
 
 String capitalize(String value) {

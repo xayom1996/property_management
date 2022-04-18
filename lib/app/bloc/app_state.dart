@@ -18,6 +18,7 @@ class AppState extends Equatable {
     this.tenantItems = const [],
     this.expensesItems = const [],
     this.expensesArticleItems = const [],
+    this.planItems = const [],
   });
 
   // const AppState.loading(User user, List<String> owners, List<Characteristics> objectItems, List<Characteristics> tenantItems)
@@ -35,6 +36,7 @@ class AppState extends Equatable {
   final List<Characteristics> tenantItems;
   final List<Characteristics> expensesItems;
   final List<Characteristics> expensesArticleItems;
+  final List<Characteristics> planItems;
 
   @override
   List<Object> get props => [status, user, owners];
@@ -47,6 +49,7 @@ class AppState extends Equatable {
     List<Characteristics>? tenantItems,
     List<Characteristics>? expensesItems,
     List<Characteristics>? expensesArticleItems,
+    List<Characteristics>? planItems,
   }) {
     return AppState(
       status: status ?? this.status,
@@ -56,6 +59,7 @@ class AppState extends Equatable {
       tenantItems: tenantItems ?? this.tenantItems,
       expensesItems: expensesItems ?? this.expensesItems,
       expensesArticleItems: expensesArticleItems ?? this.expensesArticleItems,
+      planItems: planItems ?? this.planItems,
     );
   }
 }

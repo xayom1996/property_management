@@ -12,7 +12,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
 import 'package:property_management/account/cubit/change_password/change_password_cubit.dart';
 import 'package:property_management/account/cubit/personal_info/personal_info_cubit.dart';
+import 'package:property_management/analytics/cubit/add_plan_cubit.dart';
 import 'package:property_management/analytics/cubit/analytics_cubit.dart';
+import 'package:property_management/analytics/cubit/edit_plan_cubit.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/services/firestore_service.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
@@ -130,6 +132,9 @@ class App extends StatelessWidget {
           BlocProvider(create: (_) => AddExpenseArticleCubit(fireStoreService: _fireStoreService,
               appBloc: _appBloc)),
           BlocProvider(create: (_) => EditExpenseArticleCubit(fireStoreService: _fireStoreService)),
+          BlocProvider(create: (_) => AddPlanCubit(fireStoreService: _fireStoreService,
+              appBloc: _appBloc)),
+          BlocProvider(create: (_) => EditPlanCubit(fireStoreService: _fireStoreService)),
         ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),

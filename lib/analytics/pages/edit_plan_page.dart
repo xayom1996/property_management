@@ -1,98 +1,227 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:property_management/account/pages/successfull_page.dart';
+import 'package:property_management/analytics/cubit/add_plan_cubit.dart';
+import 'package:property_management/analytics/cubit/edit_plan_cubit.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/cubit/adding/adding_state.dart';
+import 'package:property_management/app/cubit/editing/editing_state.dart';
+import 'package:property_management/app/widgets/custom_alert_dialog.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/pages/change_field_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/objects/pages/item_page.dart';
 
-class EditPlanPage extends StatelessWidget {
-  EditPlanPage({Key? key}) : super(key: key);
+class EditPlanPage extends StatefulWidget {
+  final int planIndex;
+  final Function calculateTable;
+  EditPlanPage({Key? key, required this.planIndex, required this.calculateTable}) : super(key: key);
+
+  @override
+  State<EditPlanPage> createState() => _EditPlanPageState();
+}
+
+class _EditPlanPageState extends State<EditPlanPage> {
+  int currentId = -1;
+  TextEditingController currentController = TextEditingController();
+  FocusNode currentFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      appBar: AppBar(
-        centerTitle: true,
-        leading: null,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Spacer(),
-            Text(
-              'План первый',
-              style: body,
-            ),
-            Spacer(),
-            BoxIcon(
-              iconPath: 'assets/icons/clear.svg',
-              iconColor: Colors.black,
-              backgroundColor: Colors.white,
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Stack(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  for (var item in planItems)
-                    BoxInputField(
-                      controller: TextEditingController(text: item['value'] ?? ''),
-                      placeholder: item['placeholder'],
-                      title: item['title'],
-                      enabled: false,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ChangeFieldPage(
-                            title: item['title'],
-                            item: item,
-                          )),
-                        );
-                      },
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 14,
-                        color: Color(0xff5589F1),
+    return BlocConsumer<EditPlanCubit, EditingState>(
+        listener: (context, state) {
+          if (state.status == StateStatus.success) {
+            context.read<ObjectsBloc>().add(ObjectsUpdateEvent());
+
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>
+                  SuccessfullPage(
+                    onExit: widget.calculateTable,
+                    information: Text(
+                      'План успешно сохранен',
+                      textAlign: TextAlign.center,
+                      style: body.copyWith(
+                          color: Color(0xff151515)
                       ),
-                      // isError: isError,
                     ),
-                  SizedBox(
-                    height: 60,
+                  )),
+            );
+          }
+
+          if (state.status == StateStatus.error) {
+            showDialog(
+                context: context,
+                builder: (context) => CustomAlertDialog(
+                  title: state.errorMessage,
+                  firstButtonTitle: 'Ок',
+                  secondButtonTitle: null,
+                )
+            );
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: kBackgroundColor,
+            appBar: AppBar(
+              centerTitle: true,
+              leading: null,
+              title: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Spacer(),
+                  Text(
+                    state.items[0].getFullValue(),
+                    style: body,
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: BoxIcon(
+                      iconPath: 'assets/icons/clear.svg',
+                      iconColor: Colors.black,
+                      backgroundColor: Colors.white,
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-          Positioned(
-            bottom: 24,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.25.sw), vertical: 16),
-              child: SizedBox(
-                width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
-                child: BoxButton(
-                  title: 'Сохранить',
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+            body: state.status == StateStatus.loading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Stack(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              for (var item in state.items)
+                                if (item.showInCreating() || item.getFullValue().isNotEmpty)
+                                  BoxInputField(
+                                    controller: currentId == item.id
+                                        ? currentController
+                                        : TextEditingController(text: item.getFullValue()),
+                                    placeholder: item.placeholder ?? '',
+                                    title: item.title,
+                                    enabled: item.title != 'Система налогообложения'
+                                        && item.title != 'Расходы на управление (% от реального дохода)'
+                                        && item.type != 'Дата',
+                                    disableSpace: item.type == 'Число',
+                                    keyboardType: item.title == 'Номер телефона'
+                                        ? TextInputType.phone
+                                        : item.type == 'Число'
+                                        ? const TextInputType.numberWithOptions(decimal: true, signed: true)
+                                        : null,
+                                    onTap: () {
+                                      if (item.isDate()) {
+                                        FocusScope.of(context).unfocus();
+
+                                        if (currentId != -1) {
+                                          context.read<AddPlanCubit>().changeItemValue(currentId, currentController.text);
+                                        }
+
+                                        setState(() {
+                                          currentController.text = item.value ?? '';
+                                          currentId = item.id;
+                                        });
+
+                                        DateTime maxTime = DateTime(2025, 12, 31);
+                                        DateTime minTime = DateTime(2000, 1, 1);
+                                        if (item.title == 'Месяц, Год'){
+                                          maxTime = DateTime(DateTime.now().year + 1, 12, 31);
+                                          minTime = DateTime(DateTime.now().year - 1, 1, 1);
+                                        }
+                                        DatePicker.showPicker(context,
+                                            showTitleActions: true,
+                                            onConfirm: (date) {
+                                              if (currentId != -1) {
+                                                currentController.text =
+                                                    DateFormat('dd.MM.yyyy')
+                                                        .format(date);
+                                                context.read<EditPlanCubit>().changeItemValue(currentId, currentController.text);
+                                              }
+                                              setState(() {
+                                                currentId = -1;
+                                              });
+                                            },
+                                            pickerModel: CustomPicker(
+                                              currentTime: currentController.text == ''
+                                                  ? DateTime.now()
+                                                  : DateFormat('dd.MM.yyyy').parse(currentController.text),
+                                              locale: LocaleType.ru,
+                                              maxTime: maxTime,
+                                              minTime: minTime,
+                                            ),
+                                            locale: LocaleType.ru
+                                        );
+                                      }
+                                    },
+                                    onSubmit: (String value) {
+                                      if (currentId != -1) {
+                                        context.read<EditPlanCubit>().changeItemValue(currentId, currentController.text);
+                                      }
+                                      setState(() {
+                                        currentId = -1;
+                                      });
+                                    },
+                                    onTapTextField: () {
+                                      if (item.title != 'Система налогообложения' && item.title != 'Расходы на управление (% от реального дохода)') {
+                                        setState(() {
+                                          if (currentId != -1) {
+                                            context.read<EditPlanCubit>().changeItemValue(currentId, currentController.text);
+                                          }
+                                          currentController.text = item.value ?? '';
+                                          currentController.selection = TextSelection.fromPosition(TextPosition(offset: currentController.text.length));
+                                          currentId = item.id;
+                                        });
+                                      }
+                                    },
+                                    // isError: isError,
+                                  ),
+                              SizedBox(
+                                height: 60,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (state.status == StateStatus.valid)
+                        Positioned(
+                          bottom: 24,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 0.25.sw), vertical: 16),
+                            child: SizedBox(
+                              width: 1.sw - horizontalPadding(context, 0.25.sw) * 2,
+                              child: BoxButton(
+                                title: 'Сохранить',
+                                onTap: (){
+                                  if (currentId != -1) {
+                                    context.read<EditPlanCubit>().changeItemValue(currentId, currentController.text);
+                                  }
+                                  context.read<EditPlanCubit>().edit(widget.planIndex);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+          );
+        },
     );
   }
-
 }

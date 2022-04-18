@@ -9,7 +9,8 @@ import 'package:property_management/app/widgets/box_button.dart';
 
 class SuccessfullPage extends StatelessWidget {
   final Widget information;
-  const SuccessfullPage({Key? key, required this.information}) : super(key: key);
+  final Function? onExit;
+  const SuccessfullPage({Key? key, required this.information, this.onExit}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,9 @@ class SuccessfullPage extends StatelessWidget {
                     BoxButton(
                       title: 'Понятно',
                       onTap: () {
+                        if (onExit != null) {
+                          onExit!();
+                        }
                         Navigator.of(context).pop();
                       },
                     ),

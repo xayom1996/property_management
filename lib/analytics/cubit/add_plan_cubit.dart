@@ -15,11 +15,11 @@ class AddPlanCubit extends Cubit<AddingState> {
       : _fireStoreService = fireStoreService,
         _appBloc = appBloc,
         super(AddingState()) {
-          getItems(_appBloc.state.expensesItems);
+          getItems(_appBloc.state.planItems);
           _appBlocSubscription = _appBloc.stream.listen(
                   (state){
                     if (state.status != AppStatus.loading) {
-                      getItems(state.expensesItems);
+                      getItems(state.planItems);
                     }
                   });
         }
@@ -40,7 +40,12 @@ class AddPlanCubit extends Cubit<AddingState> {
   }
 
   bool isItemsValid(List<Characteristics> items) {
-    return items[0].getFullValue().isNotEmpty;
+    for (var item in items) {
+      if (item.getFullValue().isEmpty && !item.title.contains('Потери от недогрузки')) {
+        return false;
+      }
+    }
+    return true;
   }
 
   void changeItemValue(int id, String value) {
@@ -65,8 +70,7 @@ class AddPlanCubit extends Cubit<AddingState> {
       status: StateStatus.loading,
     ));
     try {
-      await _fireStoreService.addExpense(expenseItems: state.addItems, docId: docId,
-          defaultExpenseItems: _appBloc.state.expensesItems);
+      await _fireStoreService.addPlan(planItems: state.addItems, docId: docId);
       List<Characteristics> _addItems = List.from(state.items.map((item) => Characteristics.fromJson(item.toJson())));
       emit(state.copyWith(
         addItems: _addItems,

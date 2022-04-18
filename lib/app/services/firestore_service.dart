@@ -98,6 +98,17 @@ class FireStoreService {
 
   Future<void> addExpenseArticle({required List<Characteristics> expenseArticleItems, required String docId}) async {
     Map<String, dynamic> expensesArticleMap = {for (var item in expenseArticleItems) item.title : item.toJson()};
+
+    String startStr = expensesArticleMap['Начало даты расчета']['value'] ?? '';
+    String finishStr = expensesArticleMap['Конец даты расчета']['value'] ?? '';
+    if (startStr.isNotEmpty && finishStr.isNotEmpty) {
+      DateTime start = DateFormat('dd.MM.yyyy').parse(startStr);
+      DateTime finish = DateFormat('dd.MM.yyyy').parse(finishStr);
+      if (start.isAtSameMomentAs(finish) || start.isAfter(finish)) {
+        throw Exception('Дата конца расчета должна быть больше даты начала');
+      }
+    }
+
     await _fireStore.collection('objects')
         .doc(docId)
         .update({
@@ -173,6 +184,51 @@ class FireStoreService {
           'expensesItems': expensesItems,
         })
         .then((value) => print("expensesItems Added"))
+        .catchError((error) => throw Exception('Error adding'));
+  }
+
+  Future<void> addPlan({required List<Characteristics> planItems, required String docId, int? index, String? action}) async {
+    Map<String, dynamic> planMap = {for (var item in planItems) item.title : item.toJson()};
+
+    String startStr = planMap['Начало даты расчета']['value'] ?? '';
+    String finishStr = planMap['Конец даты расчета']['value'] ?? '';
+    if (startStr.isNotEmpty && finishStr.isNotEmpty) {
+      DateTime start = DateFormat('dd.MM.yyyy').parse(startStr);
+      DateTime finish = DateFormat('dd.MM.yyyy').parse(finishStr);
+      if (start.isAtSameMomentAs(finish) || start.isAfter(finish)) {
+        throw Exception('Дата конца расчета должна быть больше даты начала');
+      }
+    }
+
+    String str = planMap['Потери от недогрузки (смена арендатора)']['value'] ?? '';
+    if (str.isEmpty) {
+      planMap['Потери от недогрузки (смена арендатора)']['value'] = '0';
+    }
+
+    DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
+
+    var object = snapshot.data() as Map<String, dynamic>;
+    List plansItems = [];
+    if (object['plansItems'] != null) {
+      plansItems = object['plansItems'];
+    }
+    if (index != null) {
+      if (action == 'edit') {
+        plansItems[index] = planMap;
+      }
+      if (action == 'delete') {
+        plansItems.removeAt(index);
+      }
+    } else {
+      plansItems.add(planMap);
+    }
+
+    await _fireStore.collection('objects')
+        .doc(docId)
+        .update({
+          'plansItems': plansItems,
+        })
+        .then((value) => print("PlanItems Updated"))
         .catchError((error) => throw Exception('Error adding'));
   }
 
@@ -291,9 +347,9 @@ class FireStoreService {
         if (place['objectItems']['Коэффициент капитализации']['value'] != null
             && place['objectItems']['Коэффициент капитализации']['value'] != '') {
           place['objectItems']['Рыночная стоимость помещения']['value'] =
-              double.parse((double.parse(place['objectItems']['Арендная плата']['value']) ~/
-                  double.parse(
-                      place['objectItems']['Коэффициент капитализации']['value'])).toStringAsFixed(2)).toString();
+              removeTrailingZeros((double.parse(place['objectItems']['Арендная плата']['value']) /
+                  (double.parse(
+                      place['objectItems']['Коэффициент капитализации']['value']) / 100)).toStringAsFixed(2));
         }
       }
 
