@@ -342,6 +342,7 @@ class FireStoreService {
         }
       }
 
+      place['objectItems']['Рыночная стоимость помещения']['value'] = null;
       if (place['objectItems']['Арендная плата']['value'] != null
           && place['objectItems']['Арендная плата']['value'] != '') {
         if (place['objectItems']['Коэффициент капитализации']['value'] != null

@@ -37,7 +37,7 @@ class AddTenantCubit extends Cubit<AddingState> {
   }
 
   bool isTenantItemsValid(List<Characteristics> items) {
-    return items[0].getFullValue().isNotEmpty;
+    return true;
   }
 
   void changeItemValue(int id, String value, String documentUrl) {

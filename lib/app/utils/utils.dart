@@ -260,7 +260,13 @@ String formatNumber(String value, String? symbol) {
   if (!value.contains('.')) {
     decimalDigits = 0;
   }
-  return NumberFormat.currency(locale: 'ru', symbol: symbol ?? '', decimalDigits: decimalDigits).format(double.parse(value));
+
+  String formatN = NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: decimalDigits).format(double.parse(value)).replaceAll(',', '.').replaceAll(' ', '');
+  if (formatN[formatN.length - 1] == '0') {
+    formatN = formatN.substring(0, formatN.length - 2);
+  }
+
+  return formatN + ' $symbol';
 }
 
 String removeTrailingZeros(String n) {

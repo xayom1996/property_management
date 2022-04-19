@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,10 +8,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 import 'package:property_management/app/widgets/expenses.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/models/place.dart';
@@ -25,75 +29,175 @@ class TotalCharts extends StatefulWidget {
 class _TotalChartsState extends State<TotalCharts> {
   int currentIndexTab = 0;
   bool isTable = true;
+  bool isLoading = true;
+  Map<String, List> table = {};
+  List<String> places = [];
+  List<bool> hasTenantName = [];
 
-  final List<DeveloperSeries> data = [
-    DeveloperSeries(
-      year: "1",
-      money: 14506010,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7DD390)),
-    ),
-    DeveloperSeries(
-      year: "2",
-      money: 7250400,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7DD390)),
-    ),
-    DeveloperSeries(
-      year: "3",
-      money: 5582400,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7DD390)),
-    ),
-    DeveloperSeries(
-      year: "4",
-      money: 5582400,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7DD390)),
-    ),
-    DeveloperSeries(
-      year: "5",
-      money: 7250400,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7DD390)),
-    ),
-  ];
+  @override
+  void initState() {
+    calculationTable();
+    super.initState();
+  }
 
-  final List<DeveloperSeries> data1 = [
-    DeveloperSeries(
-      year: "1",
-      money: 5389183,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7EB6EA)),
-    ),
-    DeveloperSeries(
-      year: "2",
-      money: 6629001,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7EB6EA)),
-    ),
-    DeveloperSeries(
-      year: "3",
-      money: 7106001,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7EB6EA)),
-    ),
-    DeveloperSeries(
-      year: "4",
-      money: 7106001,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7EB6EA)),
-    ),
-    DeveloperSeries(
-      year: "5",
-      money: 6629001,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7EB6EA)),
-    ),
-  ];
+  void calculationTable() {
+    setState(() {
+      isLoading = true;
+    });
 
-  final List<DeveloperSeries> data3 = [
-    DeveloperSeries(
-      year: "1",
-      money: 34124452,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7EB6EA)),
-    ),
-    DeveloperSeries(
-      year: "2",
-      money: 39704579,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff7DD390)),
-    ),
-  ];
+    places = [];
+    hasTenantName = [];
+    table = {};
+    String currentDate = DateFormat('MM.yyyy').format(DateTime.now());
+
+    for (var place in context.read<ObjectsBloc>().state.places) {
+      if (isHandedObject(place)) {
+        String objectName = place.objectItems['Название объекта']!.value ?? '';
+        String objectArea = place.objectItems['Площадь объекта']!.value ?? '';
+        String objectDate = place.objectItems['Дата приобретения']!.value ?? '';
+        String objectPrice = place.objectItems['Начальная стоимость']!.value ?? '';
+        String objectCapitalization = place.objectItems['Коэффициент капитализации']!.value ?? '';
+        String objectRent = isNotEmpty(place.objectItems['Арендная плата']!.value)
+            ? place.objectItems['Арендная плата']!.value!
+            : '0';
+        String tenantName = place.tenantItems != null
+            ? place.tenantItems!['Наименование организации']!.value ?? ''
+            : '';
+
+        if (objectName.isEmpty || objectDate.isEmpty || objectArea.isEmpty
+            || objectPrice.isEmpty || objectCapitalization.isEmpty ) {
+          break;
+        }
+
+        places.add(objectName);
+        hasTenantName.add(tenantName.isNotEmpty);
+        objectDate = DateFormat('MM.yyyy').format(DateFormat('dd.MM.yyyy').parse(objectDate));
+
+        if (table['Площадь, кв.м.'] == null) {
+          table['Площадь, кв.м.'] = [];
+        }
+        table['Площадь, кв.м.']!.add(double.parse(objectArea));
+
+        if (table['Период покупки'] == null) {
+          table['Период покупки'] = [];
+        }
+        table['Период покупки']!.add(objectDate);
+
+        if (table['Цена покупки помещения, руб.'] == null) {
+          table['Цена покупки помещения, руб.'] = [];
+        }
+        table['Цена покупки помещения, руб.']!.add(double.parse(objectPrice));
+
+        if (table['Цена покупки помещения за 1 м2, руб.'] == null) {
+          table['Цена покупки помещения за 1 м2, руб.'] = [];
+        }
+        table['Цена покупки помещения за 1 м2, руб.']!.add(
+            double.parse(objectPrice) / double.parse(objectArea)
+        );
+
+        if (table['Оценочная стоимость помещения на $currentDate, руб.'] == null) {
+          table['Оценочная стоимость помещения на $currentDate, руб.'] = [];
+        }
+
+        if (table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.'] == null) {
+          table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.'] = [];
+        }
+
+        if (table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.'] == null) {
+          table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.'] = [];
+        }
+
+        if (table['Ежегодное удорожание помещения, %'] == null) {
+          table['Ежегодное удорожание помещения, %'] = [];
+        }
+
+        if (table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)'] == null) {
+          table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)'] = [];
+        }
+        table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.add(
+            double.parse(objectRent) / double.parse(objectArea)
+        );
+
+        if (table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)'] == null) {
+          table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)'] = [];
+        }
+        table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.add(
+            table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.last * 12 * double.parse(objectArea)
+        );
+
+        table['Оценочная стоимость помещения на $currentDate, руб.']!.add(
+            table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.last / (double.parse(objectCapitalization) / 100)
+        );
+
+        table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.']!.add(
+            table['Оценочная стоимость помещения на $currentDate, руб.']!.last / double.parse(objectArea)
+        );
+
+        table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.']!.add(
+            table['Оценочная стоимость помещения на $currentDate, руб.']!.last
+                - table['Цена покупки помещения, руб.']!.last
+        );
+
+        table['Ежегодное удорожание помещения, %']!.add(
+            objectRent == '0'
+                ? ''
+                : (pow(6, (
+                      log(table['Оценочная стоимость помещения на $currentDate, руб.']!.last
+                          / table['Цена покупки помещения, руб.']!.last) / log(6)
+                  ) / 6) - 1) * 100
+        );
+
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+
+    if (places.isNotEmpty) {
+      places.add('Всего');
+      hasTenantName.add(false);
+
+      double sum = table['Площадь, кв.м.']!.fold(0, (previous, current) => previous + current);
+      table['Площадь, кв.м.']!.add(sum);
+
+      table['Период покупки']!.add('');
+
+      sum = table['Цена покупки помещения, руб.']!.fold(0, (previous, current) => previous + current);
+      table['Цена покупки помещения, руб.']!.add(sum);
+
+      table['Цена покупки помещения за 1 м2, руб.']!.add('');
+
+      sum = table['Оценочная стоимость помещения на $currentDate, руб.']!.fold(0, (previous, current) => previous + current);
+      table['Оценочная стоимость помещения на $currentDate, руб.']!.add(sum);
+
+      table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.']!.add('');
+
+      sum = table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.']!.fold(0, (previous, current) => previous + current);
+      table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.']!.add(sum);
+
+      sum = table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.fold(0, (previous, current) => previous + current);
+      table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.add(sum);
+
+      sum = table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.fold(0, (previous, current) => previous + current);
+      table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.add(
+          table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.last
+              / 12 / table['Площадь, кв.м.']!.last
+      );
+
+      double sum1 = 0;
+      double sum2 = 0;
+      for (var i = 0; i < table['Ежегодное удорожание помещения, %']!.length; i++) {
+        if (table['Ежегодное удорожание помещения, %']![i] != '') {
+          sum1 += table['Площадь, кв.м.']![i] * (table['Ежегодное удорожание помещения, %']![i] / 100);
+          sum2 += table['Площадь, кв.м.']![i];
+        }
+      }
+      table['Ежегодное удорожание помещения, %']!.add(
+          (sum1 / sum2) * 100
+      );
+    }
+
+  }
 
   // List headerTitles = ['ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'ЖК ЭКО, 3-к', 'ЖК Акваленд, 3-к', 'ЖК ЭКО, 3-к', 'Всего'];
   List headerTitles = [];
@@ -128,48 +232,15 @@ class _TotalChartsState extends State<TotalCharts> {
 
   @override
   Widget build(BuildContext context) {
-    List<Place> places = context.read<ObjectsBloc>().state.places;
-    for (var place in places) {
-      if (isHandedObject(place)) {
-        headerTitles.add(place.objectItems['Название объекта']!.getFullValue());
-      }
-    }
-    if (headerTitles.isNotEmpty) {
-      headerTitles.add('Всего');
-    }
-
-    List<charts.Series<DeveloperSeries, String>> series = [
-      charts.Series(
-          id: "money",
-          data: data1,
-          domainFn: (DeveloperSeries series, _) => series.year,
-          measureFn: (DeveloperSeries series, _) => series.money,
-          colorFn: (DeveloperSeries series, _) => series.barColor,
-          // Set a label accessor to control the text of the bar label.
-          labelAccessorFn: (DeveloperSeries sales, _) =>
-          'asfasfasf',
-          // insideLabelStyleAccessorFn: (DeveloperSeries sales, _) {
-          //   final color = (sales.year == '2014')
-          //       ? charts.MaterialPalette.red.shadeDefault
-          //       : charts.MaterialPalette.yellow.shadeDefault.darker;
-          //   return new charts.TextStyleSpec(color: color);
-          // },
-          // outsideLabelStyleAccessorFn: (DeveloperSeries sales, _) {
-          //   final color = (sales.year == '2014')
-          //       ? charts.MaterialPalette.red.shadeDefault
-          //       : charts.MaterialPalette.yellow.shadeDefault.darker;
-          //   return new charts.TextStyleSpec(color: color);
-          // }
-      ),
-      // charts.Series(
-      //   id: "money",
-      //   data: data,
-      //   domainFn: (DeveloperSeries series, _) => series.year,
-      //   measureFn: (DeveloperSeries series, _) => series.money,
-      //   colorFn: (DeveloperSeries series, _) => series.barColor,
-      //   labelAccessorFn: (DeveloperSeries row, _) => '${row.year}: ${row.money}',
-      // ),
-    ];
+    // List<Place> places = context.read<ObjectsBloc>().state.places;
+    // for (var place in places) {
+    //   if (isHandedObject(place)) {
+    //     headerTitles.add(place.objectItems['Название объекта']!.getFullValue());
+    //   }
+    // }
+    // if (headerTitles.isNotEmpty) {
+    //   headerTitles.add('Всего');
+    // }
     return Container(
       color: kBackgroundColor,
       child: SafeArea(
@@ -228,7 +299,7 @@ class _TotalChartsState extends State<TotalCharts> {
             slivers: [
               SliverFillRemaining(
                 hasScrollBody: false,
-                child: true == false && MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
+                child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -266,17 +337,17 @@ class _TotalChartsState extends State<TotalCharts> {
                                     child: ListView.builder(
                                         shrinkWrap: true,
                                         scrollDirection: Axis.horizontal,
-                                        itemCount: headerTitles.length,
+                                        itemCount: places.length,
                                         itemBuilder: (BuildContext context, int index) => Container(
                                           width: 128,
                                           child: Padding(
                                             padding: EdgeInsets.only(right: index == 5 ? 0 : 9),
                                             child: Center(
                                               child: Text(
-                                                headerTitles[index],
+                                                places[index],
                                                 style: body.copyWith(
                                                   fontSize: 14,
-                                                  fontWeight: index == headerTitles.length - 1
+                                                  fontWeight: index == places.length - 1
                                                       ? FontWeight.w700
                                                       : FontWeight.w400,
                                                 ),
@@ -288,19 +359,50 @@ class _TotalChartsState extends State<TotalCharts> {
                                     ),
                                   ),
                                 ),
-                                if (headerTitles.isNotEmpty)
-                                  for (var item in totalTableItems)
+                                if (places.isNotEmpty)
+                                  for (var title in table.keys)
                                     Padding(
                                       padding: EdgeInsets.only(left: 24, right: 24, bottom: 8),
                                       child: ExpensesContainer(
-                                        title: item['title'],
-                                        // expenses: item['objects'],
-                                        expenses: List.generate(headerTitles.length, (index) => item['objects'][0]),
+                                        title: title,
+                                        hasTenantName: hasTenantName,
+                                        expenses: List.generate(table[title]!.length, (index) {
+                                            if (title == 'Период покупки') {
+                                              return table[title]![index];
+                                            }
+
+                                            if (table[title]![index] == '') {
+                                              return '';
+                                            }
+
+                                            if (title.contains('%')) {
+                                              return removeTrailingZeros(table[title]![index].toString()) + '%';
+                                            }
+
+                                            if (title.contains('руб') || title == 'Денежный поток') {
+                                              return formatNumber(removeTrailingZeros(table[title]![index].round().toString()), '');
+                                            }
+                                            return formatNumber(removeTrailingZeros(table[title]![index].toString()), '');
+                                          }
+                                        ),
                                         width: 128,
                                         height: 32,
                                         isLastElementBold: true,
                                       ),
                                     )
+                                // if (places.isNotEmpty)
+                                //   for (var item in totalTableItems)
+                                //     Padding(
+                                //       padding: EdgeInsets.only(left: 24, right: 24, bottom: 8),
+                                //       child: ExpensesContainer(
+                                //         title: item['title'],
+                                //         // expenses: item['objects'],
+                                //         expenses: List.generate(headerTitles.length, (index) => item['objects'][0]),
+                                //         width: 128,
+                                //         height: 32,
+                                //         isLastElementBold: true,
+                                //       ),
+                                //     )
                               ],
                             ),
                           ),
@@ -319,223 +421,15 @@ class _TotalChartsState extends State<TotalCharts> {
                         ],
                       )
                       : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      child: Wrap(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                currentIndexTab = 0;
-                              });
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(bottom: 8),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                                decoration: BoxDecoration(
-                                    color: currentIndexTab == 0
-                                        ? Color(0xff5589F1)
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(22)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 20,
-                                        offset: Offset(0, 4), // changes position of shadow
-                                      ),
-                                    ],
-                                ),
-                                child: Text(
-                                  'Распределение прибыли по годам',
-                                  style: caption1.copyWith(
-                                    color: currentIndexTab == 0
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                currentIndexTab = 1;
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                              decoration: BoxDecoration(
-                                  color: currentIndexTab == 1
-                                      ? Color(0xff5589F1)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(22)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 20,
-                                      offset: Offset(0, 4), // changes position of shadow
-                                    ),
-                                  ],
-                              ),
-                              child: Text(
-                                'Вклад аренды и роста стоимости в прибыль',
-                                style: caption1.copyWith(
-                                  color: currentIndexTab == 1
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height / 2,
-                      // width: 1.sw,
-                      // padding: EdgeInsets.all(25),
-                      child: Container(
-                        color: Color(0xffF5F7F9),
-                        child: Padding(
-                          padding: const EdgeInsets.all(9.0),
-                          child: Column(
-                            children: <Widget>[
-                              currentIndexTab == 0
-                                  ? Expanded(
-                                  child: _getBarChart()
-                              )
-                                  : Expanded(
-                                  child: _getPieChart()
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                height: 16,
-                                width: 16,
-                                color: Color(0xff7DD390),
-                              ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                'Прирост рыночной стоимости, руб.',
-                                style: body,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                height: 16,
-                                width: 16,
-                                color: Color(0xff7EB6EA),
-                              ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                'Чистый арендный доход, руб.',
-                                style: body,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                )
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                          ],
+                        )
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  _getBarChart(){
-    List<charts.Series<DeveloperSeries, String>> series = [
-      charts.Series(
-        id: "money",
-        data: data1,
-        domainFn: (DeveloperSeries series, _) => series.year,
-        measureFn: (DeveloperSeries series, _) => series.money,
-        colorFn: (DeveloperSeries series, _) => series.barColor,
-        // Set a label accessor to control the text of the bar label.
-        labelAccessorFn: (DeveloperSeries sales, _) => '${NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: 0).format(sales.money)}',
-        // insideLabelStyleAccessorFn: (DeveloperSeries sales, _) {
-        //   final color = (sales.year == '2014')
-        //       ? charts.MaterialPalette.red.shadeDefault
-        //       : charts.MaterialPalette.yellow.shadeDefault.darker;
-        //   return new charts.TextStyleSpec(color: color);
-        // },
-        // outsideLabelStyleAccessorFn: (DeveloperSeries sales, _) {
-        //   final color = (sales.year == '2014')
-        //       ? charts.MaterialPalette.red.shadeDefault
-        //       : charts.MaterialPalette.yellow.shadeDefault.darker;
-        //   return new charts.TextStyleSpec(color: color);
-        // }
-      ),
-      charts.Series(
-        id: "money",
-        data: data,
-        domainFn: (DeveloperSeries series, _) => series.year,
-        measureFn: (DeveloperSeries series, _) => series.money,
-        colorFn: (DeveloperSeries series, _) => series.barColor,
-        // labelAccessorFn: (DeveloperSeries row, _) => '${row.year}: ${row.money}',
-      ),
-    ];
-    return charts.BarChart(series,
-      animate: true,
-      // Set a bar label decorator.
-      // Example configuring different styles for inside/outside:
-      //       barRendererDecorator: new charts.BarLabelDecorator(
-      //          insideLabelStyleSpec: new charts.TextStyleSpec(...),
-      //          outsideLabelStyleSpec: new charts.TextStyleSpec(...)),
-      // barRendererDecorator: new charts.BarLabelDecorator<String>(),
-      // domainAxis: new charts.OrdinalAxisSpec(),
-      barRendererDecorator: new charts.BarLabelDecorator<String>(),
-      domainAxis: new charts.OrdinalAxisSpec(),
-      defaultRenderer: new charts.BarRendererConfig(
-          groupingType: charts.BarGroupingType.stacked, strokeWidthPx: 1.0),
-    );
-  }
-
-  _getPieChart(){
-    List<charts.Series<DeveloperSeries, String>> series = [
-      charts.Series(
-        id: "money",
-        data: data3,
-        domainFn: (DeveloperSeries series, _) => series.year,
-        measureFn: (DeveloperSeries series, _) => series.money,
-        colorFn: (DeveloperSeries series, _) => series.barColor,
-        // Set a label accessor to control the text of the bar label.
-        labelAccessorFn: (DeveloperSeries sales, _) => '${NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: 0).format(sales.money)}',
-      ),
-    ];
-    return charts.PieChart<String>(series,
-      animate: true,
-      // barRendererDecorator: new charts.BarLabelDecorator<String>(),
-      // domainAxis: new charts.OrdinalAxisSpec(),
-      // defaultRenderer: new charts.BarRendererConfig(
-      //     groupingType: charts.BarGroupingType.stacked, strokeWidthPx: 1.0),
-        defaultRenderer: new charts.ArcRendererConfig(
-            arcWidth: 60,
-            arcRendererDecorators: [new charts.ArcLabelDecorator()])
     );
   }
 }

@@ -12,7 +12,8 @@ class ExpensesContainer extends StatelessWidget {
   final double? width;
   final double? height;
   final bool isLastElementBold;
-  const ExpensesContainer({Key? key, required this.title, required this.expenses, this.width, this.height, this.isLastElementBold = false}) : super(key: key);
+  final List<bool>? hasTenantName;
+  const ExpensesContainer({Key? key, required this.title, required this.expenses, this.width, this.height, this.isLastElementBold = false, this.hasTenantName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,9 @@ class ExpensesContainer extends StatelessWidget {
           height: 11,
         ),
         Container(
-          height: height ?? 54,
+          // constraints: new BoxConstraints(
+          //   minHeight: height ?? 54,
+          // ),
           child: Row(
             children: [
               for (var index = 0; index < expenses.length; index++)
@@ -53,9 +56,11 @@ class ExpensesContainer extends StatelessWidget {
                             );
                         },
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: title.contains('Комментарий') ? 8: 0),
+                          padding: EdgeInsets.symmetric(horizontal: title.contains('Комментарий') ? 8: 0, vertical: 6),
                           decoration: BoxDecoration(
-                              color: Color(0xffF5F5F5).withOpacity(0.6),
+                              color:  hasTenantName == null || !hasTenantName![index]
+                                  ? Color(0xffF5F5F5).withOpacity(0.6)
+                                  : Color(0xff5589F1).withOpacity(0.15),
                               borderRadius: BorderRadius.all(Radius.circular(12))
                           ),
                           child: Center(

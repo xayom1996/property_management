@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:property_management/analytics/cubit/analytics_cubit.dart';
 import 'package:property_management/analytics/pages/analytics_page.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
@@ -40,6 +41,11 @@ class DashboardPage extends StatelessWidget {
             }
             if (context.read<CharacteristicsCubit>().state.selectedPlaceId > state.places.length - 1) {
               context.read<CharacteristicsCubit>().changeSelectedPlaceId(
+                  0, state.places, isJump: true);
+            }
+
+            if (context.read<AnalyticsCubit>().state.selectedPlaceId > state.places.length - 1) {
+              context.read<AnalyticsCubit>().changeSelectedPlaceId(
                   0, state.places, isJump: true);
             }
 

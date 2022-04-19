@@ -9,37 +9,6 @@ import 'package:property_management/total/pages/total_charts.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/container_for_transition.dart';
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({
-    required this.minHeight,
-    required this.maxHeight,
-    required this.child,
-  });
-
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
-
-  @override
-  double get minExtent => minHeight;
-
-  @override
-  double get maxExtent => max(maxHeight, minHeight);
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return new SizedBox.expand(child: child);
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
-  }
-}
-
 class TotalPage extends StatefulWidget {
   const TotalPage({Key? key}) : super(key: key);
 
@@ -90,56 +59,6 @@ class _TotalPageState extends State<TotalPage> {
                   );
                 })
             ),
-            // SliverPersistentHeader(
-            //   pinned: false,
-            //   delegate: _SliverAppBarDelegate(
-            //     minHeight: 75,
-            //     maxHeight: 75,
-            //     child: CarouselSlider(
-            //       options: CarouselOptions(
-            //         // aspectRatio: 2.0,
-            //         // enlargeCenterPage: true,
-            //           height: 75,
-            //           enableInfiniteScroll: true,
-            //           onPageChanged: (int index, CarouselPageChangedReason reason) {
-            //             print(index);
-            //           }
-            //       ),
-            //       items: [1,2,3,4,5].map((i) {
-            //         return Builder(
-            //           builder: (BuildContext context) {
-            //             return ObjectCarouselCard(id: i);
-            //           },
-            //         );
-            //       }).toList(),
-            //     ),
-            //   ),
-            // ),
-            // SliverPersistentHeader(
-            //   pinned: false,
-            //   delegate: _SliverAppBarDelegate(
-            //     minHeight: 24,
-            //     maxHeight: 24,
-            //     child: Container(),
-            //   ),
-            // ),
-            // SliverPersistentHeader(
-            //   pinned: true,
-            //   delegate: _SliverAppBarDelegate(
-            //     minHeight: 45,
-            //     maxHeight: 45,
-            //     child: CustomTabContainer(
-            //       firstTab: 'Объект',
-            //       secondTab: 'Арендатор',
-            //       currentIndex: currentIndexTab,
-            //       onChange: (int index) {
-            //         setState(() {
-            //           currentIndexTab = index;
-            //         });
-            //       },
-            //     ),
-            //   ),
-            // ),
           ];
         },
         body: CustomScrollView(

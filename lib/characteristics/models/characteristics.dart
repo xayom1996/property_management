@@ -78,7 +78,7 @@ class Characteristics {
         return requisites.isEmpty ? '' : requisites;
       }
       if (value == null || value!.isEmpty) return '';
-      if (type != 'Число' || title.contains('Коэффициент') || (type == 'Число' && value!.contains('.'))) return '$value${unit == '' ? '' : ' $unit'}';
+      if (type != 'Число') return '$value${unit == '' ? '' : ' $unit'}';
       try {
         return formatNumber(value ?? '0', unit);
       } catch (e) {
