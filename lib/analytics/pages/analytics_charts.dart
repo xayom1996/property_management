@@ -329,7 +329,7 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
-                    : MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800 && true == false
+                    : MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
