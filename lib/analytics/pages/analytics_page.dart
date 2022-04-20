@@ -183,108 +183,138 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                       builder: (context, state) {
                         var plansItems = objectState.places[context.read<AnalyticsCubit>().state.selectedPlaceId].plansItems ?? [];
 
-                        return SingleChildScrollView(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
-                            child: Column(
-                              children: [
-                                for (var i = 0; i < plansItems.length; i++)
-                                  BlocConsumer<EditPlanCubit, EditingState>(
-                                    listener: (context, state) {
-                                      if (state.status == StateStatus.success) {
-                                        context.read<ObjectsBloc>().add(ObjectsUpdateEvent());
-                                      }
-                                    },
-                                    builder: (context, state) {
-                                      return Slidable(
-                                        key: ValueKey(plansItems[i].hashCode),
-                                        endActionPane: ActionPane(
-                                          motion: ScrollMotion(),
-                                          children: [
-                                            Spacer(),
-                                            Align(
-                                              alignment: Alignment.topCenter,
-                                              child: Padding(
-                                                padding: EdgeInsets.only(top: 5),
-                                                child: BoxIcon(
-                                                  iconPath: 'assets/icons/trash.svg',
-                                                  iconColor: Colors.black,
-                                                  backgroundColor: Colors.white,
-                                                  onTap: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) => CustomAlertDialog(
-                                                          title: 'Вы действительно хотите удалить план?',
-                                                          onApprove: () {
-                                                            Place place = context.read<ObjectsBloc>().state.places[context.read<AnalyticsCubit>().state.selectedPlaceId];
-                                                            context.read<EditPlanCubit>().getItems(plansItems[i], place.id);
-                                                            context.read<EditPlanCubit>().edit(i, action: 'delete');
-                                                          },
-                                                        ),
-                                                    );
-                                                  },
-
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                          ],
-                                        ),
-                                        child: ContainerForTransition(
-                                          title: plansItems[i]['Название плана']!.getFullValue(),
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => AnalyticCharts(
-                                                title: plansItems[i]['Название плана']!.getFullValue(),
-                                                planIndex: i,
-                                              )),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    }
-                                  ),
-                                const SizedBox(
-                                  height: 48,
-                                ),
-                                if (plansItems.length < 3 && context.read<AppBloc>().state.user.isAdminOrManager())
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => CreatePlanPage(
-                                          docId: objectState.places[context.read<AnalyticsCubit>().state.selectedPlaceId].id,
-                                        )),
-                                      );
-                                    },
-                                    child: Row(
+                        return plansItems.isEmpty && !context.read<AppBloc>().state.user.isAdminOrManager()
+                            ? CustomScrollView(
+                                slivers: [
+                                  SliverFillRemaining(
+                                    hasScrollBody: false,
+                                    child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         SvgPicture.asset(
-                                          'assets/icons/plus.svg',
-                                          color: Color(0xff4B81EF),
-                                          height: 16,
+                                          'assets/icons/home_white.svg',
+                                          color: Color(0xffE9ECEE),
+                                          height: 80,
                                         ),
-                                        SizedBox(width: 10),
+                                        SizedBox(
+                                          height: 32,
+                                        ),
                                         Text(
-                                          'Добавить план',
-                                          style: title2.copyWith(
-                                              color: Color(0xff4B81EF),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400
+                                          'Данные не заполнены, обратитесь к вашему менеджеру',
+                                          textAlign: TextAlign.center,
+                                          style: body.copyWith(
+                                            color: Color(0xffC7C9CC),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                              ],
-                            ),
-                          ),
-                        );
+                                ],
+                              )
+                            : SingleChildScrollView(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
+                                  child: Column(
+                                    children: [
+                                      for (var i = 0; i < plansItems.length; i++)
+                                        BlocConsumer<EditPlanCubit, EditingState>(
+                                          listener: (context, state) {
+                                            if (state.status == StateStatus.success) {
+                                              context.read<ObjectsBloc>().add(ObjectsUpdateEvent());
+                                            }
+                                          },
+                                          builder: (context, state) {
+                                            return Slidable(
+                                              key: ValueKey(plansItems[i].hashCode),
+                                              enabled: context.read<AppBloc>().state.user.isAdminOrManager(),
+                                              endActionPane: ActionPane(
+                                                motion: ScrollMotion(),
+                                                children: [
+                                                  Spacer(),
+                                                  Align(
+                                                    alignment: Alignment.topCenter,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(top: 5),
+                                                      child: BoxIcon(
+                                                        iconPath: 'assets/icons/trash.svg',
+                                                        iconColor: Colors.black,
+                                                        backgroundColor: Colors.white,
+                                                        onTap: () {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder: (context) => CustomAlertDialog(
+                                                                title: 'Вы действительно хотите удалить план?',
+                                                                onApprove: () {
+                                                                  Place place = context.read<ObjectsBloc>().state.places[context.read<AnalyticsCubit>().state.selectedPlaceId];
+                                                                  context.read<EditPlanCubit>().getItems(plansItems[i], place.id);
+                                                                  context.read<EditPlanCubit>().edit(i, action: 'delete');
+                                                                },
+                                                              ),
+                                                          );
+                                                        },
+
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                ],
+                                              ),
+                                              child: ContainerForTransition(
+                                                title: plansItems[i]['Название плана']!.getFullValue(),
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => AnalyticCharts(
+                                                      title: plansItems[i]['Название плана']!.getFullValue(),
+                                                      planIndex: i,
+                                                    )),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }
+                                        ),
+                                      const SizedBox(
+                                        height: 48,
+                                      ),
+                                      if (plansItems.length < 3 && context.read<AppBloc>().state.user.isAdminOrManager())
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => CreatePlanPage(
+                                                docId: objectState.places[context.read<AnalyticsCubit>().state.selectedPlaceId].id,
+                                              )),
+                                            );
+                                          },
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/icons/plus.svg',
+                                                color: Color(0xff4B81EF),
+                                                height: 16,
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                'Добавить план',
+                                                style: title2.copyWith(
+                                                    color: Color(0xff4B81EF),
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              );
                       }
                     ),
                     textButton: secondTabObjectItems.isEmpty

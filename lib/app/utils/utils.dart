@@ -262,7 +262,7 @@ String formatNumber(String value, String? symbol) {
   }
 
   String formatN = NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: decimalDigits).format(double.parse(value)).replaceAll(',', '.').replaceAll(' ', '');
-  if (formatN[formatN.length - 1] == '0') {
+  if (formatN.contains('.') && formatN[formatN.length - 2] == '0') {
     formatN = formatN.substring(0, formatN.length - 2);
   }
 

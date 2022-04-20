@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -19,8 +20,8 @@ import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/models/place.dart';
 
 class TotalCharts extends StatefulWidget {
-  final String title;
-  const TotalCharts({Key? key, required this.title}) : super(key: key);
+  // final String title;
+  const TotalCharts({Key? key}) : super(key: key);
 
   @override
   State<TotalCharts> createState() => _TotalChartsState();
@@ -29,14 +30,24 @@ class TotalCharts extends StatefulWidget {
 class _TotalChartsState extends State<TotalCharts> {
   int currentIndexTab = 0;
   bool isTable = true;
-  bool isLoading = true;
+  bool isLoading = false;
   Map<String, List> table = {};
+  Map<String, num> table1 = {};
   List<String> places = [];
   List<bool> hasTenantName = [];
+  String currentDate = '';
+  late StreamSubscription _objectsSubscription;
 
   @override
   void initState() {
+    currentDate = DateFormat('MM.yyyy').format(DateTime.now());
     calculationTable();
+    _objectsSubscription = context.read<ObjectsBloc>().stream.listen(
+            (state){
+          if (state.status == ObjectsStatus.fetched){
+            calculationTable();
+          }
+        });
     super.initState();
   }
 
@@ -51,106 +62,102 @@ class _TotalChartsState extends State<TotalCharts> {
     String currentDate = DateFormat('MM.yyyy').format(DateTime.now());
 
     for (var place in context.read<ObjectsBloc>().state.places) {
-      if (isHandedObject(place)) {
-        String objectName = place.objectItems['Название объекта']!.value ?? '';
-        String objectArea = place.objectItems['Площадь объекта']!.value ?? '';
-        String objectDate = place.objectItems['Дата приобретения']!.value ?? '';
-        String objectPrice = place.objectItems['Начальная стоимость']!.value ?? '';
-        String objectCapitalization = place.objectItems['Коэффициент капитализации']!.value ?? '';
-        String objectRent = isNotEmpty(place.objectItems['Арендная плата']!.value)
-            ? place.objectItems['Арендная плата']!.value!
-            : '0';
-        String tenantName = place.tenantItems != null
-            ? place.tenantItems!['Наименование организации']!.value ?? ''
-            : '';
+      String objectName = place.objectItems['Название объекта']!.value ?? '';
+      String objectArea = place.objectItems['Площадь объекта']!.value ?? '';
+      String objectDate = place.objectItems['Дата приобретения']!.value ?? '';
+      String objectPrice = place.objectItems['Начальная стоимость']!.value ?? '';
+      String objectCapitalization = place.objectItems['Коэффициент капитализации']!.value ?? '';
+      String objectRent = isNotEmpty(place.objectItems['Арендная плата']!.value)
+          ? place.objectItems['Арендная плата']!.value!
+          : '0';
+      String tenantName = place.tenantItems != null
+          ? place.tenantItems!['Наименование организации']!.value ?? ''
+          : '';
 
-        if (objectName.isEmpty || objectDate.isEmpty || objectArea.isEmpty
-            || objectPrice.isEmpty || objectCapitalization.isEmpty ) {
-          break;
-        }
-
-        places.add(objectName);
-        hasTenantName.add(tenantName.isNotEmpty);
-        objectDate = DateFormat('MM.yyyy').format(DateFormat('dd.MM.yyyy').parse(objectDate));
-
-        if (table['Площадь, кв.м.'] == null) {
-          table['Площадь, кв.м.'] = [];
-        }
-        table['Площадь, кв.м.']!.add(double.parse(objectArea));
-
-        if (table['Период покупки'] == null) {
-          table['Период покупки'] = [];
-        }
-        table['Период покупки']!.add(objectDate);
-
-        if (table['Цена покупки помещения, руб.'] == null) {
-          table['Цена покупки помещения, руб.'] = [];
-        }
-        table['Цена покупки помещения, руб.']!.add(double.parse(objectPrice));
-
-        if (table['Цена покупки помещения за 1 м2, руб.'] == null) {
-          table['Цена покупки помещения за 1 м2, руб.'] = [];
-        }
-        table['Цена покупки помещения за 1 м2, руб.']!.add(
-            double.parse(objectPrice) / double.parse(objectArea)
-        );
-
-        if (table['Оценочная стоимость помещения на $currentDate, руб.'] == null) {
-          table['Оценочная стоимость помещения на $currentDate, руб.'] = [];
-        }
-
-        if (table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.'] == null) {
-          table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.'] = [];
-        }
-
-        if (table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.'] == null) {
-          table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.'] = [];
-        }
-
-        if (table['Ежегодное удорожание помещения, %'] == null) {
-          table['Ежегодное удорожание помещения, %'] = [];
-        }
-
-        if (table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)'] == null) {
-          table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)'] = [];
-        }
-        table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.add(
-            double.parse(objectRent) / double.parse(objectArea)
-        );
-
-        if (table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)'] == null) {
-          table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)'] = [];
-        }
-        table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.add(
-            table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.last * 12 * double.parse(objectArea)
-        );
-
-        table['Оценочная стоимость помещения на $currentDate, руб.']!.add(
-            table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.last / (double.parse(objectCapitalization) / 100)
-        );
-
-        table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.']!.add(
-            table['Оценочная стоимость помещения на $currentDate, руб.']!.last / double.parse(objectArea)
-        );
-
-        table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.']!.add(
-            table['Оценочная стоимость помещения на $currentDate, руб.']!.last
-                - table['Цена покупки помещения, руб.']!.last
-        );
-
-        table['Ежегодное удорожание помещения, %']!.add(
-            objectRent == '0'
-                ? ''
-                : (pow(6, (
-                      log(table['Оценочная стоимость помещения на $currentDate, руб.']!.last
-                          / table['Цена покупки помещения, руб.']!.last) / log(6)
-                  ) / 6) - 1) * 100
-        );
-
-        setState(() {
-          isLoading = false;
-        });
+      if (objectName.isEmpty || objectDate.isEmpty || objectArea.isEmpty
+          || objectPrice.isEmpty || objectCapitalization.isEmpty || objectCapitalization == '0') {
+        continue;
       }
+
+      places.add(objectName);
+      hasTenantName.add(tenantName.isNotEmpty);
+      objectDate = DateFormat('MM.yyyy').format(DateFormat('dd.MM.yyyy').parse(objectDate));
+
+      if (table['Площадь, кв.м.'] == null) {
+        table['Площадь, кв.м.'] = [];
+      }
+      table['Площадь, кв.м.']!.add(double.parse(objectArea));
+
+      if (table['Период покупки'] == null) {
+        table['Период покупки'] = [];
+      }
+      table['Период покупки']!.add(objectDate);
+
+      if (table['Цена покупки помещения, руб.'] == null) {
+        table['Цена покупки помещения, руб.'] = [];
+      }
+      table['Цена покупки помещения, руб.']!.add(double.parse(objectPrice));
+
+      if (table['Цена покупки помещения за 1 м2, руб.'] == null) {
+        table['Цена покупки помещения за 1 м2, руб.'] = [];
+      }
+      table['Цена покупки помещения за 1 м2, руб.']!.add(
+          double.parse(objectPrice) / double.parse(objectArea)
+      );
+
+      if (table['Оценочная стоимость помещения на $currentDate, руб.'] == null) {
+        table['Оценочная стоимость помещения на $currentDate, руб.'] = [];
+      }
+
+      if (table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.'] == null) {
+        table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.'] = [];
+      }
+
+      if (table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.'] == null) {
+        table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.'] = [];
+      }
+
+      if (table['Ежегодное удорожание помещения, %'] == null) {
+        table['Ежегодное удорожание помещения, %'] = [];
+      }
+
+      if (table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)'] == null) {
+        table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)'] = [];
+      }
+      table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.add(
+          double.parse(objectRent) / double.parse(objectArea)
+      );
+
+      if (table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)'] == null) {
+        table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)'] = [];
+      }
+      table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.add(
+          table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.last * 12 * double.parse(objectArea)
+      );
+
+      table['Оценочная стоимость помещения на $currentDate, руб.']!.add(
+          table['Фактическая/ Расчётная аренда за Помещение, руб. в год (на $currentDate или к началу доходной эксплуатации)']!.last / (double.parse(objectCapitalization) / 100)
+      );
+
+      table['Оценочная стоимость помещения за 1 м2 на $currentDate, руб.']!.add(
+          table['Оценочная стоимость помещения на $currentDate, руб.']!.last / double.parse(objectArea)
+      );
+
+      table['Удорожание (прибавка в стоимости) помещения к $currentDate, руб.']!.add(
+          table['Оценочная стоимость помещения на $currentDate, руб.']!.last
+              - table['Цена покупки помещения, руб.']!.last
+      );
+
+      int yearsCount = (DateFormat('MM.yyyy').parse(currentDate).difference(DateFormat('MM.yyyy').parse(objectDate)).inDays / 365).ceil();
+
+      table['Ежегодное удорожание помещения, %']!.add(
+          objectRent == '0' || yearsCount < 2
+              ? ''
+              : (pow(yearsCount, (
+              log(table['Оценочная стоимость помещения на $currentDate, руб.']!.last
+                  / table['Цена покупки помещения, руб.']!.last) / log(yearsCount)
+          ) / yearsCount) - 1) * 100
+      );
     }
 
     if (places.isNotEmpty) {
@@ -195,7 +202,22 @@ class _TotalChartsState extends State<TotalCharts> {
       table['Ежегодное удорожание помещения, %']!.add(
           (sum1 / sum2) * 100
       );
+
+      table1['Количество помещений'] = places.length;
+      table1['Средняя покупная стоимость помещения'] = table['Цена покупки помещения, руб.']!.last / places.length;
+      table1['Средняя покупная стоимость за 1м2'] = table['Цена покупки помещения, руб.']!.last / table['Площадь, кв.м.']!.last;
+      table1['Средняя стоимость помещений на $currentDate'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last / places.length;
+      table1['Средняя стоимость помещений за 1м2 на $currentDate'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last / table['Площадь, кв.м.']!.last;
+      table1['Средняя прибавка в стоимости (Удорожание) 1м2 всех помещений за всё время (на $currentDate)'] = 0;
+      table1['Общая прибавка в стоимости (Удорожание) всех помещений на $currentDate.'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last - table['Цена покупки помещения, руб.']!.last;
+      table1['Средняя прибавка в стоимости (Удорожание) 1м2 всех помещений за всё время (на $currentDate)'] = table1['Общая прибавка в стоимости (Удорожание) всех помещений на $currentDate.']! / table['Площадь, кв.м.']!.last;
+      table1['Средняя стоимость аренды помещений за 1 м2 на $currentDate'] = table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.last;
+      table1['Средний прирост стоимости в год'] = table['Ежегодное удорожание помещения, %']!.last;
     }
+
+    setState(() {
+      isLoading = false;
+    });
 
   }
 
@@ -209,26 +231,26 @@ class _TotalChartsState extends State<TotalCharts> {
     return 'с ${DateFormat('MM.yyyy').format(date2)} по ${DateFormat('MM.yyyy').format(date1)}';
   }
 
-  bool isHandedObject(Place place) {
-    int count = 0;
-    DateTime now = DateTime.now();
-    String date1 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 1, now.day));
-    String date2 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 2, now.day));
-    String date3 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 3, now.day));
-    for (var expense in place.expensesItems ?? []){
-      String date = expense['Месяц, Год']!.getFullValue();
-
-      if (date == date1 || date == date2 || date == date3){
-        if (isNotEmpty(expense['Текущая арендная плата']!.getFullValue())) {
-          if (int.parse(expense['Текущая арендная плата']!.value) > 0) {
-            count++;
-          }
-        }
-      }
-    }
-    return (widget.title == 'Объекты в эксплуатации' && count == 3)
-        || (widget.title == 'Объекты спекулятивного типа' && count != 3);
-  }
+  // bool isHandedObject(Place place) {
+  //   int count = 0;
+  //   DateTime now = DateTime.now();
+  //   String date1 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 1, now.day));
+  //   String date2 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 2, now.day));
+  //   String date3 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 3, now.day));
+  //   for (var expense in place.expensesItems ?? []){
+  //     String date = expense['Месяц, Год']!.getFullValue();
+  //
+  //     if (date == date1 || date == date2 || date == date3){
+  //       if (isNotEmpty(expense['Текущая арендная плата']!.getFullValue())) {
+  //         if (int.parse(expense['Текущая арендная плата']!.value) > 0) {
+  //           count++;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return (widget.title == 'Объекты в эксплуатации' && count == 3)
+  //       || (widget.title == 'Объекты спекулятивного типа' && count != 3);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -254,32 +276,35 @@ class _TotalChartsState extends State<TotalCharts> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                BoxIcon(
-                  iconPath: 'assets/icons/back.svg',
-                  iconColor: Colors.black,
-                  backgroundColor: Colors.white,
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                Container(
+                  width: 44,
+                  height: 44,
                 ),
-                Spacer(),
-                Column(
-                  children: [
-                    Text(
-                      widget.title,
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      MediaQuery.of(context).orientation == Orientation.portrait
+                          && MediaQuery.of(context).size.width <= 800 || (places.isEmpty && !isLoading)
+                          ? 'Итог'
+                          : isTable
+                            ? 'Текущая оценка стоимостей по состоянию на $currentDate г.'
+                            : 'Итоги',
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
                       style: body,
                     ),
-                    if (widget.title == 'Объекты спекулятивного типа')
-                    Text(
-                      getRangeDate(),
-                      style: caption,
-                    ),
-                  ],
+                  ),
                 ),
-                Spacer(),
+                // Text(
+                //   'Текущая оценка стоимостей по состоянию на 04.2022 г.',
+                //   textAlign: TextAlign.center,
+                //   style: body,
+                // ),
+                // Spacer(),
                 BoxIcon(
                   iconPath: isTable
-                      ? 'assets/icons/graph.svg'
+                      ? 'assets/icons/table.svg'
                       : 'assets/icons/table.svg',
                   iconColor: Colors.black,
                   backgroundColor: Colors.white,
@@ -299,7 +324,8 @@ class _TotalChartsState extends State<TotalCharts> {
             slivers: [
               SliverFillRemaining(
                 hasScrollBody: false,
-                child: MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
+                child: MediaQuery.of(context).orientation == Orientation.portrait
+                    && MediaQuery.of(context).size.width <= 800 || (places.isEmpty && !isLoading)
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -312,7 +338,11 @@ class _TotalChartsState extends State<TotalCharts> {
                           Padding(
                             padding: const EdgeInsets.all(30),
                             child: Text(
-                              'Для просмотра таблиц и графиков поверните телефон',
+                              places.isEmpty && !isLoading
+                                ? context.read<AppBloc>().state.user.isAdminOrManager()
+                                  ? 'Для расчета таблицы заполните необходимые данные по объекту'
+                                  : 'Данные не заполнены'
+                                : 'Для просмотра таблиц и графиков поверните телефон',
                               textAlign: TextAlign.center,
                               style: body.copyWith(
                                 color: Color(0xffC7C9CC),
@@ -390,19 +420,6 @@ class _TotalChartsState extends State<TotalCharts> {
                                         isLastElementBold: true,
                                       ),
                                     )
-                                // if (places.isNotEmpty)
-                                //   for (var item in totalTableItems)
-                                //     Padding(
-                                //       padding: EdgeInsets.only(left: 24, right: 24, bottom: 8),
-                                //       child: ExpensesContainer(
-                                //         title: item['title'],
-                                //         // expenses: item['objects'],
-                                //         expenses: List.generate(headerTitles.length, (index) => item['objects'][0]),
-                                //         width: 128,
-                                //         height: 32,
-                                //         isLastElementBold: true,
-                                //       ),
-                                //     )
                               ],
                             ),
                           ),
@@ -410,7 +427,8 @@ class _TotalChartsState extends State<TotalCharts> {
                             child: Align(
                               alignment: Alignment.topCenter,
                               child: Text(
-                                'Объекты',
+                                'Объект',
+                                textAlign: TextAlign.center,
                                 style: body.copyWith(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w700,
@@ -420,11 +438,64 @@ class _TotalChartsState extends State<TotalCharts> {
                           ),
                         ],
                       )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                          ],
-                        )
+                      : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  child: Text(
+                                    'Общие показатели инвестиций в текущих оценках \n стоимостей по состоянию на $currentDate г.',
+                                    textAlign: TextAlign.center,
+                                    style: body.copyWith(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              for (var key in table1.keys)
+                                Column(
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            key,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: body,
+                                          ),
+                                        ),
+                                        Text(
+                                          formatNumber(
+                                              removeTrailingZeros(table1[key].toString()),
+                                              key == 'Количество помещений'
+                                                  ? 'шт'
+                                                  : key == 'Средний прирост стоимости в год'
+                                                    ? '%'
+                                                    : '₽',
+                                          ),
+                                          style: body,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    if (table1.keys.last != key)
+                                      Divider(),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                      )
               ),
             ],
           ),

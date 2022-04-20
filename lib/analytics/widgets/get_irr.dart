@@ -3,21 +3,21 @@ import 'dart:math';
 num internal_rate_of_return(List<num> flow, num investment, num guess) {
   num irr = guess;
   num increment;
-  Function irr_calc;
+  Function irrCalc;
 
   if (net_present_value(flow, investment, irr) >
       net_present_value(flow, investment, irr + 1.1)) {
     increment = 1;
-    irr_calc = _pos_irr_calc;
+    irrCalc = _pos_irr_calc;
   } else {
     increment = -1;
-    irr_calc = _neg_irr_calc;
+    irrCalc = _neg_irr_calc;
   }
 
   // max for iterations is 18
   for (int x = 0; x < 10; x += 1) {
     increment /= 10;
-    irr = irr_calc(flow, investment, irr, increment);
+    irr = irrCalc(flow, investment, irr, increment);
   }
 
   irr += increment;

@@ -75,7 +75,7 @@ class _TotalPageState extends State<TotalPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => TotalCharts(
-                            title: 'Объекты спекулятивного типа',
+                            // title: 'Объекты спекулятивного типа',
                           )),
                         );
                       },
@@ -86,7 +86,7 @@ class _TotalPageState extends State<TotalPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => TotalCharts(
-                            title: 'Объекты в эксплуатации',
+                            // title: 'Объекты в эксплуатации',
                           )),
                         );
                       },

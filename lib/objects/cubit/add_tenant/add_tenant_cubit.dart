@@ -33,6 +33,9 @@ class AddTenantCubit extends Cubit<AddingState> {
     emit(AddingState(
       addItems: _addItems,
       items: items,
+      status: isTenantItemsValid(_addItems)
+          ? StateStatus.valid
+          : StateStatus.invalid,
     ));
   }
 

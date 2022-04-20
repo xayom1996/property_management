@@ -12,6 +12,7 @@ import 'package:property_management/analytics/cubit/edit_plan_cubit.dart';
 import 'package:property_management/analytics/models/model.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:property_management/analytics/pages/edit_plan_page.dart';
+import 'package:property_management/analytics/widgets/finance.dart';
 import 'package:property_management/analytics/widgets/get_irr.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/theme/colors.dart';
@@ -210,9 +211,7 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
       table['Прибавка в стоимости(общая), руб.'] = [allAddedValue, (allAddedValue / (allAddedValue + allRentalIncome)) * 100];
 
       table['Чистая прибыль за период, руб.'] = [allRentalIncome + allAddedValue, 100];
-
       table['Внутренняя норма доходности в год'] = [internal_rate_of_return(List.generate(table['Денежный поток']!.length, (index) => table['Денежный поток']?[index]), 0, 0)];
-
       setState(() {
         isLoading = false;
       });
@@ -330,7 +329,7 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
-                    : MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800
+                    : MediaQuery.of(context).orientation == Orientation.portrait && MediaQuery.of(context).size.width <= 800 && true == false
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -615,10 +614,12 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
       DeveloperSeries(
         year: "1",
         money: table['Чистый арендный доход(общий), руб']?[0].round(),
+        procent: removeTrailingZeros(table['Чистый арендный доход(общий), руб']![1].toString()) + '%',
         barColor: charts.ColorUtil.fromDartColor(Color(0xff7EB6EA)),
       ),
       DeveloperSeries(
         year: "2",
+        procent: removeTrailingZeros(table['Прибавка в стоимости(общая), руб.']![1].toString()) + '%',
         money: table['Прибавка в стоимости(общая), руб.']?[0].round(),
         barColor: charts.ColorUtil.fromDartColor(Color(0xff7DD390)),
       ),
@@ -631,8 +632,22 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
         domainFn: (DeveloperSeries series, _) => series.year,
         measureFn: (DeveloperSeries series, _) => series.money,
         colorFn: (DeveloperSeries series, _) => series.barColor,
+        insideLabelStyleAccessorFn: (DeveloperSeries sales, _) {
+          const color = charts.MaterialPalette.white;
+
+          return const charts.TextStyleSpec(
+            fontFamily: 'ptSans',
+            fontSize: 17,
+            color: color
+          );
+        },
+        outsideLabelStyleAccessorFn: (DeveloperSeries sales, _) =>
+          const charts.TextStyleSpec(
+            fontFamily: 'ptSans',
+            fontSize: 17,
+          ),
         // Set a label accessor to control the text of the bar label.
-        labelAccessorFn: (DeveloperSeries sales, _) => '${NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: 0).format(sales.money)}',
+        labelAccessorFn: (DeveloperSeries sales, _) => '${NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: 0).format(sales.money)} \n \n ${sales.procent}',
       ),
     ];
     return charts.PieChart<String>(series,
