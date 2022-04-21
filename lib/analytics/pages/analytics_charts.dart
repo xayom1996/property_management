@@ -636,18 +636,18 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
           const color = charts.MaterialPalette.white;
 
           return const charts.TextStyleSpec(
-            fontFamily: 'ptSans',
-            fontSize: 17,
+            // fontFamily: 'ptSans',
+            // fontSize: 17,
             color: color
           );
         },
-        outsideLabelStyleAccessorFn: (DeveloperSeries sales, _) =>
-          const charts.TextStyleSpec(
-            fontFamily: 'ptSans',
-            fontSize: 17,
-          ),
+        // outsideLabelStyleAccessorFn: (DeveloperSeries sales, _) =>
+        //   const charts.TextStyleSpec(
+        //     fontFamily: 'ptSans',
+        //     fontSize: 17,
+        //   ),
         // Set a label accessor to control the text of the bar label.
-        labelAccessorFn: (DeveloperSeries sales, _) => '${NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: 0).format(sales.money)} \n \n ${sales.procent}',
+        labelAccessorFn: (DeveloperSeries sales, _) => '${NumberFormat.currency(locale: 'ru', symbol: '', decimalDigits: 0).format(sales.money)}\n${sales.procent}',
       ),
     ];
     return charts.PieChart<String>(series,

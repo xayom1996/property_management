@@ -29,10 +29,10 @@ class TotalCharts extends StatefulWidget {
 
 class _TotalChartsState extends State<TotalCharts> {
   int currentIndexTab = 0;
-  bool isTable = true;
+  bool isTotalTable = true;
   bool isLoading = false;
   Map<String, List> table = {};
-  Map<String, num> table1 = {};
+  Map<String, num> totalTable = {};
   List<String> places = [];
   List<bool> hasTenantName = [];
   String currentDate = '';
@@ -81,6 +81,7 @@ class _TotalChartsState extends State<TotalCharts> {
 
       places.add(objectName);
       hasTenantName.add(tenantName.isNotEmpty);
+      int yearsCount = (DateTime.now().difference(DateFormat('dd.MM.yyyy').parse(objectDate)).inDays / 365).ceil();
       objectDate = DateFormat('MM.yyyy').format(DateFormat('dd.MM.yyyy').parse(objectDate));
 
       if (table['Площадь, кв.м.'] == null) {
@@ -148,8 +149,6 @@ class _TotalChartsState extends State<TotalCharts> {
               - table['Цена покупки помещения, руб.']!.last
       );
 
-      int yearsCount = (DateFormat('MM.yyyy').parse(currentDate).difference(DateFormat('MM.yyyy').parse(objectDate)).inDays / 365).ceil();
-
       table['Ежегодное удорожание помещения, %']!.add(
           objectRent == '0' || yearsCount < 2
               ? ''
@@ -161,9 +160,6 @@ class _TotalChartsState extends State<TotalCharts> {
     }
 
     if (places.isNotEmpty) {
-      places.add('Всего');
-      hasTenantName.add(false);
-
       double sum = table['Площадь, кв.м.']!.fold(0, (previous, current) => previous + current);
       table['Площадь, кв.м.']!.add(sum);
 
@@ -200,19 +196,26 @@ class _TotalChartsState extends State<TotalCharts> {
         }
       }
       table['Ежегодное удорожание помещения, %']!.add(
-          (sum1 / sum2) * 100
+          sum2 == 0
+              ? ''
+              : (sum1 / sum2) * 100
       );
 
-      table1['Количество помещений'] = places.length;
-      table1['Средняя покупная стоимость помещения'] = table['Цена покупки помещения, руб.']!.last / places.length;
-      table1['Средняя покупная стоимость за 1м2'] = table['Цена покупки помещения, руб.']!.last / table['Площадь, кв.м.']!.last;
-      table1['Средняя стоимость помещений на $currentDate'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last / places.length;
-      table1['Средняя стоимость помещений за 1м2 на $currentDate'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last / table['Площадь, кв.м.']!.last;
-      table1['Средняя прибавка в стоимости (Удорожание) 1м2 всех помещений за всё время (на $currentDate)'] = 0;
-      table1['Общая прибавка в стоимости (Удорожание) всех помещений на $currentDate.'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last - table['Цена покупки помещения, руб.']!.last;
-      table1['Средняя прибавка в стоимости (Удорожание) 1м2 всех помещений за всё время (на $currentDate)'] = table1['Общая прибавка в стоимости (Удорожание) всех помещений на $currentDate.']! / table['Площадь, кв.м.']!.last;
-      table1['Средняя стоимость аренды помещений за 1 м2 на $currentDate'] = table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.last;
-      table1['Средний прирост стоимости в год'] = table['Ежегодное удорожание помещения, %']!.last;
+      totalTable['Количество помещений'] = places.length;
+      totalTable['Средняя покупная стоимость помещения'] = table['Цена покупки помещения, руб.']!.last / places.length;
+      totalTable['Средняя покупная стоимость за 1м2'] = table['Цена покупки помещения, руб.']!.last / table['Площадь, кв.м.']!.last;
+      totalTable['Средняя стоимость помещений на $currentDate'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last / places.length;
+      totalTable['Средняя стоимость помещений за 1м2 на $currentDate'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last / table['Площадь, кв.м.']!.last;
+      totalTable['Средняя прибавка в стоимости (Удорожание) 1м2 всех помещений за всё время (на $currentDate)'] = 0;
+      totalTable['Общая прибавка в стоимости (Удорожание) всех помещений на $currentDate.'] = table['Оценочная стоимость помещения на $currentDate, руб.']!.last - table['Цена покупки помещения, руб.']!.last;
+      totalTable['Средняя прибавка в стоимости (Удорожание) 1м2 всех помещений за всё время (на $currentDate)'] = totalTable['Общая прибавка в стоимости (Удорожание) всех помещений на $currentDate.']! / table['Площадь, кв.м.']!.last;
+      totalTable['Средняя стоимость аренды помещений за 1 м2 на $currentDate'] = table['Фактическая/ Расчетная ставка аренды, руб./м2 в мес. (на $currentDate или к началу доходной эксплуатации)']!.last;
+      totalTable['Средний прирост стоимости в год'] = table['Ежегодное удорожание помещения, %']!.last == ''
+          ? 0
+          : table['Ежегодное удорожание помещения, %']!.last;
+
+      places.add('Всего');
+      hasTenantName.add(false);
     }
 
     setState(() {
@@ -285,11 +288,9 @@ class _TotalChartsState extends State<TotalCharts> {
                     alignment: Alignment.center,
                     child: Text(
                       MediaQuery.of(context).orientation == Orientation.portrait
-                          && MediaQuery.of(context).size.width <= 800 || (places.isEmpty && !isLoading)
-                          ? 'Итог'
-                          : isTable
-                            ? 'Текущая оценка стоимостей по состоянию на $currentDate г.'
-                            : 'Итоги',
+                          && MediaQuery.of(context).size.width <= 800 || (places.isEmpty && !isLoading) || isTotalTable
+                          ? 'Итоги'
+                          : 'Текущая оценка стоимостей по состоянию на $currentDate г.',
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       style: body,
@@ -303,14 +304,14 @@ class _TotalChartsState extends State<TotalCharts> {
                 // ),
                 // Spacer(),
                 BoxIcon(
-                  iconPath: isTable
+                  iconPath: isTotalTable
                       ? 'assets/icons/table.svg'
                       : 'assets/icons/table.svg',
                   iconColor: Colors.black,
                   backgroundColor: Colors.white,
                   onTap: () {
                     setState(() {
-                      isTable = !isTable;
+                      isTotalTable = !isTotalTable;
                     });
                   },
                 ),
@@ -325,7 +326,7 @@ class _TotalChartsState extends State<TotalCharts> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: MediaQuery.of(context).orientation == Orientation.portrait
-                    && MediaQuery.of(context).size.width <= 800 || (places.isEmpty && !isLoading)
+                    && MediaQuery.of(context).size.width <= 800 && !isTotalTable || (places.isEmpty && !isLoading)
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -351,7 +352,7 @@ class _TotalChartsState extends State<TotalCharts> {
                           ),
                         ],
                       )
-                    : isTable
+                    : !isTotalTable
                       ? Stack(
                         children: [
                           SingleChildScrollView(
@@ -455,7 +456,7 @@ class _TotalChartsState extends State<TotalCharts> {
                                   ),
                                 ),
                               ),
-                              for (var key in table1.keys)
+                              for (var key in totalTable.keys)
                                 Column(
                                   children: [
                                     Row(
@@ -465,20 +466,22 @@ class _TotalChartsState extends State<TotalCharts> {
                                         Expanded(
                                           child: Text(
                                             key,
-                                            maxLines: 2,
+                                            maxLines: 4,
                                             overflow: TextOverflow.ellipsis,
                                             style: body,
                                           ),
                                         ),
                                         Text(
-                                          formatNumber(
-                                              removeTrailingZeros(table1[key].toString()),
-                                              key == 'Количество помещений'
-                                                  ? 'шт'
-                                                  : key == 'Средний прирост стоимости в год'
-                                                    ? '%'
-                                                    : '₽',
-                                          ),
+                                          key == 'Средний прирост стоимости в год' && totalTable[key] == 0
+                                          ? ''
+                                          : formatNumber(
+                                                removeTrailingZeros(totalTable[key].toString()),
+                                                key == 'Количество помещений'
+                                                    ? 'шт'
+                                                    : key == 'Средний прирост стоимости в год'
+                                                      ? '%'
+                                                      : '₽',
+                                            ),
                                           style: body,
                                         ),
                                       ],
@@ -486,7 +489,7 @@ class _TotalChartsState extends State<TotalCharts> {
                                     SizedBox(
                                       height: 16,
                                     ),
-                                    if (table1.keys.last != key)
+                                    if (totalTable.keys.last != key)
                                       Divider(),
                                     SizedBox(
                                       height: 12,
