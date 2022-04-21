@@ -70,7 +70,7 @@ class ExpensesContainer extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
-                            expenses[index] == '' || expenses[index] == '0'
+                            expenses[index] == ''
                                 ? ''
                                 : expenses[index],
                             textAlign: TextAlign.center,
