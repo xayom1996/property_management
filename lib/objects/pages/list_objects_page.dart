@@ -68,7 +68,7 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
   // PageStorageKey controllerKey = PageStorageKey<String>('controllerA');
 
   _scrollListener() {
-    if (_controller.offset >= 110 + 35){
+    if (_controller.offset >= 110){
       setState(() {
         isPinned = true;
       });
@@ -350,72 +350,46 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                     )
                     : Column(
                         children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                            height: 56,
-                            decoration: BoxDecoration(
-                                color: Color(0xffFCFCFC),
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(24),
-                                  topLeft: Radius.circular(24),
-                                )
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: Colors.transparent, isScrollControlled: true,
-                                        builder: (context) {
-                                          return FilterBottomSheet(
-                                            filterBy: state.filterBy,
-                                          );
-                                        }
-                                    );
-                                  },
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/icons/filter.svg',
-                                        color: Colors.black,
-                                        height: 12,
-                                      ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        state.filterBy == 'name'
-                                            ? 'По названию'
-                                            : 'По адресу',
-                                        style: title2.copyWith(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                if (context.read<AppBloc>().state.user.isAdminOrManager())
+                          if (!isPinned)
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                              height: 56,
+                              decoration: BoxDecoration(
+                                  color: Color(0xffFCFCFC),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(24),
+                                    topLeft: Radius.circular(24),
+                                  )
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
                                   GestureDetector(
-                                    onTap: (){
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent, isScrollControlled: true,
+                                          builder: (context) {
+                                            return FilterBottomSheet(
+                                              filterBy: state.filterBy,
+                                            );
+                                          }
                                       );
                                     },
                                     child: Row(
                                       children: [
                                         SvgPicture.asset(
-                                          'assets/icons/plus.svg',
-                                          color: Color(0xff4B81EF),
-                                          height: 16,
+                                          'assets/icons/filter.svg',
+                                          color: Colors.black,
+                                          height: 12,
                                         ),
                                         SizedBox(width: 4),
                                         Text(
-                                          'Добавить',
+                                          state.filterBy == 'name'
+                                              ? 'По названию'
+                                              : 'По адресу',
                                           style: title2.copyWith(
-                                              color: Color(0xff4B81EF),
+                                              color: Colors.black,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400
                                           ),
@@ -423,9 +397,36 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                       ],
                                     ),
                                   ),
-                              ],
+                                  if (context.read<AppBloc>().state.user.isAdminOrManager())
+                                    GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icons/plus.svg',
+                                            color: Color(0xff4B81EF),
+                                            height: 16,
+                                          ),
+                                          SizedBox(width: 4),
+                                          Text(
+                                            'Добавить',
+                                            style: title2.copyWith(
+                                                color: Color(0xff4B81EF),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
                           SizedBox(
                             height: 16,
                           ),

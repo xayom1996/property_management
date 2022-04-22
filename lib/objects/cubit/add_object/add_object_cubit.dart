@@ -38,7 +38,8 @@ class AddObjectCubit extends Cubit<AddObjectState> {
   bool isObjectItemsValid(List<Characteristics> items) {
     return items[0].getFullValue().isNotEmpty && items[1].getFullValue().isNotEmpty
         && items[2].getFullValue().isNotEmpty && items[3].getFullValue().isNotEmpty
-        && items[6].getFullValue().isNotEmpty && items[7].getFullValue().isNotEmpty;
+        && items[6].getFullValue().isNotEmpty && items[7].getFullValue().isNotEmpty
+        && items[15].getFullValue().isNotEmpty && items[15].value != '0';
   }
 
   void changeItemValue(int id, String value, String documentUrl) {
