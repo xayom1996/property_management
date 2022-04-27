@@ -14,13 +14,7 @@ class AddObjectCubit extends Cubit<AddObjectState> {
       : _fireStoreService = fireStoreService,
         _appBloc = appBloc,
         super(AddObjectState()) {
-          getItems(_appBloc.state.objectItems);
-          _appBlocSubscription = _appBloc.stream.listen(
-                  (state){
-                    if (state.status != AppStatus.loading) {
-                      getItems(state.objectItems);
-                    }
-                  });
+
         }
 
   final FireStoreService _fireStoreService;

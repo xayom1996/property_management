@@ -4,15 +4,17 @@ import 'package:property_management/app/utils/utils.dart';
 
 class Characteristics {
   final int id;
-  final String title;
-  final String? placeholder;
-  final String? additionalInfo;
+  String title;
+  String? placeholder;
+  String? additionalInfo;
   final String type;
-  final String? unit;
+  String? unit;
   final List<String>? choices;
   String? value;
   String? documentUrl;
   List<String>? details;
+  bool visible;
+  bool isDefault;
 
   Characteristics({
     required this.id,
@@ -25,6 +27,8 @@ class Characteristics {
     this.documentUrl,
     this.choices,
     this.details,
+    this.visible = true,
+    this.isDefault = true,
   });
 
   factory Characteristics.fromJson(Map<String, dynamic> json) {
@@ -43,6 +47,8 @@ class Characteristics {
       details: json["details"] != null
           ? List.from(json["details"].map((detail) => detail))
           : [],
+      visible: json['visible'] ?? true,
+      isDefault: json['isDefault'] ?? true,
     );
   }
 
@@ -57,6 +63,8 @@ class Characteristics {
       "documentUrl": documentUrl ?? '',
       "choices": choices ?? [],
       "details": details ?? [],
+      "visible": visible,
+      "isDefault": isDefault,
     };
 
     @override
@@ -99,8 +107,7 @@ class Characteristics {
     }
 
     bool showInCreating() {
-      return title != 'Рыночная стоимость помещения' &&
-          title != 'Фактическая Налоговая нагрузка' && title != 'Текущая аренда'
-          && title != 'Отмеченный клиент' && title != 'Сумма Аренды от товарооборота';
+      return title != 'Рыночная стоимость помещения' && title != 'Фактическая Налоговая нагрузка'
+          && title != 'Текущая аренда' && title != 'Отмеченный клиент' && title != 'Сумма Аренды от товарооборота';
     }
 }

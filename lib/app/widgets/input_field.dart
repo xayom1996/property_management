@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_text.dart';
 
 class BoxInputField extends StatefulWidget {
@@ -10,6 +11,7 @@ class BoxInputField extends StatefulWidget {
   final Function(String)? onChanged;
   final String placeholder;
   final String title;
+  final String? additionalInfo;
   final Widget? leading;
   final Widget? trailing;
   final bool password;
@@ -30,6 +32,7 @@ class BoxInputField extends StatefulWidget {
   BoxInputField({
     Key? key,
     required this.title,
+    this.additionalInfo,
     this.controller,
     this.onChanged,
     this.placeholder = '',
@@ -190,6 +193,13 @@ class _BoxInputFieldState extends State<BoxInputField> {
                             enabledBorder: InputBorder.none,
                           ),
                         ),
+                        if (isNotEmpty(widget.additionalInfo))
+                          Text(
+                            widget.additionalInfo!,
+                            style: caption.copyWith(
+                              color: Color(0xff151515),
+                            ),
+                          ),
                       ],
                     ),
                   ),

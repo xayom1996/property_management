@@ -13,11 +13,7 @@ class AppState extends Equatable {
   const AppState({
     required this.status,
     this.user = User.empty,
-    this.owners = const [],
-    this.objectItems = const [],
-    this.tenantItems = const [],
-    this.expensesItems = const [],
-    this.expensesArticleItems = const [],
+    this.owners = const {},
     this.planItems = const [],
   });
 
@@ -31,11 +27,7 @@ class AppState extends Equatable {
 
   final AppStatus status;
   final User user;
-  final List<String> owners;
-  final List<Characteristics> objectItems;
-  final List<Characteristics> tenantItems;
-  final List<Characteristics> expensesItems;
-  final List<Characteristics> expensesArticleItems;
+  final Map<String, dynamic> owners;
   final List<Characteristics> planItems;
 
   @override
@@ -44,21 +36,13 @@ class AppState extends Equatable {
   AppState copyWith({
     AppStatus? status,
     User? user,
-    List<String>? owners,
-    List<Characteristics>? objectItems,
-    List<Characteristics>? tenantItems,
-    List<Characteristics>? expensesItems,
-    List<Characteristics>? expensesArticleItems,
+    Map<String, dynamic>? owners,
     List<Characteristics>? planItems,
   }) {
     return AppState(
       status: status ?? this.status,
       user: user ?? this.user,
       owners: owners ?? this.owners,
-      objectItems: objectItems ?? this.objectItems,
-      tenantItems: tenantItems ?? this.tenantItems,
-      expensesItems: expensesItems ?? this.expensesItems,
-      expensesArticleItems: expensesArticleItems ?? this.expensesArticleItems,
       planItems: planItems ?? this.planItems,
     );
   }

@@ -15,13 +15,7 @@ class AddTenantCubit extends Cubit<AddingState> {
       : _fireStoreService = fireStoreService,
         _appBloc = appBloc,
         super(AddingState()) {
-          getItems(_appBloc.state.tenantItems);
-          _appBlocSubscription = _appBloc.stream.listen(
-                  (state){
-                    if (state.status != AppStatus.loading) {
-                      getItems(state.tenantItems);
-                    }
-                  });
+
         }
 
   final FireStoreService _fireStoreService;

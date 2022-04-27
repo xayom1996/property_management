@@ -14,18 +14,14 @@ class AppLogoutRequested extends AppEvent {}
 
 class AppUserChanged extends AppEvent {
   @visibleForTesting
-  const AppUserChanged(this.user, this.owners, this.objectItems, this.tenantItems, this.expensesItems, this.expensesArticleItems, this.planItems);
+  const AppUserChanged(this.user, this.owners, this.planItems);
 
   final User user;
-  final List<String> owners;
-  final List<Characteristics> objectItems;
-  final List<Characteristics> tenantItems;
-  final List<Characteristics> expensesItems;
-  final List<Characteristics> expensesArticleItems;
+  final Map<String, dynamic> owners;
   final List<Characteristics> planItems;
 
   @override
-  List<Object> get props => [user, owners, objectItems, tenantItems, expensesItems, expensesArticleItems, planItems];
+  List<Object> get props => [user, owners, planItems];
 }
 
 class AppUserUpdated extends AppEvent {
@@ -35,4 +31,14 @@ class AppUserUpdated extends AppEvent {
 
   @override
   List<Object> get props => [user];
+}
+
+class AppOwnerUpdated extends AppEvent {
+  @visibleForTesting
+  const AppOwnerUpdated(this.owners);
+
+  final Map<String, dynamic> owners;
+
+  @override
+  List<Object> get props => [owners];
 }

@@ -12,7 +12,7 @@ import 'package:property_management/app/cubit/adding/adding_state.dart';
 import 'package:property_management/app/cubit/editing/editing_state.dart';
 import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
-import 'package:property_management/objects/pages/change_field_page.dart';
+import 'package:property_management/settings/pages/change_field_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';

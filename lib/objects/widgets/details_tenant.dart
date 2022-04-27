@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:property_management/objects/pages/change_field_page.dart';
+import 'package:property_management/settings/pages/change_field_page.dart';
 import 'package:property_management/objects/pages/upload_document_page.dart';
 import 'package:property_management/objects/widgets/action_bottom_sheet.dart';
 import 'package:property_management/app/theme/colors.dart';

@@ -14,9 +14,13 @@ import 'package:property_management/authentication/pages/authorization_page.dart
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/characteristics/pages/characteristics_page.dart';
 import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
+import 'package:property_management/exploitation/cubit/add_expense_article_cubit.dart';
+import 'package:property_management/exploitation/cubit/add_expense_cubit.dart';
 import 'package:property_management/exploitation/cubit/exploitation_cubit.dart';
 import 'package:property_management/exploitation/pages/exploitation_page.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
+import 'package:property_management/objects/cubit/add_tenant/add_tenant_cubit.dart';
+import 'package:property_management/objects/models/place.dart';
 import 'package:property_management/objects/pages/list_objects_page.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/total/pages/total_page.dart';
@@ -34,14 +38,24 @@ class DashboardPage extends StatelessWidget {
           // if (state.status == ObjectsStatus.fetched){
           //   context.read<CharacteristicsCubit>().fetchObjects(state.places);
           // }
-          if (state.status == ObjectsStatus.fetched){
+          if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty) {
+            Place place = context.read<ObjectsBloc>().state.places[0];
             if (context.read<ExploitationCubit>().state.selectedPlaceId > state.places.length - 1) {
               context.read<ExploitationCubit>().changeSelectedPlaceId(
                   0, state.places, isJump: true);
+              context.read<AddExpenseArticleCubit>().getItems(
+                  context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['expense_article_characteristics']
+              );
+              context.read<AddExpenseCubit>().getItems(
+                  context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['expense_characteristics']
+              );
             }
             if (context.read<CharacteristicsCubit>().state.selectedPlaceId > state.places.length - 1) {
               context.read<CharacteristicsCubit>().changeSelectedPlaceId(
                   0, state.places, isJump: true);
+              context.read<AddTenantCubit>().getItems(
+                  context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['tenant_characteristics']
+              );
             }
 
             if (context.read<AnalyticsCubit>().state.selectedPlaceId > state.places.length - 1) {
@@ -53,6 +67,25 @@ class DashboardPage extends StatelessWidget {
           return previousState.places.length != state.places.length;
         },
         builder: (context, state) {
+          if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty) {
+            Place place = context.read<ObjectsBloc>().state.places[0];
+
+            context.read<AddExpenseArticleCubit>().getItems(
+                context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['expense_article_characteristics']
+            );
+
+            context.read<AddExpenseCubit>().getItems(
+                context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['expense_characteristics']
+            );
+
+            context.read<AddTenantCubit>().getItems(
+                context
+                    .read<AppBloc>()
+                    .state
+                    .owners[place.objectItems['Собственник']!
+                    .value]['tenant_characteristics']);
+
+          }
           return Scaffold(
             // key: _scaffoldKey,
             body: BlocBuilder<DashboardCubit, DashboardState>(

@@ -19,34 +19,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           on<AppUserChanged>(_onUserChanged);
           on<AppUserUpdated>(_onUserUpdated);
           on<AppLogoutRequested>(_onLogoutRequested);
+          on<AppOwnerUpdated>(_onOwnerUpdated);
           _userSubscription = _userRepository.user.listen(
               (user) async {
                 emit(state.copyWith(
                   status: AppStatus.loading,
                 ));
                 User _user = await _userRepository.getUser();
-                List<String> owners = await fireStoreService.getOwners(_user);
-                List<Characteristics> objectItems = [];
-                List<Characteristics> tenantItems = [];
-                List<Characteristics> expensesItems = [];
-                List<Characteristics> expensesArticleItems = [];
-                List<Characteristics> planItems = [];
-
-                // if (_user.isAdminOrManager()) {
-                objectItems = await fireStoreService
-                    .getCharacteristics('object_characteristics');
-                tenantItems = await fireStoreService
-                    .getCharacteristics('tenant_characteristics');
-                expensesItems = await fireStoreService
-                    .getCharacteristics('expense_characteristics');
-                expensesArticleItems = await fireStoreService
-                    .getCharacteristics('expense_article_characteristics');
-                planItems = await fireStoreService
+                Map<String,
+                    Map<String,
+                        List<Characteristics>>> owners = await fireStoreService
+                    .getOwners(_user);
+                List<Characteristics> planItems = await fireStoreService
                     .getCharacteristics('plan_characteristics');
-                // }
-                add(AppUserChanged(_user, owners, objectItems, tenantItems,
-                    expensesItems, expensesArticleItems, planItems));
-              },
+                add(AppUserChanged(_user, owners, planItems));
+              }
           );
           // _userRepository.getObjects(state.user);
         }
@@ -62,10 +49,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           : AppStatus.authenticated,
       user: event.user,
       owners: event.owners,
-      objectItems: event.objectItems,
-      tenantItems: event.tenantItems,
-      expensesItems: event.expensesItems,
-      expensesArticleItems: event.expensesArticleItems,
       planItems: event.planItems,
     ));
   }
@@ -78,6 +61,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(
       status: AppStatus.authenticated,
       user: event.user,
+    ));
+  }
+
+  void _onOwnerUpdated(AppOwnerUpdated event, Emitter<AppState> emit) async {
+    emit(state.copyWith(
+      status: AppStatus.loading,
+    ));
+    emit(state.copyWith(
+      status: AppStatus.authenticated,
+      owners: event.owners,
     ));
   }
 

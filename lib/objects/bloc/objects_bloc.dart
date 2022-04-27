@@ -45,7 +45,7 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
       places = [];
       return emit(state.copyWith(status: ObjectsStatus.initial, places: places, filterBy: 'name'));
     } else {
-      places = await _fireStoreService.getObjects(event.user, event.owners);
+      places = await _fireStoreService.getObjects(event.user, event.owners.keys.toList());
     }
     String filterBy = state.filterBy;
     String filterField = 'Название объекта';
@@ -62,7 +62,7 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
   void _onUpdateObjects(ObjectsUpdateEvent event, Emitter<ObjectsState> emit) async {
     emit(state.copyWith(status: ObjectsStatus.loading));
     List<Place> places;
-    places = await _fireStoreService.getObjects(_appBloc.state.user, _appBloc.state.owners);
+    places = await _fireStoreService.getObjects(_appBloc.state.user, _appBloc.state.owners.keys.toList());
     String filterBy = state.filterBy;
     String filterField = 'Название объекта';
     if (filterBy == 'address'){

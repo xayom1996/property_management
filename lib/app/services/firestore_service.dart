@@ -277,7 +277,7 @@ class FireStoreService {
     await _fireStore.collection('objects')
         .doc(docId)
         .update(object)
-        .then((value) => print("Object Added"))
+        .then((value) => print("Object Updated"))
         .catchError((error) => throw Exception('Error adding'));
   }
 
@@ -364,7 +364,7 @@ class FireStoreService {
     return places;
   }
 
-  Future<List<String>> getOwners(User user) async {
+  Future<Map<String, Map<String, List<Characteristics>>>> getOwners(User user) async {
     QuerySnapshot querySnapshot;
     if (user.role == 'admin') {
       querySnapshot = await _fireStore.collection('owners').get();
@@ -374,8 +374,118 @@ class FireStoreService {
       querySnapshot = await _fireStore.collection('owners').where('holders', arrayContains: user.email).get();
     }
 
-    List<String> owners = querySnapshot.docs.map((doc) => (doc.data() as Map<String, dynamic>)['name'].toString()).toList();
-    print(owners);
+    List<Characteristics> objectItems = await getCharacteristics('object_characteristics');
+    List<Characteristics> tenantItems = await getCharacteristics('tenant_characteristics');
+    List<Characteristics> expensesItems = await getCharacteristics('expense_characteristics');
+    List<Characteristics> expensesArticleItems = await getCharacteristics('expense_article_characteristics');
+
+    Map<String, Map<String, List<Characteristics>>> owners = {};
+    for (var doc in querySnapshot.docs) {
+      var owner = (doc.data() as Map<String, dynamic>);
+      String ownerName = owner['name'];
+      Map<String, List<Characteristics>> ownerCharacteristics;
+      if (owner['characteristics'] != null) {
+        ownerCharacteristics = Map.from(
+            owner['characteristics'].map((key, value) =>
+                MapEntry(key, List<Characteristics>.from(value.map((characteristic) => Characteristics.fromJson(characteristic))))));
+      } else {
+        await _fireStore.collection('owners')
+            .doc(doc.reference.id)
+            .update({
+              'characteristics': {
+                'object_characteristics': List.from(objectItems.map((item) => item.toJson())),
+                'tenant_characteristics': List.from(tenantItems.map((item) => item.toJson())),
+                'expense_characteristics': List.from(expensesItems.map((item) => item.toJson())),
+                'expense_article_characteristics': List.from(expensesArticleItems.map((item) => item.toJson())),
+              },
+            })
+            .then((value) => print("Updated"));
+
+        ownerCharacteristics = {
+          'object_characteristics': objectItems,
+          'tenant_characteristics': tenantItems,
+          'expense_characteristics': expensesItems,
+          'expense_article_characteristics': expensesArticleItems,
+        };
+      }
+
+      owners[ownerName] = ownerCharacteristics;
+    }
     return owners;
+  }
+
+  Future<void> saveCharacteristic({required List<Characteristics> characteristics,
+    required String ownerName, required String characteristicsName}) async {
+    QuerySnapshot querySnapshot = await _fireStore.collection('owners').where('name', isEqualTo: ownerName).get();
+    String docId = querySnapshot.docs.first.reference.id;
+
+    QuerySnapshot objects = await _fireStore.collection('objects').where('objectItems.Собственник.value', isEqualTo: ownerName).get();
+    for (var snapshot in objects.docs) {
+      var object = snapshot.data() as Map<String, dynamic>;
+      Map<String, dynamic> newItemsMap = {for (var item in characteristics) item.title : item.toJson()};
+
+      if (characteristicsName == 'object_characteristics') {
+        for (var item in object['objectItems'].values) {
+          int index = characteristics.lastIndexWhere((element) => element.id == item['id']);
+          if (index != -1) {
+            newItemsMap[characteristics[index].title]['value'] =
+            item['value'];
+          }
+        }
+        object['objectItems'] = newItemsMap;
+      }
+
+      if (characteristicsName == 'tenant_characteristics'
+          && object['tenantItems'] != null) {
+        for (var item in object['tenantItems'].values) {
+          int index = characteristics.lastIndexWhere((element) => element.id == item['id']);
+          if (index != -1) {
+            newItemsMap[characteristics[index].title]['value'] =
+            item['value'];
+          }
+        }
+        object['tenantItems'] = newItemsMap;
+      }
+
+      if (characteristicsName == 'expense_characteristics') {
+        // for (var items in object['expensesItems']) {
+        //   for (var item in items.values) {
+        //     int index = characteristics.lastIndexWhere((element) =>
+        //     element.id == item['id']);
+        //     if (index != -1) {
+        //       newItemsMap[characteristics[index].title]['value'] =
+        //       item['value'];
+        //     }
+        //   }
+        // }
+        // object['expensesItems'] = newItemsMap;
+      }
+
+      if (characteristicsName == 'expense_article_characteristics'
+          && object['expensesArticleItems'] != null) {
+        for (var item in object['expensesArticleItems'].values) {
+          int index = characteristics.lastIndexWhere((element) => element.id == item['id']);
+          if (index != -1) {
+            newItemsMap[characteristics[index].title]['value'] =
+            item['value'];
+          }
+        }
+        object['expensesArticleItems'] = newItemsMap;
+      }
+
+      await _fireStore.collection('objects')
+          .doc(snapshot.reference.id)
+          .update(object)
+          .then((value) => print("Object Updated"))
+          .catchError((error) => throw Exception('Error adding'));
+    }
+
+    await _fireStore.collection('owners')
+        .doc(docId)
+        .update({
+          'characteristics.$characteristicsName': List.from(characteristics.map((item) => item.toJson())),
+        })
+        .then((value) => print("Updated"))
+        .catchError((error) => throw Exception('Error adding'));
   }
 }

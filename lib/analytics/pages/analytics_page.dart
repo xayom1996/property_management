@@ -181,7 +181,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                             previousState.currentIndexTab != state.currentIndexTab;
                       },
                       builder: (context, state) {
-                        var plansItems = objectState.places[context.read<AnalyticsCubit>().state.selectedPlaceId].plansItems ?? [];
+                        var plansItems = [];
+                        if (objectState.places.isNotEmpty) {
+                          plansItems = objectState.places[context.read<AnalyticsCubit>().state.selectedPlaceId].plansItems ?? [];
+                        }
 
                         return plansItems.isEmpty && !context.read<AppBloc>().state.user.isAdminOrManager()
                             ? CustomScrollView(

@@ -11,6 +11,7 @@ import 'package:property_management/app/widgets/box_button.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
 import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
+import 'package:property_management/objects/pages/list_owners_page.dart';
 import 'package:property_management/objects/pages/search_objects_page.dart';
 import 'package:property_management/objects/widgets/filter_bottom_sheet.dart';
 import 'package:property_management/objects/widgets/search_text_field.dart';
@@ -136,7 +137,10 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                 onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                                    MaterialPageRoute(builder: (context) => ListOwnersPage(
+                                      title: 'Настройки',
+                                      onTap: () {},
+                                    )),
                                   );
                                 },
                               ),
@@ -258,7 +262,10 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                   onTap: (){
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                      MaterialPageRoute(builder: (context) => ListOwnersPage(
+                                        title: 'Новый объект',
+                                        onTap: () {},
+                                      )),
                                     );
                                   },
                                   child: Row(
@@ -402,7 +409,10 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                       onTap: (){
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                          MaterialPageRoute(builder: (context) => ListOwnersPage(
+                                            title: 'Новый объект',
+                                            onTap: () {},
+                                          )),
                                         );
                                       },
                                       child: Row(

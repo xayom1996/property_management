@@ -120,7 +120,7 @@ class _ItemPageState extends State<ItemPage> {
                         ? Column(
                             children: [
                               if (widget.item.title == 'Собственник')
-                                for (var item in state.owners)
+                                for (var item in state.owners.keys)
                                   ContainerForTransition(
                                     title: item,
                                     icon: checkedItem == item ? Icons.check : null,

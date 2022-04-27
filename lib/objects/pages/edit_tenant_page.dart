@@ -11,7 +11,7 @@ import 'package:property_management/exploitation/pages/create_details_tenant_pag
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/cubit/add_tenant/add_tenant_cubit.dart';
 import 'package:property_management/objects/cubit/edit_tenant/edit_tenant_cubit.dart';
-import 'package:property_management/objects/pages/change_field_page.dart';
+import 'package:property_management/settings/pages/change_field_page.dart';
 import 'package:property_management/app/theme/box_ui.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
@@ -96,11 +96,12 @@ class EditTenantPage extends StatelessWidget {
                         child: Column(
                           children: [
                             for (var item in state.items)
-                              if (item.showInCreating())
+                              if (item.showInCreating() && item.visible)
                                 BoxInputField(
                                   controller: TextEditingController(text: item.getFullValue()),
                                   placeholder: item.placeholder ?? '',
                                   title: item.title,
+                                  additionalInfo: item.additionalInfo,
                                   enabled: false,
                                   onTap: () {
                                     Navigator.push(

@@ -25,6 +25,12 @@ class CustomTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Characteristics> sortedItems = objectItems.values.toList();
     sortedItems.sort((a, b) => a.id.compareTo(b.id));
+    sortedItems.sort((a, b) {
+      if(a.title == 'Отмеченный клиент') {
+        return 1;
+      }
+      return -1;
+    });
 
     return child == null
         ? Container(
@@ -33,73 +39,75 @@ class CustomTabView extends StatelessWidget {
                   child: Column(
                     children: [
                       for (var item in sortedItems)
-                        item.title == 'Отмеченный клиент'
-                            ? CustomCheckBox(
-                                choices: item.choices!,
-                                checkedColor: item.getFullValue(),
-                                isChecked: item.getFullValue().isNotEmpty,
-                                onChange: (String value) {
-                                  context.read<ObjectsBloc>().add(
-                                      ChangeColorObjectEvent(
-                                          id: context.read<CharacteristicsCubit>().state.selectedPlaceId,
-                                          value: value)
-                                  );
-                                },
-                              )
-                          : item.title != 'Коэффициент капитализации' || context.read<AppBloc>().state.user.isAdminOrManager()
-                            ? BoxInputField(
-                              controller: TextEditingController(text: item.getFullValue()),
-                              title: item.title,
-                              placeholder: 'Данные не заполнены',
-                              enabled: false,
-                              backgroundColor: Color(0xffF5F5F5).withOpacity(0.6),
-                              trailing: item.documentUrl != null && item.documentUrl!.isNotEmpty
-                                  ? BoxIcon(
-                                      iconPath: 'assets/icons/document.svg',
-                                      iconColor: Color(0xff5589F1),
-                                      backgroundColor: Colors.white,
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => DocumentPage(
-                                            documentUrl: item.documentUrl!,
-                                          )),
-                                        );
-                                      },
-                                    )
-                                  : item.getFullValue().isEmpty
-                                    ? Tooltip(
-                                        padding: EdgeInsets.all(16),
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: horizontalPadding(context, 60, portraitPadding: 40)
-                                        ),
-                                        textStyle: body.copyWith(
-                                          fontStyle: FontStyle.italic,
-                                          color: Colors.black,
-                                        ),
-                                        triggerMode: TooltipTriggerMode.tap,
-                                        preferBelow: false,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.9),
-                                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.12),
-                                              blurRadius: 20,
-                                              offset: Offset(0, 8), // changes position of shadow
-                                            ),
-                                          ],
-                                        ),
-                                        message: 'Данные не заполнены, обратитесь к вашему менеджеру',
-                                        child: BoxIcon(
-                                          iconPath: 'assets/icons/question.svg',
+                        if (item.visible)
+                          item.title == 'Отмеченный клиент'
+                              ? CustomCheckBox(
+                                  choices: item.choices!,
+                                  checkedColor: item.getFullValue(),
+                                  isChecked: item.getFullValue().isNotEmpty,
+                                  onChange: (String value) {
+                                    context.read<ObjectsBloc>().add(
+                                        ChangeColorObjectEvent(
+                                            id: context.read<CharacteristicsCubit>().state.selectedPlaceId,
+                                            value: value)
+                                    );
+                                  },
+                                )
+                              : item.title != 'Коэффициент капитализации' || context.read<AppBloc>().state.user.isAdminOrManager()
+                                ? BoxInputField(
+                                  controller: TextEditingController(text: item.getFullValue()),
+                                  title: item.title,
+                                  additionalInfo: item.additionalInfo,
+                                  placeholder: 'Данные не заполнены',
+                                  enabled: false,
+                                  backgroundColor: Color(0xffF5F5F5).withOpacity(0.6),
+                                  trailing: item.documentUrl != null && item.documentUrl!.isNotEmpty
+                                      ? BoxIcon(
+                                          iconPath: 'assets/icons/document.svg',
                                           iconColor: Color(0xff5589F1),
                                           backgroundColor: Colors.white,
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => DocumentPage(
+                                                documentUrl: item.documentUrl!,
+                                              )),
+                                            );
+                                          },
                                         )
-                                      )
-                                    : null,
-                            )
-                            : Container(),
+                                      : item.getFullValue().isEmpty
+                                        ? Tooltip(
+                                            padding: EdgeInsets.all(16),
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: horizontalPadding(context, 60, portraitPadding: 40)
+                                            ),
+                                            textStyle: body.copyWith(
+                                              fontStyle: FontStyle.italic,
+                                              color: Colors.black,
+                                            ),
+                                            triggerMode: TooltipTriggerMode.tap,
+                                            preferBelow: false,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(0.9),
+                                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black.withOpacity(0.12),
+                                                  blurRadius: 20,
+                                                  offset: Offset(0, 8), // changes position of shadow
+                                                ),
+                                              ],
+                                            ),
+                                            message: 'Данные не заполнены, обратитесь к вашему менеджеру',
+                                            child: BoxIcon(
+                                              iconPath: 'assets/icons/question.svg',
+                                              iconColor: Color(0xff5589F1),
+                                              backgroundColor: Colors.white,
+                                            )
+                                          )
+                                        : null,
+                                )
+                                : Container(),
                       SizedBox(
                         height: 30,
                       ),

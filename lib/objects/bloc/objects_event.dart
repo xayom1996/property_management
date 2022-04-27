@@ -6,7 +6,7 @@ abstract class ObjectsEvent extends Equatable {
 
 class ObjectsGetEvent extends ObjectsEvent {
   final User user;
-  final List<String> owners;
+  final Map<String, dynamic> owners;
 
   ObjectsGetEvent({required this.user, required this.owners});
 
