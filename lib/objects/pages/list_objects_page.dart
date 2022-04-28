@@ -346,7 +346,10 @@ class _ListObjectsPageState extends State<ListObjectsPage> {
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => CreateObjectPage()),
+                                      MaterialPageRoute(builder: (context) => ListOwnersPage(
+                                        title: 'Новый объект',
+                                        onTap: () {},
+                                      )),
                                     );
                                   },
                                 ),

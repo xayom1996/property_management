@@ -298,3 +298,10 @@ void showSnackBar(BuildContext context, String text, {String? label, Color? colo
     ),
   ));
 }
+
+List sortList(List lst) {
+  lst.sort((a, b) {
+    return a.toLowerCase().compareTo(b.toLowerCase());
+  });
+  return lst;
+}

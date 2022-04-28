@@ -430,6 +430,9 @@ class FireStoreService {
           if (index != -1) {
             newItemsMap[characteristics[index].title]['value'] =
             item['value'];
+
+            newItemsMap[characteristics[index].title]['details'] =
+            item['details'];
           }
         }
         object['objectItems'] = newItemsMap;
@@ -442,23 +445,34 @@ class FireStoreService {
           if (index != -1) {
             newItemsMap[characteristics[index].title]['value'] =
             item['value'];
+
+            newItemsMap[characteristics[index].title]['details'] =
+            item['details'];
           }
         }
         object['tenantItems'] = newItemsMap;
       }
 
-      if (characteristicsName == 'expense_characteristics') {
-        // for (var items in object['expensesItems']) {
-        //   for (var item in items.values) {
-        //     int index = characteristics.lastIndexWhere((element) =>
-        //     element.id == item['id']);
-        //     if (index != -1) {
-        //       newItemsMap[characteristics[index].title]['value'] =
-        //       item['value'];
-        //     }
-        //   }
-        // }
-        // object['expensesItems'] = newItemsMap;
+      if (characteristicsName == 'expense_characteristics'
+          && object['expensesItems'] != null) {
+        List expensesItems = [];
+        for (var items in object['expensesItems']) {
+          newItemsMap = {for (var item in characteristics) item.title : item.toJson()};
+
+          for (var item in items.values) {
+            int index = characteristics.lastIndexWhere((element) =>
+            element.id == item['id']);
+            if (index != -1) {
+              newItemsMap[characteristics[index].title]['value'] =
+              item['value'];
+
+              newItemsMap[characteristics[index].title]['details'] =
+              item['details'];
+            }
+          }
+          expensesItems.add(newItemsMap);
+        }
+        object['expensesItems'] = expensesItems;
       }
 
       if (characteristicsName == 'expense_article_characteristics'
@@ -468,6 +482,9 @@ class FireStoreService {
           if (index != -1) {
             newItemsMap[characteristics[index].title]['value'] =
             item['value'];
+
+            newItemsMap[characteristics[index].title]['details'] =
+            item['details'];
           }
         }
         object['expensesArticleItems'] = newItemsMap;

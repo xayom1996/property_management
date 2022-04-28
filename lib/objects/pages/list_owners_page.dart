@@ -79,7 +79,7 @@ class ListOwnersPage extends StatelessWidget {
                         vertical: 16),
                     child: Column(
                       children: [
-                        for (var item in state.owners.keys)
+                        for (var item in sortList(state.owners.keys.toList()))
                           ContainerForTransition(
                             title: item,
                             icon: title == 'Новый объект'

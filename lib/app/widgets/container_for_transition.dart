@@ -4,11 +4,12 @@ import 'package:property_management/app/theme/styles.dart';
 
 class ContainerForTransition extends StatelessWidget {
   final String title;
+  final Color? titleColor;
   final Function()? onTap;
   final IconData? icon;
 
   const ContainerForTransition({Key? key, required this.title,
-    this.onTap, this.icon = Icons.arrow_forward_ios}) : super(key: key);
+    this.onTap, this.icon = Icons.arrow_forward_ios, this.titleColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,9 @@ class ContainerForTransition extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: body,
+                  style: body.copyWith(
+                    color: titleColor ?? Color(0xff151515)
+                  ),
                 ),
               ),
               Icon(

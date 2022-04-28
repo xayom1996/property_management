@@ -61,7 +61,7 @@ class _EditCharacteristicPageState extends State<EditCharacteristicPage> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
-                      state.selectedCharacteristic['title'],
+                      widget.title,
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       style: body,
@@ -89,89 +89,88 @@ class _EditCharacteristicPageState extends State<EditCharacteristicPage> {
                 hasScrollBody: false,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
-                  child: Column(
-                    children: [
-                      BoxInputField(
-                        controller: titleController,
-                        placeholder: 'Введите название характеристике',
-                        title: 'Название характеристики',
-                        enabled: true,
-                        trailing: null,
-                        onChanged: (String value) {
-                          Map newMap = {...state.selectedCharacteristic};
-                          newMap['title'] = value;
-                          context.read<SettingsCubit>().changeCharacteristic(newMap);
-                        },
-                        isError: state.status == StateStatus.error
-                            && state.selectedCharacteristic['title'].isEmpty,
-                        errorText: 'Это поле не может быть пустым',
-                      ),
-                      BoxInputField(
-                        controller: additionalController,
-                        placeholder: 'Введите дополнительную информацию',
-                        title: 'Дополнительная информация',
-                        enabled: true,
-                        trailing: null,
-                        onChanged: (String value) {
-                          Map newMap = {...state.selectedCharacteristic};
-                          newMap['additionalInfo'] = value;
-                          context.read<SettingsCubit>().changeCharacteristic(newMap);
-                        },
-                        // isError: isError,
-                      ),
-                      BoxInputField(
-                        controller: TextEditingController(text: state.selectedCharacteristic['type']),
-                        placeholder: 'Выберите тип характеристики',
-                        title: 'Тип характеристики',
-                        enabled: false,
-                        trailing: const Icon(
-                          Icons.arrow_forward_ios,
-                          size: 14,
-                          color: Color(0xff5589F1),
-                        ),
-                        isError: state.status == StateStatus.error
-                            && state.selectedCharacteristic['type'].isEmpty,
-                        errorText: 'Это поле не может быть пустым',
-                      ),
-                      if (state.selectedCharacteristic['type'] == 'Число')
-                        BoxInputField(
-                          controller: TextEditingController(text: state.selectedCharacteristic['unit']),
-                          placeholder: 'Выберите единицы измерения',
-                          title: 'Единицы измерения',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ChangeFieldPage(
-                                title: 'Единицы измерения',
-                                onSave: (String value) {
+                  child: state.status == StateStatus.loading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Column(
+                            children: [
+                              BoxInputField(
+                                controller: titleController,
+                                placeholder: 'Введите название характеристике',
+                                title: 'Название характеристики',
+                                enabled: true,
+                                trailing: null,
+                                onChanged: (String value) {
                                   Map newMap = {...state.selectedCharacteristic};
-                                  newMap['unit'] = '';
-                                  if (value.contains(' - ')) {
-                                    newMap['unit'] = value.split(' - ').last;
-                                  }
+                                  newMap['title'] = value;
                                   context.read<SettingsCubit>().changeCharacteristic(newMap);
                                 },
-                                selectItem: state.selectedCharacteristic['unit'].contains(' - ')
-                                    ? state.selectedCharacteristic['unit']
-                                    : 'Без единицы измерения',
-                                items: const ['Рубли - ₽', 'Метры квадратные - Кв.м', 'Процент - %', 'Штука - шт.', 'Киловатт - кВт', 'Без единицы измерения'],
-                              )),
-                            );
-                          },
-                          isError: state.status == StateStatus.error
-                              && state.selectedCharacteristic['unit'].isEmpty,
-                          errorText: 'Это поле не может быть пустым',
-                          enabled: false,
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 14,
-                            color: Color(0xff5589F1),
+                                isError: state.status == StateStatus.error
+                                    && state.selectedCharacteristic['title'].isEmpty,
+                                errorText: 'Это поле не может быть пустым',
+                              ),
+                              BoxInputField(
+                                controller: additionalController,
+                                placeholder: 'Введите дополнительную информацию',
+                                title: 'Дополнительная информация',
+                                enabled: true,
+                                trailing: null,
+                                onChanged: (String value) {
+                                  Map newMap = {...state.selectedCharacteristic};
+                                  newMap['additionalInfo'] = value;
+                                  context.read<SettingsCubit>().changeCharacteristic(newMap);
+                                },
+                                // isError: isError,
+                              ),
+                              BoxInputField(
+                                controller: TextEditingController(text: state.selectedCharacteristic['type']),
+                                placeholder: 'Выберите тип характеристики',
+                                title: 'Тип характеристики',
+                                enabled: false,
+                                isError: state.status == StateStatus.error
+                                    && state.selectedCharacteristic['type'].isEmpty,
+                                errorText: 'Это поле не может быть пустым',
+                              ),
+                              if (state.selectedCharacteristic['type'] == 'Число')
+                                BoxInputField(
+                                  controller: TextEditingController(text: state.selectedCharacteristic['unit']),
+                                  placeholder: 'Выберите единицы измерения',
+                                  title: 'Единицы измерения',
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ChangeFieldPage(
+                                        title: 'Единицы измерения',
+                                        onSave: (String value) {
+                                          Map newMap = {...state.selectedCharacteristic};
+                                          newMap['unit'] = '';
+                                          if (value.contains(' - ')) {
+                                            newMap['unit'] = value.split(' - ').last;
+                                          }
+                                          context.read<SettingsCubit>().changeCharacteristic(newMap);
+                                        },
+                                        selectItem: state.selectedCharacteristic['unit'].isNotEmpty
+                                            ? state.selectedCharacteristic['unit']
+                                            : 'Без единицы измерения',
+                                        items: const ['Рубли - ₽', 'Метры квадратные - Кв.м', 'Процент - %', 'Штука - шт.', 'Киловатт - кВт', 'Без единицы измерения'],
+                                      )),
+                                    );
+                                  },
+                                  isError: state.status == StateStatus.error
+                                      && state.selectedCharacteristic['unit'].isEmpty,
+                                  errorText: 'Это поле не может быть пустым',
+                                  enabled: false,
+                                  trailing: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 14,
+                                    color: Color(0xff5589F1),
+                                  ),
+                                  // isError: isError,
+                                ),
+                            ],
                           ),
-                          // isError: isError,
                         ),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),

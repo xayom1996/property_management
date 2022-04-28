@@ -23,158 +23,174 @@ class CharacteristicItemsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      appBar: AppBar(
-        centerTitle: true,
-        leading: null,
-        automaticallyImplyLeading: false,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BoxIcon(
-              iconPath: 'assets/icons/back.svg',
-              iconColor: Colors.black,
-              backgroundColor: Colors.white,
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            Spacer(),
-            Column(
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      builder: (context, settingsState) {
+        return Scaffold(
+          backgroundColor: kBackgroundColor,
+          appBar: AppBar(
+            centerTitle: true,
+            leading: null,
+            automaticallyImplyLeading: false,
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Настройки',
-                  style: body,
+                BoxIcon(
+                  iconPath: 'assets/icons/back.svg',
+                  iconColor: Colors.black,
+                  backgroundColor: Colors.white,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
-                Text(
-                  title,
-                  style: caption,
+                Spacer(),
+                Column(
+                  children: [
+                    Text(
+                      'Настройки',
+                      style: body,
+                    ),
+                    Text(
+                      title,
+                      style: caption,
+                    ),
+                  ],
+                ),
+                Spacer(),
+                BoxIcon(
+                  iconPath: 'assets/icons/plus.svg',
+                  iconColor: Colors.black,
+                  backgroundColor: Colors.white,
+                  onTap: () {
+                    context.read<SettingsCubit>().selectCharacteristic(null);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NewCharacteristicPage()),
+                    );
+                  },
                 ),
               ],
             ),
-            Spacer(),
-            BoxIcon(
-              iconPath: 'assets/icons/plus.svg',
-              iconColor: Colors.black,
-              backgroundColor: Colors.white,
-              onTap: () {
-                context.read<SettingsCubit>().selectCharacteristic(null);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NewCharacteristicPage()),
-                );
-              },
-            ),
-          ],
-        ),
-        elevation: 0,
-        toolbarHeight: 68,
-        backgroundColor: kBackgroundColor,
-      ),
-      body: BlocConsumer<AppBloc, AppState>(
-        listener: (context, state) {
+            elevation: 0,
+            toolbarHeight: 68,
+            backgroundColor: kBackgroundColor,
+          ),
+          body: BlocBuilder<AppBloc, AppState>(
+            buildWhen: (previousState, state) {
+              return previousState.owners != state.owners
+                  || previousState.status != state.status;
+            },
+            builder: (context, state) {
+              return Stack(
+                children: [
+                  CustomScrollView(
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
+                          child: Column(
+                                  children: [
+                                    for (var i = 0; i < items.length; i++)
+                                      if (items[i].title != 'Отмеченный клиент' || !items[i].isDefault)
+                                      Slidable(
+                                        key: ValueKey(items[i].id),
+                                        enabled: !items[i].isDefault,
+                                        endActionPane: ActionPane(
+                                          motion: ScrollMotion(),
+                                          children: [
+                                            Spacer(),
+                                            Align(
+                                              alignment: Alignment.topCenter,
+                                              child: Padding(
+                                                padding: EdgeInsets.only(top: 5),
+                                                child: BoxIcon(
+                                                  iconPath: items[i].visible == false
+                                                      ? 'assets/icons/eye_invisible.svg'
+                                                      : 'assets/icons/eye_visible.svg',
+                                                  iconColor: Colors.black,
+                                                  backgroundColor: Colors.white,
+                                                  onTap: () {
+                                                    context.read<SettingsCubit>().visibilityCharacteristic(i, isVisible: !items[i].visible);
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 24,
+                                            ),
+                                            Align(
+                                              alignment: Alignment.topCenter,
+                                              child: Padding(
+                                                padding: EdgeInsets.only(top: 5),
+                                                child: BoxIcon(
+                                                  iconPath: 'assets/icons/trash.svg',
+                                                  iconColor: Colors.black,
+                                                  backgroundColor: Colors.white,
+                                                  onTap: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) => CustomAlertDialog(
+                                                          title: 'Вы действительно хотите удалить характеристику?',
+                                                          onApprove: () {
+                                                            context.read<SettingsCubit>().deleteCharacteristic(i);
+                                                          },
+                                                        )
+                                                    );
+                                                  },
 
-        },
-        buildWhen: (previousState, state) {
-          return previousState.owners != state.owners
-              || previousState.status != state.status;
-        },
-        builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < items.length; i++)
-                        Slidable(
-                          key: ValueKey(items[i].id),
-                          enabled: !items[i].isDefault,
-                          endActionPane: ActionPane(
-                            motion: ScrollMotion(),
-                            children: [
-                              Spacer(),
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 5),
-                                  child: BoxIcon(
-                                    iconPath: items[i].visible == false
-                                        ? 'assets/icons/eye_invisible.svg'
-                                        : 'assets/icons/eye_visible.svg',
-                                    iconColor: Colors.black,
-                                    backgroundColor: Colors.white,
-                                    // iconSize: items[i].visible == false
-                                    //   ? 17
-                                    //   : 17.5,
-                                    onTap: () {
-                                      context.read<SettingsCubit>().visibilityCharacteristic(i, isVisible: !items[i].visible);
-                                    },
-                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                          ],
+                                        ),
+                                        child: ContainerForTransition(
+                                          title: items[i].title,
+                                          icon: ((items[i].isDefault && state.user.role == 'admin')
+                                              || !items[i].isDefault)
+                                              ? Icons.arrow_forward_ios
+                                              : null,
+                                          titleColor: items[i].visible
+                                              ? null
+                                              : Color(0xffC7C9CC),
+                                          onTap: () {
+                                            if ((items[i].isDefault && state.user.role == 'admin')
+                                                || !items[i].isDefault){
+                                              context.read<SettingsCubit>()
+                                                  .selectCharacteristic(items[i]);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) =>
+                                                    EditCharacteristicPage(
+                                                      title: items[i].title,
+                                                      item: items[i],
+                                                    )),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(
-                                width: 24,
-                              ),
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 5),
-                                  child: BoxIcon(
-                                    iconPath: 'assets/icons/trash.svg',
-                                    iconColor: Colors.black,
-                                    backgroundColor: Colors.white,
-                                    onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => CustomAlertDialog(
-                                            title: 'Вы действительно хотите удалить характеристику?',
-                                            onApprove: () {
-                                              context.read<SettingsCubit>().deleteCharacteristic(i);
-                                            },
-                                          )
-                                      );
-                                    },
-
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                            ],
-                          ),
-                          child: ContainerForTransition(
-                            title: items[i].title,
-                            onTap: () {
-                              if ((items[i].isDefault && state.user.role == 'admin')
-                                  || !items[i].isDefault){
-                                context.read<SettingsCubit>()
-                                    .selectCharacteristic(items[i]);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) =>
-                                      EditCharacteristicPage(
-                                        title: items[i].title,
-                                        item: items[i],
-                                      )),
-                                );
-                              }
-                            },
-                          ),
                         ),
+                      ),
                     ],
                   ),
-                ),
-              ),
-            ],
-          );
-        }
-      ),
+                  if (settingsState.status == StateStatus.loading)
+                    Positioned(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        )
+                    )
+                ],
+              );
+            }
+          ),
+        );
+      },
     );
   }
 }

@@ -86,7 +86,9 @@ class SettingsCubit extends Cubit<SettingsState> {
     String ownerName = state.ownerName;
     String characteristicsName = state.characteristicsName;
     if (selectedCharacteristic['title'].isEmpty
-        || selectedCharacteristic['type'].isEmpty){
+        || selectedCharacteristic['type'].isEmpty
+        || (selectedCharacteristic['type'] == 'Число'
+            && selectedCharacteristic['unit'].isEmpty)){
       emit(
           state.copyWith(
               status: StateStatus.error
@@ -145,6 +147,11 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   void deleteCharacteristic(int index) async {
+    emit(
+        state.copyWith(
+            status: StateStatus.loading
+        )
+    );
     String ownerName = state.ownerName;
     String characteristicsName = state.characteristicsName;
 
@@ -164,11 +171,20 @@ class SettingsCubit extends Cubit<SettingsState> {
           )
       );
     } catch (e) {
-
+      emit(
+          state.copyWith(
+              status: StateStatus.error
+          )
+      );
     }
   }
 
   void visibilityCharacteristic(int index, {required bool isVisible}) async {
+    emit(
+        state.copyWith(
+            status: StateStatus.loading
+        )
+    );
     String ownerName = state.ownerName;
     String characteristicsName = state.characteristicsName;
     Map<String, dynamic> owners = _appBloc.state.owners;
@@ -188,7 +204,11 @@ class SettingsCubit extends Cubit<SettingsState> {
           )
       );
     } catch (e) {
-
+      emit(
+          state.copyWith(
+              status: StateStatus.error
+          )
+      );
     }
   }
 }
