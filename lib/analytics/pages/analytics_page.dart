@@ -266,12 +266,12 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                                                 ],
                                               ),
                                               child: ContainerForTransition(
-                                                title: plansItems[i]['Название плана']!.getFullValue(),
+                                                title: plansItems[i][0].getFullValue(),
                                                 onTap: () {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(builder: (context) => AnalyticCharts(
-                                                      title: plansItems[i]['Название плана']!.getFullValue(),
+                                                      title: plansItems[i][0].getFullValue(),
                                                       planIndex: i,
                                                     )),
                                                   );

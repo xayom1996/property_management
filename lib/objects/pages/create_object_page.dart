@@ -16,7 +16,8 @@ import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/objects/pages/item_page.dart';
 
 class CreateObjectPage extends StatelessWidget {
-  CreateObjectPage({Key? key}) : super(key: key);
+  final Function()? onBack;
+  const CreateObjectPage({Key? key, this.onBack}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,14 +56,18 @@ class CreateObjectPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  BoxIcon(
-                    iconPath: 'assets/icons/back.svg',
-                    iconColor: Colors.black,
-                    backgroundColor: Colors.white,
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+                  if (onBack != null)
+                    BoxIcon(
+                      iconPath: 'assets/icons/back.svg',
+                      iconColor: Colors.black,
+                      backgroundColor: Colors.white,
+                      onTap: onBack,
+                    ),
+                  if (onBack == null)
+                    SizedBox(
+                      height: 44,
+                      width: 44,
+                    ),
                   Spacer(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,7 +86,9 @@ class CreateObjectPage extends StatelessWidget {
                   Spacer(),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pop(context);
+                      if (onBack != null) {
+                        onBack!();
+                      }
                       Navigator.pop(context);
                     },
                     child: BoxIcon(

@@ -49,8 +49,9 @@ class FireStoreService {
   }
 
   Future<void> addObject({required List<Characteristics> filledItems}) async {
-    Map<String, dynamic> objectMap = {for (var item in filledItems) item.title : item.toJson()}; // 2016-01-25
-    await _fireStore.collection('objects')
+    List<dynamic> objectMap = [for (var item in filledItems) item.toJson()];
+
+    await _fireStore.collection('new_objects')
         .add({
           'objectItems': objectMap,
           'createdDate': DateFormat('yyyy-MM-dd').format(DateTime.now()),
@@ -60,9 +61,9 @@ class FireStoreService {
   }
 
   Future<void> addTenant({required List<Characteristics> tenantItems, required String docId}) async {
-    Map<String, dynamic> tenantMap = {for (var item in tenantItems) item.title : item.toJson()}; // 2016-01-25
+    List<dynamic> tenantMap = [for (var item in tenantItems) item.toJson()];
 
-    DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
+    DocumentSnapshot snapshot = await _fireStore.collection('new_objects').doc(docId).get();
 
     var object = snapshot.data() as Map<String, dynamic>;
 
@@ -90,7 +91,7 @@ class FireStoreService {
         }
       }
     }
-    await _fireStore.collection('objects')
+    await _fireStore.collection('new_objects')
         .doc(docId)
         .update(object)
         .then((value) => print("Object Added"))
@@ -98,7 +99,7 @@ class FireStoreService {
   }
 
   Future<void> addExpenseArticle({required List<Characteristics> expenseArticleItems, required String docId}) async {
-    Map<String, dynamic> expensesArticleMap = {for (var item in expenseArticleItems) item.title : item.toJson()};
+    List<dynamic> expensesArticleMap = [for (var item in expenseArticleItems) item.toJson()];
 
     String startStr = expensesArticleMap[7]['value'] ?? '';
     String finishStr = expensesArticleMap[8]['value'] ?? '';
@@ -110,7 +111,7 @@ class FireStoreService {
       }
     }
 
-    await _fireStore.collection('objects')
+    await _fireStore.collection('new_objects')
         .doc(docId)
         .update({
           'expensesArticleItems': expensesArticleMap,
@@ -121,11 +122,12 @@ class FireStoreService {
 
   Future<void> addExpense({required List<Characteristics> expenseItems,
     required String docId, int? monthIndex, List<Characteristics>? defaultExpenseItems}) async {
-    Map<String, dynamic> expensesMap = {for (var item in expenseItems) item.title : item.toJson()};
-    DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
+    List<dynamic> expensesMap = [for (var item in expenseItems) item.toJson()];
+    print(expensesMap);
+    DocumentSnapshot snapshot = await _fireStore.collection('new_objects').doc(docId).get();
 
     var object = snapshot.data() as Map<String, dynamic>;
-    List expensesItems = [];
+    Map<String, dynamic> expensesItems = {};
     if (object['expensesItems'] != null) {
       expensesItems = object['expensesItems'];
     }
@@ -143,26 +145,26 @@ class FireStoreService {
       expensesMap[4]['value'] = '0';
     }
 
-    List expensesDates = [for (var i = 0; i < expensesItems.length; i++) if (i != monthIndex) expensesItems[i][0]['value']];
+    // List expensesDates = [for (var i = 0; i < expensesItems.values; i++) if (i != monthIndex) expensesItems.values[i][0]['value']];
 
-    if (expensesDates.contains(expensesMap[0]['value'])){
+    if (expensesItems.containsKey(expensesMap[0]['value'])){
       throw Exception('Эксплуатация за этот месяц уже существует');
     }
 
     if (monthIndex != null) {
-      expensesItems[monthIndex] = expensesMap;
+      expensesItems[expensesMap[0]['value']] = expensesMap;
     } else {
-      expensesItems.add(expensesMap);
+      expensesItems[expensesMap[0]['value']] = expensesMap;
 
       DateTime newDate = DateTime.now();
       DateTime currentDate = DateFormat('MM.yyyy').parse(expensesMap[0]['value']);
 
       while (DateFormat('MM.yyyy').format(currentDate) != DateFormat('MM.yyyy').format(newDate)) {
-        if (!expensesDates.contains(DateFormat('MM.yyyy').format(currentDate))
+        if (!expensesItems.containsKey(DateFormat('MM.yyyy').format(currentDate))
             && DateFormat('MM.yyyy').format(currentDate) != expensesMap[0]['value']){
-          Map<String, dynamic> defaultExpensesMap = {for (var item in defaultExpenseItems!) item.title : item.toJson()};
+          List<dynamic> defaultExpensesMap = [for (var item in defaultExpenseItems!) item.toJson()];
           defaultExpensesMap[0]['value'] = DateFormat('MM.yyyy').format(currentDate);
-          expensesItems.add(defaultExpensesMap);
+          expensesItems[defaultExpensesMap[0]['value']] = defaultExpensesMap;
         }
         if (newDate.isBefore(currentDate)) {
           currentDate = DateTime(currentDate.year, currentDate.month - 1);
@@ -171,15 +173,15 @@ class FireStoreService {
         }
       }
 
-      if (!expensesDates.contains(DateFormat('MM.yyyy').format(currentDate))
+      if (!expensesItems.containsKey(DateFormat('MM.yyyy').format(currentDate))
           && DateFormat('MM.yyyy').format(currentDate) != expensesMap[0]['value']){
-        Map<String, dynamic> defaultExpensesMap = {for (var item in defaultExpenseItems!) item.title : item.toJson()};
+        List<dynamic> defaultExpensesMap = [for (var item in defaultExpenseItems!) item.toJson()];
         defaultExpensesMap[0]['value'] = DateFormat('MM.yyyy').format(currentDate);
-        expensesItems.add(defaultExpensesMap);
+        expensesItems[defaultExpensesMap[0]['value']] = defaultExpensesMap;
       }
     }
 
-    await _fireStore.collection('objects')
+    await _fireStore.collection('new_objects')
         .doc(docId)
         .update({
           'expensesItems': expensesItems,
@@ -206,25 +208,30 @@ class FireStoreService {
       planMap[10]['value'] = '0';
     }
 
-    DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
+    DocumentSnapshot snapshot = await _fireStore.collection('new_objects').doc(docId).get();
 
     var object = snapshot.data() as Map<String, dynamic>;
-    List plansItems = [];
+    Map<String, dynamic> plansItems = {};
     if (object['plansItems'] != null) {
       plansItems = object['plansItems'];
     }
     if (index != null) {
       if (action == 'edit') {
-        plansItems[index] = planMap;
+        plansItems[index.toString()] = planMap;
       }
       if (action == 'delete') {
-        plansItems.removeAt(index);
+        int planIndex = index;
+        while (plansItems.containsKey((planIndex + 1).toString())) {
+          plansItems[planIndex.toString()] = plansItems[(planIndex + 1).toString()];
+          planIndex = planIndex + 1;
+        }
+        plansItems.remove(planIndex.toString());
       }
     } else {
-      plansItems.add(planMap);
+      plansItems[plansItems.values.length.toString()] = planMap;
     }
 
-    await _fireStore.collection('objects')
+    await _fireStore.collection('new_objects')
         .doc(docId)
         .update({
           'plansItems': plansItems,
@@ -235,7 +242,7 @@ class FireStoreService {
 
   Future<void> editObject({required List<Characteristics> filledItems, required String docId}) async {
     List<dynamic> objectMap = [for (var item in filledItems) item.toJson()];
-    await _fireStore.collection('objects')
+    await _fireStore.collection('new_objects')
         .doc(docId)
         .update({
           'objectItems': objectMap,
@@ -247,35 +254,37 @@ class FireStoreService {
   Future<void> editTenant({required List<Characteristics> filledItems, required String docId}) async {
     List<dynamic> tenantMap = [for (var item in filledItems) item.toJson()]; // 2016-01-25
 
-    DocumentSnapshot snapshot = await _fireStore.collection('objects').doc(docId).get();
+    DocumentSnapshot snapshot = await _fireStore.collection('new_objects').doc(docId).get();
 
     var object = snapshot.data() as Map<String, dynamic>;
 
     object['tenantItems'] = tenantMap;
 
     if (object['expensesItems'] != null) {
-      for (var i = 0; i < object['expensesItems'].length; i++){
+      List<dynamic> expensesItems = object['expensesItems'].values.toList();
+
+      for (var i = 0; i < expensesItems.length; i++){
         if (object['tenantItems'] != null && isNotEmpty(object['tenantItems'][10]['value'])
-            && isNotEmpty(object['expensesItems'][i][5]['value'])) {
+            && isNotEmpty(expensesItems[i][5]['value'])) {
           try {
-            object['expensesItems'][i][4]['value'] =
+            expensesItems[i][4]['value'] =
                 double.parse(
-                    object['expensesItems'][i][5]['value']) *
+                    expensesItems[i][5]['value']) *
                     (100 - double.parse(
                         object['tenantItems'][10]['value'])) /
                     100;
-            object['expensesItems'][i][4]['value'] =
-                double.parse(object['expensesItems'][i][4]['value']
+            expensesItems[i][4]['value'] =
+                double.parse(expensesItems[i][4]['value']
                     .toStringAsFixed(2)).toString();
           } catch (e) {
             print(e);
           }
         } else {
-          object['expensesItems'][i][4]['value'] = '0';
+          expensesItems[i][4]['value'] = '0';
         }
       }
     }
-    await _fireStore.collection('objects')
+    await _fireStore.collection('new_objects')
         .doc(docId)
         .update(object)
         .then((value) => print("Object Updated"))
@@ -283,17 +292,20 @@ class FireStoreService {
   }
 
   Future<void> updateColorObject({required String docId, required String value}) async {
-    await _fireStore.collection('objects')
+    DocumentSnapshot snapshot = await _fireStore.collection('new_objects').doc(docId).get();
+
+    var object = snapshot.data() as Map<String, dynamic>;
+    object['tenantItems'][12]['value'] = value;
+
+    await _fireStore.collection('new_objects')
         .doc(docId)
-        .update({
-          'tenantItems.12.value': value,
-        })
-        .then((value) => print("Object updated"))
+        .update(object)
+        .then((value) => print("Color Updated"))
         .catchError((error) => throw Exception('Error adding'));
   }
 
   Future<void> deleteObject(String docId) async {
-    await _fireStore.collection('objects')
+    await _fireStore.collection('new_objects')
         .doc(docId)
         .delete()
         .then((value) => print("Object deleted"))
@@ -302,76 +314,23 @@ class FireStoreService {
 
   Future<List<Place>> getObjects(User user, List<String> owners) async {
     QuerySnapshot querySnapshot;
-    if (user.role == 'admin') {
-      querySnapshot = await _fireStore.collection('objects').get();
-    } else {
-      querySnapshot = await _fireStore.collection('objects').where('objectItems.3.value', whereIn: owners).get();
-    }
-    print(querySnapshot.docs.length);
-    List<Place> places = querySnapshot.docs.map((doc) {
+    querySnapshot = await _fireStore.collection('new_objects').get();
+    // if (user.role == 'admin') {
+    //   querySnapshot = await _fireStore.collection('new_objects').get();
+    // } else {
+    //   querySnapshot = await _fireStore.collection('new_objects').where('objectItems.3.value', whereIn: owners).get();
+    // }
+
+    List<Place> places = [];
+    for (var doc in querySnapshot.docs) {
       var place = doc.data() as Map<String, dynamic>;
-      var objectItems = place['objectItems'].values.toList();
-      objectItems.sort((a, b) {
-        if(a['id'] > b['id']) {
-          return 1;
-        }
-        return -1;
-      });
-      place['objectItems'] = objectItems;
-      if (place['tenantItems'] != null) {
-        var tenantItems = place['tenantItems'].values.toList();
-        tenantItems.sort((a, b) {
-          if (a['id'] > b['id']) {
-            return 1;
-          }
-          return -1;
-        });
-        place['tenantItems'] = tenantItems;
-      }
-
-      if (place['expensesArticleItems'] != null) {
-        var expensesArticleItems = place['expensesArticleItems'].values
-            .toList();
-        expensesArticleItems.sort((a, b) {
-          if (a['id'] > b['id']) {
-            return 1;
-          }
-          return -1;
-        });
-        place['expensesArticleItems'] = expensesArticleItems;
-      }
-
-      if (place['expensesItems'] != null) {
-        var expensesItems = place['expensesItems'].toList();
-        for (var i = 0; i < expensesItems.length; i++) {
-          var items = expensesItems[i].values.toList();
-          items.sort((a, b) {
-            if (a['id'] > b['id']) {
-              return 1;
-            }
-            return -1;
-          });
-          expensesItems[i] = items;
-        }
-        place['expensesItems'] = expensesItems;
-      }
-
-      if (place['planItems'] != null) {
-        var planItems = place['planItems'].toList();
-        for (var i = 0; i < planItems.length; i++) {
-          var items = planItems[i].values.toList();
-          items.sort((a, b) {
-            if (a['id'] > b['id']) {
-              return 1;
-            }
-            return -1;
-          });
-          planItems[i] = items;
-        }
-        place['planItems'] = planItems;
-      }
-      
       place['id'] = doc.id;
+      place['expensesItems'] = (place['expensesItems'] ?? {}).values;
+      place['plansItems'] = (place['plansItems'] ?? {}).values;
+
+      if (!owners.contains(place['objectItems'][3]['value'])){
+        continue;
+      }
 
       double sumTaxes = 0;
       double sumCurrentRent = 0;
@@ -422,8 +381,8 @@ class FireStoreService {
           place['objectItems'][13]['value'] = double.parse((sumTaxes / sumCurrentRent).toStringAsFixed(2)).toString();
         }
       }
-      return Place.fromJson(place);
-    }).toList();
+      places.add(Place.fromJson(place));
+    }
     return places;
   }
 
@@ -482,13 +441,18 @@ class FireStoreService {
     QuerySnapshot querySnapshot = await _fireStore.collection('owners').where('name', isEqualTo: ownerName).get();
     String docId = querySnapshot.docs.first.reference.id;
 
-    QuerySnapshot objects = await _fireStore.collection('objects').where('objectItems.3.value', isEqualTo: ownerName).get();
+    QuerySnapshot objects = await _fireStore.collection('new_objects').get();
+
     for (var snapshot in objects.docs) {
       var object = snapshot.data() as Map<String, dynamic>;
+
+      if (object['objectItems'][3]['value'] != ownerName) {
+        continue;
+      }
       List<dynamic> newItemsMap = [for (var item in characteristics) item.toJson()];
 
       if (characteristicsName == 'object_characteristics') {
-        for (var item in object['objectItems'].values) {
+        for (var item in object['objectItems']) {
           int index = characteristics.lastIndexWhere((element) => element.id == item['id']);
           if (index != -1) {
             newItemsMap[index]['value'] = item['value'];
@@ -501,7 +465,7 @@ class FireStoreService {
 
       if (characteristicsName == 'tenant_characteristics'
           && object['tenantItems'] != null) {
-        for (var item in object['tenantItems'].values) {
+        for (var item in object['tenantItems']) {
           int index = characteristics.lastIndexWhere((element) => element.id == item['id']);
           if (index != -1) {
             newItemsMap[index]['value'] = item['value'];
@@ -514,11 +478,11 @@ class FireStoreService {
 
       if (characteristicsName == 'expense_characteristics'
           && object['expensesItems'] != null) {
-        List expensesItems = [];
-        for (var items in object['expensesItems']) {
+        Map<String, dynamic> expensesItems = {};
+        for (var items in object['expensesItems'].values) {
           newItemsMap = [for (var item in characteristics) item.toJson()];
 
-          for (var item in items.values) {
+          for (var item in items) {
             int index = characteristics.lastIndexWhere((element) =>
             element.id == item['id']);
             if (index != -1) {
@@ -527,14 +491,14 @@ class FireStoreService {
               newItemsMap[index]['details'] = item['details'];
             }
           }
-          expensesItems.add(newItemsMap);
+          expensesItems[newItemsMap[0]['value']] = newItemsMap;
         }
         object['expensesItems'] = expensesItems;
       }
 
       if (characteristicsName == 'expense_article_characteristics'
           && object['expensesArticleItems'] != null) {
-        for (var item in object['expensesArticleItems'].values) {
+        for (var item in object['expensesArticleItems']) {
           int index = characteristics.lastIndexWhere((element) => element.id == item['id']);
           if (index != -1) {
             newItemsMap[index]['value'] = item['value'];
@@ -545,7 +509,7 @@ class FireStoreService {
         object['expensesArticleItems'] = newItemsMap;
       }
 
-      await _fireStore.collection('objects')
+      await _fireStore.collection('new_objects')
           .doc(snapshot.reference.id)
           .update(object)
           .then((value) => print("Object Updated"))

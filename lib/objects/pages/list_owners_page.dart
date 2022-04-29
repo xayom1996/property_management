@@ -12,11 +12,50 @@ import 'package:property_management/objects/pages/create_object_page.dart';
 import 'package:property_management/settings/cubit/settings_cubit.dart';
 import 'package:property_management/settings/pages/settings_page.dart';
 
-class ListOwnersPage extends StatelessWidget {
+class ListOwnersPage extends StatefulWidget {
   final String title;
   final Function onTap;
   const ListOwnersPage({Key? key, required this.title, required this.onTap}) : super(key: key);
 
+  @override
+  State<ListOwnersPage> createState() => _ListOwnersPageState();
+}
+
+class _ListOwnersPageState extends State<ListOwnersPage> {
+
+  @override
+  void initState() {
+    // isOneOwner();
+    super.initState();
+  }
+
+  void isOneOwner() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      String item = context.read<AppBloc>().state.owners.keys.toList().first;
+      Navigator.pop(context);
+
+      if (widget.title == 'Новый объект') {
+        context.read<AddObjectCubit>().getItems(
+            context.read<AppBloc>().state.owners[item]['object_characteristics']);
+        context.read<AddObjectCubit>().changeItemValue(
+            3, item, '');
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const CreateObjectPage()),
+        );
+      } else {
+        context.read<SettingsCubit>().selectOwnerName(item);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const SettingsPage()
+          ),
+        );
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,12 +63,12 @@ class ListOwnersPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         leading: null,
-        automaticallyImplyLeading: title != 'Настройки',
+        automaticallyImplyLeading: widget.title != 'Настройки',
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (title == 'Настройки')
+            if (widget.title == 'Настройки')
               BoxIcon(
                 iconPath: 'assets/icons/back.svg',
                 iconColor: Colors.black,
@@ -44,7 +83,7 @@ class ListOwnersPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  title,
+                  widget.title,
                   style: body,
                 ),
                 Text(
@@ -82,11 +121,11 @@ class ListOwnersPage extends StatelessWidget {
                         for (var item in sortList(state.owners.keys.toList()))
                           ContainerForTransition(
                             title: item,
-                            icon: title == 'Новый объект'
+                            icon: widget.title == 'Новый объект'
                                 ? null
                                 : Icons.arrow_forward_ios,
                             onTap: () {
-                              if (title == 'Новый объект') {
+                              if (widget.title == 'Новый объект') {
                                 context.read<AddObjectCubit>().getItems(
                                     state.owners[item]['object_characteristics']);
                                 context.read<AddObjectCubit>().changeItemValue(
@@ -95,14 +134,18 @@ class ListOwnersPage extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => CreateObjectPage()),
+                                      builder: (context) => CreateObjectPage(
+                                        onBack: () {
+                                          Navigator.pop(context);
+                                        },
+                                      )),
                                 );
                               } else {
                                 context.read<SettingsCubit>().selectOwnerName(item);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SettingsPage()),
+                                      builder: (context) => const SettingsPage()),
                                 );
                               }
                            },

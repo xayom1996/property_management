@@ -77,6 +77,7 @@ class AddPlanCubit extends Cubit<AddingState> {
         status: StateStatus.success,
       ));
     } catch (e) {
+      print(e);
       emit(state.copyWith(
         status: StateStatus.error,
         errorMessage: e.toString().replaceAll('Exception: ', ''),

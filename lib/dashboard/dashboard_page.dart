@@ -38,30 +38,34 @@ class DashboardPage extends StatelessWidget {
           // if (state.status == ObjectsStatus.fetched){
           //   context.read<CharacteristicsCubit>().fetchObjects(state.places);
           // }
+
           if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty) {
-            Place place = context.read<ObjectsBloc>().state.places[0];
-            if (context.read<ExploitationCubit>().state.selectedPlaceId > state.places.length - 1) {
-              context.read<ExploitationCubit>().changeSelectedPlaceId(
-                  0, state.places, isJump: true);
-              context.read<AddExpenseArticleCubit>().getItems(
-                  context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_article_characteristics']
-              );
-              context.read<AddExpenseCubit>().getItems(
-                  context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_characteristics']
-              );
-            }
-            if (context.read<CharacteristicsCubit>().state.selectedPlaceId > state.places.length - 1) {
+            int selectedPlaceId = context.read<CharacteristicsCubit>().state.selectedPlaceId;
+
+            if (selectedPlaceId > state.places.length - 1) {
+              selectedPlaceId = 0;
               context.read<CharacteristicsCubit>().changeSelectedPlaceId(
                   0, state.places, isJump: true);
-              context.read<AddTenantCubit>().getItems(
-                  context.read<AppBloc>().state.owners[place.objectItems[3].value]['tenant_characteristics']
-              );
-            }
+              context.read<ExploitationCubit>().changeSelectedPlaceId(
+                  0, state.places, isJump: true);
 
-            if (context.read<AnalyticsCubit>().state.selectedPlaceId > state.places.length - 1) {
               context.read<AnalyticsCubit>().changeSelectedPlaceId(
                   0, state.places, isJump: true);
             }
+
+            Place place = context.read<ObjectsBloc>().state.places[selectedPlaceId];
+
+            context.read<AddTenantCubit>().getItems(
+                context.read<AppBloc>().state.owners[place.objectItems[3].value]['tenant_characteristics']
+            );
+
+            context.read<AddExpenseArticleCubit>().getItems(
+                context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_article_characteristics']
+            );
+
+            context.read<AddExpenseCubit>().getItems(
+                context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_characteristics']
+            );
 
           }
           return previousState.places.length != state.places.length;
@@ -94,7 +98,9 @@ class DashboardPage extends StatelessWidget {
                   child: IndexedStack(
                     key: const PageStorageKey('Indexed'),
                     index: dashboardState.index,
-                    children: context.read<DashboardCubit>().pages,
+                    children: state.status == ObjectsStatus.fetched && state.places.isNotEmpty
+                        ? context.read<DashboardCubit>().pages
+                        : [const ListObjectsPage()],
                   ),
                 );
               },

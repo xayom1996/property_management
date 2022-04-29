@@ -128,19 +128,21 @@ class SettingsCubit extends Cubit<SettingsState> {
         characteristic.unit = selectedCharacteristic['unit'];
       }
 
-      try {
-        await _appBloc.fireStoreService.saveCharacteristic(
-            characteristics: characteristics,
-            ownerName: ownerName, characteristicsName: characteristicsName);
-        owners[ownerName][characteristicsName] = characteristics;
-        _appBloc.add(AppOwnerUpdated(owners));
-        emit(
-            state.copyWith(
-                status: StateStatus.success
-            )
-        );
-      } catch (e) {
+      await _appBloc.fireStoreService.saveCharacteristic(
+          characteristics: characteristics,
+          ownerName: ownerName, characteristicsName: characteristicsName);
+      owners[ownerName][characteristicsName] = characteristics;
+      _appBloc.add(AppOwnerUpdated(owners));
+      emit(
+          state.copyWith(
+              status: StateStatus.success
+          )
+      );
 
+      try {
+
+      } catch (e) {
+        print(e);
       }
       print(characteristic);
     }
@@ -171,6 +173,7 @@ class SettingsCubit extends Cubit<SettingsState> {
           )
       );
     } catch (e) {
+      print(e);
       emit(
           state.copyWith(
               status: StateStatus.error
@@ -204,6 +207,7 @@ class SettingsCubit extends Cubit<SettingsState> {
           )
       );
     } catch (e) {
+      print(e);
       emit(
           state.copyWith(
               status: StateStatus.error

@@ -43,7 +43,8 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
   bool isLoading = true;
   Map<String, List> table = {};
   List<int> years = [];
-  String title = '';
+  String objectTitle = '';
+  String tableTitle = 'Таблица “Факт”';
 
   @override
   void initState() {
@@ -52,60 +53,86 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
   }
 
   void calculationTable() {
-    setState(() {
-      isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
 
     Place place = context.read<ObjectsBloc>().state.places[context.read<AnalyticsCubit>().state.selectedPlaceId];
-    title = place.objectItems[0].getFullValue();
-    List<Characteristics> objectItems = [];
-    List<Characteristics> expensesArticleItems = [];
-
-    if (widget.planIndex != null) {
-      objectItems = place.plansItems![widget.planIndex!];
-      expensesArticleItems = place.plansItems![widget.planIndex!];
-    } else {
-      objectItems = place.objectItems;
-      expensesArticleItems = place.expensesArticleItems ?? [];
-    }
+    objectTitle = place.objectItems[0].getFullValue();
+    List<Characteristics> analyticItems = [];
+    // List<Characteristics> objectItems = [];
+    // List<Characteristics> expensesArticleItems = [];
 
 
     try {
+      if (widget.planIndex != null) {
+        tableTitle = place.plansItems![widget.planIndex!][0].getFullValue();
+        analyticItems.add(place.plansItems![widget.planIndex!][5]);
+        analyticItems.add(place.plansItems![widget.planIndex!][9]);
+        analyticItems.add(place.plansItems![widget.planIndex!][11]);
+        analyticItems.add(place.plansItems![widget.planIndex!][12]);
+        analyticItems.add(place.plansItems![widget.planIndex!][6]);
+        analyticItems.add(place.plansItems![widget.planIndex!][10]);
+        analyticItems.add(place.plansItems![widget.planIndex!][3]);
+        analyticItems.add(place.plansItems![widget.planIndex!][4]);
+        analyticItems.add(place.plansItems![widget.planIndex!][1]);
+        analyticItems.add(place.plansItems![widget.planIndex!][2]);
+        analyticItems.add(place.plansItems![widget.planIndex!][7]);
+        analyticItems.add(place.plansItems![widget.planIndex!][13]);
+        analyticItems.add(place.plansItems![widget.planIndex!][14]);
+      } else {
+        analyticItems.add(place.expensesArticleItems![0]);
+        analyticItems.add(place.expensesArticleItems![1]);
+        analyticItems.add(place.expensesArticleItems![2]);
+        analyticItems.add(place.expensesArticleItems![3]);
+        analyticItems.add(place.expensesArticleItems![4]);
+        analyticItems.add(place.expensesArticleItems![5]);
+        analyticItems.add(place.expensesArticleItems![7]);
+        analyticItems.add(place.expensesArticleItems![8]);
+        analyticItems.add(place.objectItems[2]);
+        analyticItems.add(place.objectItems[6]);
+        analyticItems.add(place.objectItems[15]);
+        analyticItems.add(place.objectItems[16]);
+        analyticItems.add(place.objectItems[17]);
+      }
+
       DateTime startDateCalculation = DateFormat('dd.MM.yyyy').parse(
-          expensesArticleItems[7].getFullValue());
+          analyticItems[6].getFullValue());
       DateTime finishDateCalculation = DateFormat('dd.MM.yyyy').parse(
-          expensesArticleItems[8].getFullValue());
+          analyticItems[7].getFullValue());
       int yearsCount = (finishDateCalculation.difference(startDateCalculation).inDays / 365).ceil();
       years = new List<int>.generate(yearsCount + 1, (i) => i);
 
       table['Рыночная ставка аренды, руб/кв.м*мес.'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         if (year == 1) {
-          table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = double.parse(expensesArticleItems[0].value!);
+          table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = double.parse(analyticItems[0].value!);
         } else if (year > 1) {
           table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = table['Рыночная ставка аренды, руб/кв.м*мес.']?[year - 1]
-              * (100 + double.parse(expensesArticleItems[4].value!)) / 100;
+              * (100 + double.parse(analyticItems[4].value!)) / 100;
         }
       }
 
       table['Потенциальный валовый доход, руб./год'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         table['Потенциальный валовый доход, руб./год']?[year] = table['Рыночная ставка аренды, руб/кв.м*мес.']?[year]
-            * double.parse(objectItems[2].value!) * 12;
+            * double.parse(analyticItems[8].value!) * 12;
       }
 
       table['Потери от недозагрузки (смена арендатора), %'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(expensesArticleItems[5].value!));
+          : double.parse(analyticItems[5].value!));
       table['Расходы на управление, % от реального дохода'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(expensesArticleItems[1].value!));
+          : double.parse(analyticItems[1].value!));
       table['Патент на сдачу в аренду нежилых помещений для ИП, руб./год.'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(expensesArticleItems[2].value!));
+          : double.parse(analyticItems[2].value!));
       table['Банковское обслуживание, руб.'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(expensesArticleItems[3].value!));
+          : double.parse(analyticItems[3].value!));
 
       table['Чистый арендный доход, руб'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
@@ -113,39 +140,39 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
           table['Чистый арендный доход, руб']?[year] =
               (table['Потенциальный валовый доход, руб./год']?[year]
                   * (100 - double.parse(
-                      expensesArticleItems[5]
+                      analyticItems[5]
                       .value!)) / 100
                   * (100 - double.parse(
-                      expensesArticleItems[1]
+                      analyticItems[1]
                       .value!)) / 100)
                   - double.parse(
-                      expensesArticleItems[2]
+                      analyticItems[2]
                       .value!)
                   - double.parse(
-                      expensesArticleItems[3]
+                      analyticItems[3]
                           .value!);
         }
       }
 
-      table['Площадь объекта, кв.м'] = [double.parse(objectItems[2].value!)];
-      table['Начальная стоимость, руб.'] = [double.parse(objectItems[6].value!)];
-      table['Услуги по приобретению, %'] = [double.parse(objectItems[16].value!)];
-      table['Расходы на сделку, руб.'] = [double.parse(objectItems[17].value!)];
+      table['Площадь объекта, кв.м'] = [double.parse(analyticItems[8].value!)];
+      table['Начальная стоимость, руб.'] = [double.parse(analyticItems[9].value!)];
+      table['Услуги по приобретению, %'] = [double.parse(analyticItems[11].value!)];
+      table['Расходы на сделку, руб.'] = [double.parse(analyticItems[12].value!)];
 
       table['Рыночная стоимость помещения, руб.'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         if (year == 0) {
           table['Рыночная стоимость помещения, руб.']?[year] =
-              double.parse(objectItems[6].value!)
-                * (100 + double.parse(objectItems[16].value!)) / 100
-                + double.parse(objectItems[17].value!);
+              double.parse(analyticItems[9].value!)
+                * (100 + double.parse(analyticItems[11].value!)) / 100
+                + double.parse(analyticItems[12].value!);
         }
         else {
           table['Рыночная стоимость помещения, руб.']?[year] =
               table['Рыночная ставка аренды, руб/кв.м*мес.']?[year]
                   * 12
-                  * (double.parse(objectItems[2].value!)
-                  / (double.parse(objectItems[15].value!) / 100));
+                  * (double.parse(analyticItems[8].value!)
+                  / (double.parse(analyticItems[10].value!) / 100));
         }
       }
 
@@ -166,31 +193,31 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
           table['Денежный поток']?[year] =
               (table['Потенциальный валовый доход, руб./год']?[year]
                 * (100 - double.parse(
-                    expensesArticleItems[5]
+                    analyticItems[5]
                     .value!)) / 100
                 * (100 - double.parse(
-                    expensesArticleItems[1]
+                    analyticItems[1]
                     .value!)) / 100)
                 - double.parse(
-                    expensesArticleItems[2]
+                    analyticItems[2]
                     .value!)
                 - double.parse(
-                    expensesArticleItems[3]
+                    analyticItems[3]
                         .value!);
         } else {
           table['Денежный поток']?[year] =
               (table['Потенциальный валовый доход, руб./год']?[year]
                   * (100 - double.parse(
-                      expensesArticleItems[5]
+                      analyticItems[5]
                       .value!)) / 100
                   * (100 - double.parse(
-                      expensesArticleItems[1]
+                      analyticItems[1]
                       .value!)) / 100)
                   - double.parse(
-                      expensesArticleItems[2]
+                      analyticItems[2]
                       .value!)
                   - double.parse(
-                      expensesArticleItems[3]
+                      analyticItems[3]
                           .value!)
                   + table['Рыночная стоимость помещения, руб.']?[year];
         }
@@ -212,9 +239,12 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
 
       table['Чистая прибыль за период, руб.'] = [allRentalIncome + allAddedValue, 100];
       table['Внутренняя норма доходности в год'] = [internal_rate_of_return(List.generate(table['Денежный поток']!.length, (index) => table['Денежный поток']?[index]), 0, 0)];
-      setState(() {
-        isLoading = false;
-      });
+
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     } catch (_) {
       print(_);
       WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -268,11 +298,11 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        widget.title,
+                        tableTitle,
                         style: body,
                       ),
                       Text(
-                        title,
+                        objectTitle,
                         style: caption,
                       ),
                     ],

@@ -44,7 +44,7 @@ class _TotalChartsState extends State<TotalCharts> {
     calculationTable();
     _objectsSubscription = context.read<ObjectsBloc>().stream.listen(
             (state){
-          if (state.status == ObjectsStatus.fetched){
+          if (state.status == ObjectsStatus.fetched && mounted){
             calculationTable();
           }
         });
@@ -52,9 +52,12 @@ class _TotalChartsState extends State<TotalCharts> {
   }
 
   void calculationTable() {
-    setState(() {
-      isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
 
     places = [];
     hasTenantName = [];
@@ -218,9 +221,11 @@ class _TotalChartsState extends State<TotalCharts> {
       hasTenantName.add(false);
     }
 
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
 
   }
 
