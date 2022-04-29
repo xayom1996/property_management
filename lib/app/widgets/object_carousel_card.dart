@@ -42,7 +42,7 @@ class ObjectCarouselCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '${place.objectItems['Название объекта']!.value}',
+                    '${place.objectItems[0].value}',
                     style: body,
                     maxLines: 1,
                     textAlign: TextAlign.center,
@@ -56,7 +56,7 @@ class ObjectCarouselCard extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    '${place.objectItems['Площадь объекта']!.getFullValue()}',
+                    '${place.objectItems[2].getFullValue()}',
                     overflow: TextOverflow.ellipsis,
                     style: body,
                     textAlign: TextAlign.center,
@@ -65,7 +65,7 @@ class ObjectCarouselCard extends StatelessWidget {
               ],
             ),
             Text(
-              '${place.objectItems['Адрес объекта']!.value}',
+              '${place.objectItems[1].value}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: caption1,

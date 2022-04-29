@@ -15,7 +15,7 @@ import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomTabView extends StatelessWidget {
-  final Map<String, Characteristics> objectItems;
+  final List<Characteristics> objectItems;
   final Widget? textButton;
   final Widget? child;
   final bool? checkbox;
@@ -23,7 +23,7 @@ class CustomTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Characteristics> sortedItems = objectItems.values.toList();
+    List<Characteristics> sortedItems = objectItems;
     sortedItems.sort((a, b) => a.id.compareTo(b.id));
     sortedItems.sort((a, b) {
       if(a.title == 'Отмеченный клиент') {

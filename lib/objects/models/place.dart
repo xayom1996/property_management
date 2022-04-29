@@ -3,11 +3,11 @@ import 'package:property_management/characteristics/models/characteristics.dart'
 
 class Place {
   final String id;
-  final Map<String, Characteristics> objectItems;
-  Map<String, Characteristics>? tenantItems;
-  Map<String, Characteristics>? expensesArticleItems;
-  List<Map<String, Characteristics>>? expensesItems;
-  List<Map<String, Characteristics>>? plansItems;
+  final List<Characteristics> objectItems;
+  List<Characteristics>? tenantItems;
+  List<Characteristics>? expensesArticleItems;
+  List<List<Characteristics>>? expensesItems;
+  List<List<Characteristics>>? plansItems;
   final String? createdDate;
 
   Place({
@@ -30,36 +30,36 @@ class Place {
 
   factory Place.fromJson(Map<String, dynamic> json) => Place(
     id: json['id'] ?? '',
-    objectItems: Map<String, Characteristics>.from(json["objectItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value)))),
+    objectItems: List<Characteristics>.from(json["objectItems"].map((item) => Characteristics.fromJson(item))),
     tenantItems: json["tenantItems"] != null
-        ? Map<String, Characteristics>.from(json["tenantItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value))))
+        ? List<Characteristics>.from(json["tenantItems"].map((item) => Characteristics.fromJson(item)))
         : json["tenantItems"],
     expensesArticleItems: json["expensesArticleItems"] != null
-        ? Map<String, Characteristics>.from(json["expensesArticleItems"].map((key, value) => MapEntry(key, Characteristics.fromJson(value))))
+        ? List<Characteristics>.from(json["expensesArticleItems"].map((item) => Characteristics.fromJson(item)))
         : json["expensesArticleItems"],
     expensesItems: json["expensesItems"] != null
-        ? List<Map<String, Characteristics>>.from(json["expensesItems"].map((expense) =>
-          Map<String, Characteristics>.from(expense.map((key, value) => MapEntry(key, Characteristics.fromJson(value))))))
+        ? List<List<Characteristics>>.from(json["expensesItems"].map((expense) =>
+          List<Characteristics>.from(expense.map((item) => Characteristics.fromJson(item)))))
         : json["expensesItems"],
     plansItems: json["plansItems"] != null
-        ? List<Map<String, Characteristics>>.from(json["plansItems"].map((expense) =>
-          Map<String, Characteristics>.from(expense.map((key, value) => MapEntry(key, Characteristics.fromJson(value))))))
+        ? List<List<Characteristics>>.from(json["plansItems"].map((expense) =>
+          List<Characteristics>.from(expense.map((item) => Characteristics.fromJson(item)))))
         : json["plansItems"],
     createdDate: json["ownerId"],
   );
 
   bool isContains(String value) {
     String _value = value.toLowerCase();
-    return objectItems['Название объекта']!.getFullValue().toLowerCase().contains(_value) ||
-        objectItems['Адрес объекта']!.getFullValue().toLowerCase().contains(_value) ||
-        objectItems['Площадь объекта']!.getFullValue().toLowerCase().contains(_value);
+    return objectItems[0].getFullValue().toLowerCase().contains(_value) ||
+        objectItems[1].getFullValue().toLowerCase().contains(_value) ||
+        objectItems[2].getFullValue().toLowerCase().contains(_value);
   }
 
   void getQuarters() {
-    List<Map<String, Characteristics>> items = expensesItems ?? [];
+    List<List<Characteristics>> items = expensesItems ?? [];
     items.sort((a, b) {
-      DateTime dateA = DateFormat('MM.yyyy').parse(a['Месяц, Год']!.getFullValue());
-      DateTime dateB = DateFormat('MM.yyyy').parse(b['Месяц, Год']!.getFullValue());
+      DateTime dateA = DateFormat('MM.yyyy').parse(a[0].getFullValue());
+      DateTime dateB = DateFormat('MM.yyyy').parse(b[0].getFullValue());
       return dateA.compareTo(dateB);
     });
   }

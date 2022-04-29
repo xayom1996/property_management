@@ -48,13 +48,13 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
       places = await _fireStoreService.getObjects(event.user, event.owners.keys.toList());
     }
     String filterBy = state.filterBy;
-    String filterField = 'Название объекта';
+    int filterFieldId = 0;
     if (filterBy == 'address'){
-      filterField = 'Адрес объекта';
+      filterFieldId = 1;
     }
     places.sort((a, b) =>
-        a.objectItems[filterField]!.getFullValue().toLowerCase()
-            .compareTo(b.objectItems[filterField]!.getFullValue().toLowerCase())
+        a.objectItems[filterFieldId].getFullValue().toLowerCase()
+            .compareTo(b.objectItems[filterFieldId].getFullValue().toLowerCase())
     );
     emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
   }
@@ -64,13 +64,13 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
     List<Place> places;
     places = await _fireStoreService.getObjects(_appBloc.state.user, _appBloc.state.owners.keys.toList());
     String filterBy = state.filterBy;
-    String filterField = 'Название объекта';
+    int filterFieldId = 0;
     if (filterBy == 'address'){
-      filterField = 'Адрес объекта';
+      filterFieldId = 1;
     }
     places.sort((a, b) =>
-        a.objectItems[filterField]!.getFullValue().toLowerCase()
-            .compareTo(b.objectItems[filterField]!.getFullValue().toLowerCase())
+        a.objectItems[filterFieldId].getFullValue().toLowerCase()
+            .compareTo(b.objectItems[filterFieldId].getFullValue().toLowerCase())
     );
     emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
   }
@@ -79,13 +79,13 @@ class ObjectsBloc extends Bloc<ObjectsEvent, ObjectsState> {
     emit(state.copyWith(status: ObjectsStatus.loading));
     List<Place> places = state.places;
     String filterBy = event.filterBy;
-    String filterField = 'Название объекта';
+    int filterFieldId = 0;
     if (filterBy == 'address'){
-      filterField = 'Адрес объекта';
+      filterFieldId = 1;
     }
     places.sort((a, b) =>
-        a.objectItems[filterField]!.getFullValue().toLowerCase()
-            .compareTo(b.objectItems[filterField]!.getFullValue().toLowerCase())
+        a.objectItems[filterFieldId].getFullValue().toLowerCase()
+            .compareTo(b.objectItems[filterFieldId].getFullValue().toLowerCase())
     );
     emit(state.copyWith(status: ObjectsStatus.fetched, places: places, filterBy: filterBy));
   }

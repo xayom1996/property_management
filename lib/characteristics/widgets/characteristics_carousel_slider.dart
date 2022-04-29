@@ -26,7 +26,7 @@ class CharacteristicsCarouselSlider extends StatelessWidget {
       listener: (context, state) async {
         Place place = context.read<ObjectsBloc>().state.places[state.selectedPlaceId];
         context.read<AddTenantCubit>().getItems(
-            context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['tenant_characteristics']
+            context.read<AppBloc>().state.owners[place.objectItems[3].value]['tenant_characteristics']
         );
         if (state.isJump) {
           carouselController.jumpToPage(state.selectedPlaceId);

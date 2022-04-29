@@ -62,16 +62,16 @@ class _TotalChartsState extends State<TotalCharts> {
     String currentDate = DateFormat('MM.yyyy').format(DateTime.now());
 
     for (var place in context.read<ObjectsBloc>().state.places) {
-      String objectName = place.objectItems['Название объекта']!.value ?? '';
-      String objectArea = place.objectItems['Площадь объекта']!.value ?? '';
-      String objectDate = place.objectItems['Дата приобретения']!.value ?? '';
-      String objectPrice = place.objectItems['Начальная стоимость']!.value ?? '';
-      String objectCapitalization = place.objectItems['Коэффициент капитализации']!.value ?? '';
-      String objectRent = isNotEmpty(place.objectItems['Арендная плата']!.value)
-          ? place.objectItems['Арендная плата']!.value!
+      String objectName = place.objectItems[0].value ?? '';
+      String objectArea = place.objectItems[2].value ?? '';
+      String objectDate = place.objectItems[7].value ?? '';
+      String objectPrice = place.objectItems[6].value ?? '';
+      String objectCapitalization = place.objectItems[15].value ?? '';
+      String objectRent = isNotEmpty(place.objectItems[14].value)
+          ? place.objectItems[14].value!
           : '0';
       String tenantName = place.tenantItems != null
-          ? place.tenantItems!['Наименование организации']!.value ?? ''
+          ? place.tenantItems![0].value ?? ''
           : '';
 
       if (objectName.isEmpty || objectDate.isEmpty || objectArea.isEmpty
@@ -241,7 +241,7 @@ class _TotalChartsState extends State<TotalCharts> {
   //   String date2 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 2, now.day));
   //   String date3 = DateFormat('MM.yyyy').format(DateTime(now.year, now.month - 3, now.day));
   //   for (var expense in place.expensesItems ?? []){
-  //     String date = expense['Месяц, Год']!.getFullValue();
+  //     String date = expense[0].getFullValue();
   //
   //     if (date == date1 || date == date2 || date == date3){
   //       if (isNotEmpty(expense['Текущая арендная плата']!.getFullValue())) {
@@ -260,7 +260,7 @@ class _TotalChartsState extends State<TotalCharts> {
     // List<Place> places = context.read<ObjectsBloc>().state.places;
     // for (var place in places) {
     //   if (isHandedObject(place)) {
-    //     headerTitles.add(place.objectItems['Название объекта']!.getFullValue());
+    //     headerTitles.add(place.objectItems[0].getFullValue());
     //   }
     // }
     // if (headerTitles.isNotEmpty) {

@@ -13,11 +13,11 @@ class EditTenantCubit extends Cubit<EditingState> {
 
   final FireStoreService _fireStoreService;
 
-  void getItems(Map<String, Characteristics> tenantItems, String docId) async {
+  void getItems(List<Characteristics> tenantItems, String docId) async {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _items = List<Characteristics>.from(tenantItems.values.map((item) => Characteristics.fromJson(item.toJson())));
+    List<Characteristics> _items = List<Characteristics>.from(tenantItems.map((item) => Characteristics.fromJson(item.toJson())));
     _items.sort((a, b) => a.id.compareTo(b.id));
     emit(state.copyWith(
       items: _items,

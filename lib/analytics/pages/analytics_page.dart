@@ -174,7 +174,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             },
             body: currentIndexTab == 0
                 ? CustomTabView(
-                    objectItems: {},
+                    objectItems: [],
                     child: BlocBuilder<AnalyticsCubit, AnalyticsState>(
                       buildWhen: (previousState, state) {
                         return previousState.selectedPlaceId != state.selectedPlaceId ||
@@ -349,7 +349,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                         : null,
                   )
                 : CustomTabView(
-                    objectItems: {},
+                    objectItems: [],
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44), vertical: 16),

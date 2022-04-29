@@ -57,55 +57,55 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
     });
 
     Place place = context.read<ObjectsBloc>().state.places[context.read<AnalyticsCubit>().state.selectedPlaceId];
-    title = place.objectItems['Название объекта']!.getFullValue();
-    Map<String, Characteristics> objectItems = {};
-    Map<String, Characteristics> expensesArticleItems = {};
+    title = place.objectItems[0].getFullValue();
+    List<Characteristics> objectItems = [];
+    List<Characteristics> expensesArticleItems = [];
 
     if (widget.planIndex != null) {
       objectItems = place.plansItems![widget.planIndex!];
       expensesArticleItems = place.plansItems![widget.planIndex!];
     } else {
       objectItems = place.objectItems;
-      expensesArticleItems = place.expensesArticleItems ?? {};
+      expensesArticleItems = place.expensesArticleItems ?? [];
     }
 
 
     try {
       DateTime startDateCalculation = DateFormat('dd.MM.yyyy').parse(
-          expensesArticleItems['Начало даты расчета']!.getFullValue());
+          expensesArticleItems[7].getFullValue());
       DateTime finishDateCalculation = DateFormat('dd.MM.yyyy').parse(
-          expensesArticleItems['Конец даты расчета']!.getFullValue());
+          expensesArticleItems[8].getFullValue());
       int yearsCount = (finishDateCalculation.difference(startDateCalculation).inDays / 365).ceil();
       years = new List<int>.generate(yearsCount + 1, (i) => i);
 
       table['Рыночная ставка аренды, руб/кв.м*мес.'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         if (year == 1) {
-          table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = double.parse(expensesArticleItems['Рыночная ставка аренды (в месяц)']!.value!);
+          table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = double.parse(expensesArticleItems[0].value!);
         } else if (year > 1) {
           table['Рыночная ставка аренды, руб/кв.м*мес.']?[year] = table['Рыночная ставка аренды, руб/кв.м*мес.']?[year - 1]
-              * (100 + double.parse(expensesArticleItems['Индексация рыночной ставки аренды']!.value!)) / 100;
+              * (100 + double.parse(expensesArticleItems[4].value!)) / 100;
         }
       }
 
       table['Потенциальный валовый доход, руб./год'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         table['Потенциальный валовый доход, руб./год']?[year] = table['Рыночная ставка аренды, руб/кв.м*мес.']?[year]
-            * double.parse(objectItems['Площадь объекта']!.value!) * 12;
+            * double.parse(objectItems[2].value!) * 12;
       }
 
       table['Потери от недозагрузки (смена арендатора), %'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(expensesArticleItems['Потери от недогрузки (смена арендатора)']!.value!));
+          : double.parse(expensesArticleItems[5].value!));
       table['Расходы на управление, % от реального дохода'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(expensesArticleItems['Расходы на управление (% от реального дохода)']!.value!));
+          : double.parse(expensesArticleItems[1].value!));
       table['Патент на сдачу в аренду нежилых помещений для ИП, руб./год.'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(expensesArticleItems['Патент на сдачу в аренду нежилых помещений для ИП']!.value!));
+          : double.parse(expensesArticleItems[2].value!));
       table['Банковское обслуживание, руб.'] = List.generate(yearsCount + 1, (i) => i == 0
           ? i
-          : double.parse(expensesArticleItems['Банковское обслуживание']!.value!));
+          : double.parse(expensesArticleItems[3].value!));
 
       table['Чистый арендный доход, руб'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
@@ -113,39 +113,39 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
           table['Чистый арендный доход, руб']?[year] =
               (table['Потенциальный валовый доход, руб./год']?[year]
                   * (100 - double.parse(
-                      expensesArticleItems['Потери от недогрузки (смена арендатора)']!
+                      expensesArticleItems[5]
                       .value!)) / 100
                   * (100 - double.parse(
-                      expensesArticleItems['Расходы на управление (% от реального дохода)']!
+                      expensesArticleItems[1]
                       .value!)) / 100)
                   - double.parse(
-                      expensesArticleItems['Патент на сдачу в аренду нежилых помещений для ИП']!
+                      expensesArticleItems[2]
                       .value!)
                   - double.parse(
-                      expensesArticleItems['Банковское обслуживание']!
+                      expensesArticleItems[3]
                           .value!);
         }
       }
 
-      table['Площадь объекта, кв.м'] = [double.parse(objectItems['Площадь объекта']!.value!)];
-      table['Начальная стоимость, руб.'] = [double.parse(objectItems['Начальная стоимость']!.value!)];
-      table['Услуги по приобретению, %'] = [double.parse(objectItems['Услуги по приобретению']!.value!)];
-      table['Расходы на сделку, руб.'] = [double.parse(objectItems['Расходы на сделку']!.value!)];
+      table['Площадь объекта, кв.м'] = [double.parse(objectItems[2].value!)];
+      table['Начальная стоимость, руб.'] = [double.parse(objectItems[6].value!)];
+      table['Услуги по приобретению, %'] = [double.parse(objectItems[16].value!)];
+      table['Расходы на сделку, руб.'] = [double.parse(objectItems[17].value!)];
 
       table['Рыночная стоимость помещения, руб.'] = List.generate(yearsCount + 1, (i) => 0);
       for (var year in years) {
         if (year == 0) {
           table['Рыночная стоимость помещения, руб.']?[year] =
-              double.parse(objectItems['Начальная стоимость']!.value!)
-                * (100 + double.parse(objectItems['Услуги по приобретению']!.value!)) / 100
-                + double.parse(objectItems['Расходы на сделку']!.value!);
+              double.parse(objectItems[6].value!)
+                * (100 + double.parse(objectItems[16].value!)) / 100
+                + double.parse(objectItems[17].value!);
         }
         else {
           table['Рыночная стоимость помещения, руб.']?[year] =
               table['Рыночная ставка аренды, руб/кв.м*мес.']?[year]
                   * 12
-                  * (double.parse(objectItems['Площадь объекта']!.value!)
-                  / (double.parse(objectItems['Коэффициент капитализации']!.value!) / 100));
+                  * (double.parse(objectItems[2].value!)
+                  / (double.parse(objectItems[15].value!) / 100));
         }
       }
 
@@ -166,31 +166,31 @@ class _AnalyticChartsState extends State<AnalyticCharts> {
           table['Денежный поток']?[year] =
               (table['Потенциальный валовый доход, руб./год']?[year]
                 * (100 - double.parse(
-                    expensesArticleItems['Потери от недогрузки (смена арендатора)']!
+                    expensesArticleItems[5]
                     .value!)) / 100
                 * (100 - double.parse(
-                    expensesArticleItems['Расходы на управление (% от реального дохода)']!
+                    expensesArticleItems[1]
                     .value!)) / 100)
                 - double.parse(
-                    expensesArticleItems['Патент на сдачу в аренду нежилых помещений для ИП']!
+                    expensesArticleItems[2]
                     .value!)
                 - double.parse(
-                    expensesArticleItems['Банковское обслуживание']!
+                    expensesArticleItems[3]
                         .value!);
         } else {
           table['Денежный поток']?[year] =
               (table['Потенциальный валовый доход, руб./год']?[year]
                   * (100 - double.parse(
-                      expensesArticleItems['Потери от недогрузки (смена арендатора)']!
+                      expensesArticleItems[5]
                       .value!)) / 100
                   * (100 - double.parse(
-                      expensesArticleItems['Расходы на управление (% от реального дохода)']!
+                      expensesArticleItems[1]
                       .value!)) / 100)
                   - double.parse(
-                      expensesArticleItems['Патент на сдачу в аренду нежилых помещений для ИП']!
+                      expensesArticleItems[2]
                       .value!)
                   - double.parse(
-                      expensesArticleItems['Банковское обслуживание']!
+                      expensesArticleItems[3]
                           .value!)
                   + table['Рыночная стоимость помещения, руб.']?[year];
         }

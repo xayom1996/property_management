@@ -217,13 +217,13 @@ class CharacteristicsPage extends StatelessWidget {
                   return state.currentIndexTab == 0
                       ? CustomTabView(
                           objectItems: objectState.places.isEmpty
-                              ? {}
+                              ? []
                               : objectState.places[state.selectedPlaceId].objectItems,
                         )
                       : CustomTabView(
                           objectItems: objectState.places.isEmpty
-                              ? {}
-                              : objectState.places[state.selectedPlaceId].tenantItems ?? {},
+                              ? []
+                              : objectState.places[state.selectedPlaceId].tenantItems ?? [],
                           checkbox: true,
                           textButton: objectState.places[state.selectedPlaceId].tenantItems == null
                               ? context.read<AppBloc>().state.user.isAdminOrManager()

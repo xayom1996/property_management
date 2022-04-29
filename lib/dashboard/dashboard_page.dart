@@ -44,17 +44,17 @@ class DashboardPage extends StatelessWidget {
               context.read<ExploitationCubit>().changeSelectedPlaceId(
                   0, state.places, isJump: true);
               context.read<AddExpenseArticleCubit>().getItems(
-                  context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['expense_article_characteristics']
+                  context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_article_characteristics']
               );
               context.read<AddExpenseCubit>().getItems(
-                  context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['expense_characteristics']
+                  context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_characteristics']
               );
             }
             if (context.read<CharacteristicsCubit>().state.selectedPlaceId > state.places.length - 1) {
               context.read<CharacteristicsCubit>().changeSelectedPlaceId(
                   0, state.places, isJump: true);
               context.read<AddTenantCubit>().getItems(
-                  context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['tenant_characteristics']
+                  context.read<AppBloc>().state.owners[place.objectItems[3].value]['tenant_characteristics']
               );
             }
 
@@ -71,18 +71,18 @@ class DashboardPage extends StatelessWidget {
             Place place = context.read<ObjectsBloc>().state.places[0];
 
             context.read<AddExpenseArticleCubit>().getItems(
-                context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['expense_article_characteristics']
+                context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_article_characteristics']
             );
 
             context.read<AddExpenseCubit>().getItems(
-                context.read<AppBloc>().state.owners[place.objectItems['Собственник']!.value]['expense_characteristics']
+                context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_characteristics']
             );
 
             context.read<AddTenantCubit>().getItems(
                 context
                     .read<AppBloc>()
                     .state
-                    .owners[place.objectItems['Собственник']!
+                    .owners[place.objectItems[3]
                     .value]['tenant_characteristics']);
 
           }

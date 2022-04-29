@@ -23,7 +23,7 @@ class ObjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      key: ValueKey(place!.objectItems['Название объекта']!.value),
+      key: ValueKey(place!.objectItems[0].value),
       endActionPane: ActionPane(
         motion: ScrollMotion(),
         children: [
@@ -93,7 +93,7 @@ class ObjectCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (place!.tenantItems != null && place!.tenantItems!['Отмеченный клиент']!.getFullValue().isNotEmpty)
+                if (place!.tenantItems != null && place!.tenantItems![12].getFullValue().isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(right: 8),
                     child: Container(
@@ -103,7 +103,7 @@ class ObjectCard extends StatelessWidget {
                         borderRadius: BorderRadius.all(
                             Radius.circular(20) //                 <--- border radius here
                         ),
-                        color: Color(int.parse(place!.tenantItems!['Отмеченный клиент']!.value!)),
+                        color: Color(int.parse(place!.tenantItems![12].value!)),
                       ),
                       child: Center(
                         child: Text(
@@ -120,7 +120,7 @@ class ObjectCard extends StatelessWidget {
                   child: Text(
                     place == null
                         ? objects[id]['name']
-                        : place!.objectItems['Название объекта']!.value,
+                        : place!.objectItems[0].value,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: body,
@@ -130,7 +130,7 @@ class ObjectCard extends StatelessWidget {
                 Text(
                   place == null
                       ? objects[id]['area']
-                      : place!.objectItems['Площадь объекта']!.getFullValue(),
+                      : place!.objectItems[2].getFullValue(),
                   style: body,
                 ),
               ],
@@ -141,7 +141,7 @@ class ObjectCard extends StatelessWidget {
             Text(
               place == null
                   ? objects[id]['address']
-                  : '${place!.objectItems['Адрес объекта']!.value}',
+                  : '${place!.objectItems[1].value}',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: body.copyWith(color: Color(0xffC7C9CC)),
