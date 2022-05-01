@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/app/theme/colors.dart';
@@ -118,42 +119,64 @@ class _ListOwnersPageState extends State<ListOwnersPage> {
                     padding: EdgeInsets.symmetric(
                         horizontal: horizontalPadding(context, 44),
                         vertical: 16),
-                    child: Column(
-                      children: [
-                        for (var item in sortList(state.owners.keys.toList()))
-                          ContainerForTransition(
-                            title: item,
-                            icon: widget.title == 'Новый объект'
-                                ? null
-                                : Icons.arrow_forward_ios,
-                            onTap: () {
-                              if (widget.title == 'Новый объект') {
-                                context.read<AddObjectCubit>().getItems(
-                                    state.owners[item]['object_characteristics']);
-                                context.read<AddObjectCubit>().changeItemValue(
-                                    3, item, '');
+                    child: state.owners.keys.isEmpty
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/home_white.svg',
+                                color: Color(0xffE9ECEE),
+                                height: 80,
+                              ),
+                              SizedBox(
+                                height: 32,
+                              ),
+                              Text(
+                                'У Вас пока нет собственников',
+                                textAlign: TextAlign.center,
+                                style: body.copyWith(
+                                  color: Color(0xffC7C9CC),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              for (var item in sortList(state.owners.keys.toList()))
+                                ContainerForTransition(
+                                  title: item,
+                                  icon: widget.title == 'Новый объект'
+                                      ? null
+                                      : Icons.arrow_forward_ios,
+                                  onTap: () {
+                                    if (widget.title == 'Новый объект') {
+                                      context.read<AddObjectCubit>().getItems(
+                                          state.owners[item]['object_characteristics']);
+                                      context.read<AddObjectCubit>().changeItemValue(
+                                          3, item, '');
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CreateObjectPage(
-                                        onBack: () {
-                                          Navigator.pop(context);
-                                        },
-                                      )),
-                                );
-                              } else {
-                                context.read<SettingsCubit>().selectOwnerName(item);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const SettingsPage()),
-                                );
-                              }
-                           },
-                          ),
-                      ],
-                    )
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CreateObjectPage(
+                                              onBack: () {
+                                                Navigator.pop(context);
+                                              },
+                                            )),
+                                      );
+                                    } else {
+                                      context.read<SettingsCubit>().selectOwnerName(item);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const SettingsPage()),
+                                      );
+                                    }
+                                 },
+                                ),
+                            ],
+                          )
                 ),
               ),
             ],
