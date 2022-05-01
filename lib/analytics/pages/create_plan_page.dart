@@ -106,88 +106,83 @@ class _CreatePlanPageState extends State<CreatePlanPage> {
                         child: Column(
                           children: [
                             for (var item in state.addItems)
-                              if (item.showInCreating() || item.getFullValue().isNotEmpty)
-                                BoxInputField(
-                                  controller: currentId == item.id
-                                      ? currentController
-                                      : TextEditingController(text: item.getFullValue()),
-                                  placeholder: item.placeholder ?? '',
-                                  title: item.title,
-                                  enabled: item.title != 'Система налогообложения'
-                                      && item.title != 'Расходы на управление (% от реального дохода)'
-                                      && item.type != 'Дата',
-                                  disableSpace: item.type == 'Число',
-                                  keyboardType: item.title == 'Номер телефона'
-                                      ? TextInputType.phone
-                                      : item.type == 'Число'
-                                      ? const TextInputType.numberWithOptions(decimal: true, signed: true)
-                                      : null,
-                                  onTap: () {
-                                    if (item.isDate()) {
-                                      FocusScope.of(context).unfocus();
-                                      if (currentId != -1) {
-                                        context.read<AddPlanCubit>().changeItemValue(currentId, currentController.text);
-                                      }
-
-                                      setState(() {
-                                        currentController.text = item.value ?? '';
-                                        currentController.selection = TextSelection.fromPosition(TextPosition(offset: currentController.text.length));
-                                        currentId = item.id;
-                                      });
-
-                                      DateTime maxTime = DateTime(2025, 12, 31);
-                                      DateTime minTime = DateTime(2000, 1, 1);
-                                      if (item.title == 'Месяц, Год'){
-                                        maxTime = DateTime(DateTime.now().year + 1, 12, 31);
-                                        minTime = DateTime(DateTime.now().year - 1, 1, 1);
-                                      }
-                                      DatePicker.showPicker(context,
-                                          showTitleActions: true,
-                                          onConfirm: (date) {
-                                            if (currentId != -1) {
-                                              currentController.text =
-                                                  DateFormat('dd.MM.yyyy')
-                                                      .format(date);
-                                              context.read<AddPlanCubit>().changeItemValue(currentId, currentController.text);
-                                            }
-                                            setState(() {
-                                              currentId = -1;
-                                            });
-                                          },
-                                          pickerModel: CustomPicker(
-                                            currentTime: currentController.text == ''
-                                                ? DateTime.now()
-                                                : DateFormat('dd.MM.yyyy').parse(currentController.text),
-                                            locale: LocaleType.ru,
-                                            maxTime: maxTime,
-                                            minTime: minTime,
-                                          ),
-                                          locale: LocaleType.ru
-                                      );
-                                    }
-                                  },
-                                  onSubmit: (String value) {
+                              BoxInputField(
+                                controller: currentId == item.id
+                                    ? currentController
+                                    : TextEditingController(text: item.getFullValue()),
+                                placeholder: item.placeholder ?? '',
+                                title: item.title,
+                                enabled: item.title != 'Система налогообложения'
+                                    && item.title != 'Расходы на управление (% от реального дохода)'
+                                    && item.type != 'Дата',
+                                disableSpace: item.type == 'Число',
+                                keyboardType: item.title == 'Номер телефона'
+                                    ? TextInputType.phone
+                                    : item.type == 'Число'
+                                    ? const TextInputType.numberWithOptions(decimal: true, signed: true)
+                                    : null,
+                                onTap: () {
+                                  if (item.isDate()) {
+                                    FocusScope.of(context).unfocus();
                                     if (currentId != -1) {
                                       context.read<AddPlanCubit>().changeItemValue(currentId, currentController.text);
                                     }
+
                                     setState(() {
-                                      currentId = -1;
+                                      currentController.text = item.value ?? '';
+                                      currentController.selection = TextSelection.fromPosition(TextPosition(offset: currentController.text.length));
+                                      currentId = item.id;
                                     });
-                                  },
-                                  onTapTextField: () {
-                                    if (item.title != 'Система налогообложения' && item.title != 'Расходы на управление (% от реального дохода)') {
-                                      setState(() {
-                                        if (currentId != -1) {
-                                          context.read<AddPlanCubit>().changeItemValue(currentId, currentController.text);
-                                        }
-                                        currentController.text = item.value ?? '';
-                                        currentController.selection = TextSelection.fromPosition(TextPosition(offset: currentController.text.length));
-                                        currentId = item.id;
-                                      });
-                                    }
-                                  },
-                                  // isError: isError,
-                                ),
+
+                                    DateTime maxTime = DateTime(2025, 12, 31);
+                                    DateTime minTime = DateTime(2000, 1, 1);
+                                    DatePicker.showPicker(context,
+                                        showTitleActions: true,
+                                        onConfirm: (date) {
+                                          if (currentId != -1) {
+                                            currentController.text =
+                                                DateFormat('dd.MM.yyyy')
+                                                    .format(date);
+                                            context.read<AddPlanCubit>().changeItemValue(currentId, currentController.text);
+                                          }
+                                          setState(() {
+                                            currentId = -1;
+                                          });
+                                        },
+                                        pickerModel: CustomPicker(
+                                          currentTime: currentController.text == ''
+                                              ? DateTime.now()
+                                              : DateFormat('dd.MM.yyyy').parse(currentController.text),
+                                          locale: LocaleType.ru,
+                                          maxTime: maxTime,
+                                          minTime: minTime,
+                                        ),
+                                        locale: LocaleType.ru
+                                    );
+                                  }
+                                },
+                                onSubmit: (String value) {
+                                  if (currentId != -1) {
+                                    context.read<AddPlanCubit>().changeItemValue(currentId, currentController.text);
+                                  }
+                                  setState(() {
+                                    currentId = -1;
+                                  });
+                                },
+                                onTapTextField: () {
+                                  if (item.title != 'Система налогообложения' && item.title != 'Расходы на управление (% от реального дохода)') {
+                                    setState(() {
+                                      if (currentId != -1) {
+                                        context.read<AddPlanCubit>().changeItemValue(currentId, currentController.text);
+                                      }
+                                      currentController.text = item.value ?? '';
+                                      currentController.selection = TextSelection.fromPosition(TextPosition(offset: currentController.text.length));
+                                      currentId = item.id;
+                                    });
+                                  }
+                                },
+                                // isError: isError,
+                              ),
                             SizedBox(
                               height: 60,
                             ),

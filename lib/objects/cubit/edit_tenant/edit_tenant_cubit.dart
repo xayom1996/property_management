@@ -32,17 +32,22 @@ class EditTenantCubit extends Cubit<EditingState> {
     return true;
   }
 
+  bool showInCreating(Characteristics item) {
+    return item.id != 2 && item.id != 12;
+  }
+
   void changeItemValue(int id, String value, String documentUrl) {
-    print(id);
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _items = List<Characteristics>.from(state.items.map((item) => item));
-    _items[id].value = value;
-    _items[id].documentUrl = documentUrl;
+    List<Characteristics> items = state.items;
+    int index = items.lastIndexWhere((element) => element.id == id);
+    items[index].value = value;
+    items[index].documentUrl = documentUrl;
+
     emit(state.copyWith(
-      items: _items,
-      status: isTenantItemsValid(_items)
+      items: items,
+      status: isTenantItemsValid(items)
           ? StateStatus.valid
           : StateStatus.invalid,
     ));

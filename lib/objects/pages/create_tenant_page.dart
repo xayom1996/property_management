@@ -88,7 +88,8 @@ class CreateTenantPage extends StatelessWidget {
                   child: Column(
                     children: [
                       for (var item in state.addItems)
-                        if (item.showInCreating() && item.visible)
+                        if (context.read<AddTenantCubit>().showInCreating(item)
+                            && item.visible)
                           BoxInputField(
                             controller: TextEditingController(text: item.getFullValue()),
                             placeholder: item.placeholder ?? '',

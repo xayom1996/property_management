@@ -39,13 +39,18 @@ class EditObjectCubit extends Cubit<EditObjectState> {
         && items[15].getFullValue().isNotEmpty && items[15].value != '0';
   }
 
+  bool showInCreating(Characteristics item) {
+    return item.id != 8 && item.id != 13;
+  }
+
   void changeItemValue(int id, String value, String documentUrl) {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _items = List<Characteristics>.from(state.items.map((item) => item));
-    _items[id].value = value;
-    _items[id].documentUrl = documentUrl;
+    List<Characteristics> items = state.items;
+    int index = items.lastIndexWhere((element) => element.id == id);
+    items[index].value = value;
+    items[index].documentUrl = documentUrl;
     // if (id == 13 || id == 14) { //Арендная плата или коэфициент капитализации
     //   if (_items[13].getFullValue().isNotEmpty && _items[14].getFullValue().isNotEmpty) {
     //     _items[15].value = (double.parse(_items[13].value!) ~/ double.parse(_items[14].value!)).toString();
@@ -54,8 +59,8 @@ class EditObjectCubit extends Cubit<EditObjectState> {
     //   }
     // }
     emit(state.copyWith(
-      items: _items,
-      status: isObjectItemsValid(_items)
+      items: items,
+      status: isObjectItemsValid(items)
           ? StateStatus.valid
           : StateStatus.invalid,
     ));

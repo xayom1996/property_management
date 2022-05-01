@@ -36,16 +36,18 @@ class AddObjectCubit extends Cubit<AddObjectState> {
         && items[15].getFullValue().isNotEmpty && items[15].value != '0';
   }
 
+  bool showInCreating(Characteristics item) {
+    return item.id != 8 && item.id != 13;
+  }
+
   void changeItemValue(int id, String value, String documentUrl) {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _addItems = [];
-    for (var item in state.addItems) {
-      _addItems.add(item);
-    }
-    _addItems[id].value = value;
-    _addItems[id].documentUrl = documentUrl;
+    List<Characteristics> addItems = state.addItems;
+    int index = addItems.lastIndexWhere((element) => element.id == id);
+    addItems[index].value = value;
+    addItems[index].documentUrl = documentUrl;
     // if (id == 13 || id == 14) { //Арендная плата или коэфициент капитализации
     //   if (_addItems[13].getFullValue().isNotEmpty && _addItems[14].getFullValue().isNotEmpty) {
     //     _addItems[15].value = (double.parse(_addItems[13].value!) ~/ double.parse(_addItems[14].value!)).toString();
@@ -54,8 +56,8 @@ class AddObjectCubit extends Cubit<AddObjectState> {
     //   }
     // }
     emit(state.copyWith(
-      addItems: _addItems,
-      status: isObjectItemsValid(_addItems)
+      addItems: addItems,
+      status: isObjectItemsValid(addItems)
           ? StateStatus.valid
           : StateStatus.invalid,
     ));

@@ -27,7 +27,9 @@ class _ChangeFieldPageState extends State<ChangeFieldPage> {
 
   @override
   void initState() {
-    checkedItem = widget.selectItem ?? '';
+    if (widget.items!.where((element) => element.toString().contains(widget.selectItem ?? '')).isNotEmpty) {
+      checkedItem = widget.items!.where((element) => element.toString().contains(widget.selectItem ?? '')).first;
+    }
     super.initState();
   }
 

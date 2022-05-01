@@ -141,7 +141,7 @@ class _ItemPageState extends State<ItemPage> {
                                   if (widget.item.isDate()) {
                                     DateTime maxTime = DateTime(2025, 12, 31);
                                     DateTime minTime = DateTime(2000, 1, 1);
-                                    if (widget.item.title == 'Месяц, Год'){
+                                    if (widget.item.id == 0){
                                       maxTime = DateTime(DateTime.now().year + 1, 12, 31);
                                       minTime = DateTime(DateTime.now().year - 1, 1, 1);
                                     }
@@ -149,7 +149,7 @@ class _ItemPageState extends State<ItemPage> {
                                         showTitleActions: true,
                                         onConfirm: (date) {
                                           setState(() {
-                                            if (widget.item.title == 'Месяц, Год'){
+                                            if (widget.item.id == 0){
                                               textController.text =
                                                   DateFormat('MM.yyyy')
                                                       .format(date);
@@ -163,7 +163,7 @@ class _ItemPageState extends State<ItemPage> {
                                         pickerModel: CustomPicker(
                                           currentTime: widget.item.value == null || widget.item.value == ''
                                               ? DateTime.now()
-                                              : widget.item.title == 'Месяц, Год'
+                                              : widget.item.id == 0
                                                 ? DateFormat('MM.yyyy').parse(widget.item.value!)
                                                 : DateFormat('dd.MM.yyyy').parse(widget.item.value!),
                                           locale: LocaleType.ru,

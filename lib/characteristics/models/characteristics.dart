@@ -103,11 +103,11 @@ class Characteristics {
     }
 
     bool isDate() {
-      return title == 'Дата приобретения' || title == 'Срок действия договора' || type == 'Дата';
+      return type == 'Дата';
     }
 
-    bool showInCreating() {
-      return title != 'Рыночная стоимость помещения' && title != 'Фактическая Налоговая нагрузка'
-          && title != 'Текущая аренда' && title != 'Отмеченный клиент' && title != 'Сумма Аренды от товарооборота';
-    }
+    // bool showInCreating() {
+    //   return id != 8 && id != 13
+    //       && title != 'Текущая аренда' && title != 'Отмеченный клиент' && title != 'Сумма Аренды от товарооборота';
+    // }
 }

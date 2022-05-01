@@ -112,8 +112,9 @@ class CreateObjectPage extends StatelessWidget {
                           child: Column(
                             children: [
                               for (var item in state.addItems)
-                                if ((item.showInCreating() || item.getFullValue().isNotEmpty)
-                                    && item.title != 'Собственник' && item.visible)
+                                if ((context.read<AddObjectCubit>().showInCreating(item)
+                                    || item.getFullValue().isNotEmpty)
+                                    && item.id != 3 && item.visible)
                                   BoxInputField(
                                     controller: TextEditingController(text: item.getFullValue()),
                                     placeholder: item.placeholder ?? '',
@@ -121,7 +122,7 @@ class CreateObjectPage extends StatelessWidget {
                                     additionalInfo: item.additionalInfo,
                                     enabled: false,
                                     onTap: () {
-                                      if (item.title != 'Рыночная стоимость помещения') {
+                                      if (context.read<AddObjectCubit>().showInCreating(item)) {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (context) => ItemPage(

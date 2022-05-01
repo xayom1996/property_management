@@ -25,34 +25,36 @@ class _ListOwnersPageState extends State<ListOwnersPage> {
 
   @override
   void initState() {
-    // isOneOwner();
+    isOneOwner();
     super.initState();
   }
 
   void isOneOwner() {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      String item = context.read<AppBloc>().state.owners.keys.toList().first;
-      Navigator.pop(context);
+      if (context.read<AppBloc>().state.owners.keys.toList().length == 1) {
+        String item = context.read<AppBloc>().state.owners.keys.toList().first;
+        Navigator.pop(context);
 
-      if (widget.title == 'Новый объект') {
-        context.read<AddObjectCubit>().getItems(
-            context.read<AppBloc>().state.owners[item]['object_characteristics']);
-        context.read<AddObjectCubit>().changeItemValue(
-            3, item, '');
+        if (widget.title == 'Новый объект') {
+          context.read<AddObjectCubit>().getItems(
+              context.read<AppBloc>().state.owners[item]['object_characteristics']);
+          context.read<AddObjectCubit>().changeItemValue(
+              3, item, '');
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const CreateObjectPage()),
-        );
-      } else {
-        context.read<SettingsCubit>().selectOwnerName(item);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const SettingsPage()
-          ),
-        );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const CreateObjectPage()),
+          );
+        } else {
+          context.read<SettingsCubit>().selectOwnerName(item);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const SettingsPage()
+            ),
+          );
+        }
       }
     });
   }

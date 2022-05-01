@@ -37,19 +37,22 @@ class AddTenantCubit extends Cubit<AddingState> {
     return true;
   }
 
+  bool showInCreating(Characteristics item) {
+    return item.id != 2 && item.id != 12;
+  }
+
   void changeItemValue(int id, String value, String documentUrl) {
     emit(state.copyWith(
       status: StateStatus.loading,
     ));
-    List<Characteristics> _addItems = [];
-    for (var item in state.addItems) {
-      _addItems.add(item);
-    }
-    _addItems[id].value = value;
-    _addItems[id].documentUrl = documentUrl;
+    List<Characteristics> items = state.addItems;
+    int index = items.lastIndexWhere((element) => element.id == id);
+    items[index].value = value;
+    items[index].documentUrl = documentUrl;
+
     emit(state.copyWith(
-      addItems: _addItems,
-      status: isTenantItemsValid(_addItems)
+      addItems: items,
+      status: isTenantItemsValid(items)
           ? StateStatus.valid
           : StateStatus.invalid,
     ));

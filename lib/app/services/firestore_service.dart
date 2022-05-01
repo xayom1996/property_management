@@ -147,7 +147,7 @@ class FireStoreService {
 
     // List expensesDates = [for (var i = 0; i < expensesItems.values; i++) if (i != monthIndex) expensesItems.values[i][0]['value']];
 
-    if (expensesItems.containsKey(expensesMap[0]['value'])){
+    if (expensesItems.containsKey(expensesMap[0]['value']) && monthIndex == null){
       throw Exception('Эксплуатация за этот месяц уже существует');
     }
 

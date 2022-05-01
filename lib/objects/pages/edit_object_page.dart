@@ -114,8 +114,9 @@ class EditObjectPage extends StatelessWidget {
                           child: Column(
                             children: [
                               for (var item in state.items)
-                                if ((item.showInCreating() || item.getFullValue().isNotEmpty)
-                                    && item.title != 'Собственник' && item.visible)
+                                if ((context.read<AddObjectCubit>().showInCreating(item)
+                                    || item.getFullValue().isNotEmpty)
+                                    && item.id != 3 && item.visible)
                                   BoxInputField(
                                     controller: TextEditingController(text: item.getFullValue()),
                                     placeholder: item.placeholder ?? '',
@@ -123,8 +124,7 @@ class EditObjectPage extends StatelessWidget {
                                     additionalInfo: item.additionalInfo,
                                     enabled: false,
                                     onTap: () {
-                                      if (item.title != 'Рыночная стоимость помещения'
-                                          && item.title != 'Фактическая Налоговая нагрузка') {
+                                      if (context.read<AddObjectCubit>().showInCreating(item)) {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (context) => ItemPage(

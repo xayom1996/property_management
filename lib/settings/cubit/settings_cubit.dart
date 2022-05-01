@@ -85,10 +85,9 @@ class SettingsCubit extends Cubit<SettingsState> {
     Map selectedCharacteristic = state.selectedCharacteristic;
     String ownerName = state.ownerName;
     String characteristicsName = state.characteristicsName;
+
     if (selectedCharacteristic['title'].isEmpty
-        || selectedCharacteristic['type'].isEmpty
-        || (selectedCharacteristic['type'] == 'Число'
-            && selectedCharacteristic['unit'].isEmpty)){
+        || selectedCharacteristic['type'].isEmpty){
       emit(
           state.copyWith(
               status: StateStatus.error
@@ -106,7 +105,9 @@ class SettingsCubit extends Cubit<SettingsState> {
           type: selectedCharacteristic['type'],
           placeholder: 'Введите ${selectedCharacteristic['title'].toString().toLowerCase()}',
           additionalInfo: selectedCharacteristic['additionalInfo'],
-          unit: selectedCharacteristic['unit'],
+          unit: selectedCharacteristic['type'] == 'Число'
+              ? selectedCharacteristic['unit']
+              : '',
           isDefault: false,
         );
         characteristics.add(characteristic);
@@ -125,7 +126,9 @@ class SettingsCubit extends Cubit<SettingsState> {
         }
         characteristic.title = selectedCharacteristic['title'];
         characteristic.additionalInfo = selectedCharacteristic['additionalInfo'];
-        characteristic.unit = selectedCharacteristic['unit'];
+        characteristic.unit = selectedCharacteristic['type'] == 'Число'
+            ? selectedCharacteristic['unit']
+            : '';
       }
 
       await _appBloc.fireStoreService.saveCharacteristic(
