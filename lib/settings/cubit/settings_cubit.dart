@@ -28,7 +28,8 @@ class SettingsCubit extends Cubit<SettingsState> {
   void changeCharacteristic(Map newMap) {
     emit(
         state.copyWith(
-            selectedCharacteristic: newMap
+          selectedCharacteristic: newMap,
+          errorMessage: '',
         )
     );
   }
@@ -45,7 +46,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   void selectCharacteristicsName(String value) {
     emit(
         state.copyWith(
-            characteristicsName: value
+          characteristicsName: value,
         )
     );
   }
@@ -71,7 +72,8 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(
         state.copyWith(
           selectedCharacteristic: selectedCharacteristic,
-          status: StateStatus.initial
+          status: StateStatus.initial,
+          errorMessage: '',
         )
     );
   }
@@ -98,7 +100,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       Map<String, dynamic> owners = _appBloc.state.owners;
       List<Characteristics> characteristics = owners[ownerName][characteristicsName];
 
-      int count = characteristics.where((element) => element.title == selectedCharacteristic['title']).length;
+      int count = characteristics.where((element) => element.title.toLowerCase().replaceAll(' ', '') == selectedCharacteristic['title'].toLowerCase().replaceAll(' ', '')).length;
       if ((action == 'add' && count == 1) || count > 1)  {
         emit(
             state.copyWith(
