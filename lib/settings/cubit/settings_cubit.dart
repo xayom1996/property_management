@@ -90,12 +90,25 @@ class SettingsCubit extends Cubit<SettingsState> {
         || selectedCharacteristic['type'].isEmpty){
       emit(
           state.copyWith(
-              status: StateStatus.error
+              status: StateStatus.error,
+              errorMessage: 'Это поле не может быть пустым'
           )
       );
     } else {
       Map<String, dynamic> owners = _appBloc.state.owners;
       List<Characteristics> characteristics = owners[ownerName][characteristicsName];
+
+      int count = characteristics.where((element) => element.title == selectedCharacteristic['title']).length;
+      if ((action == 'add' && count == 1) || count > 1)  {
+        emit(
+            state.copyWith(
+              status: StateStatus.error,
+              errorMessage: 'Характеристика с таким названием уже существует',
+            )
+        );
+        return;
+      }
+
       int lastId = characteristics.last.id;
       Characteristics characteristic;
       if (action == 'add') {
@@ -129,17 +142,6 @@ class SettingsCubit extends Cubit<SettingsState> {
         characteristic.unit = selectedCharacteristic['type'] == 'Число'
             ? selectedCharacteristic['unit']
             : '';
-      }
-
-      int count = characteristics.where((element) => element.title == characteristic.title).length;
-      if ((action == 'add' && count == 1) || count > 1)  {
-        emit(
-            state.copyWith(
-              status: StateStatus.error,
-              errorMessage: 'Характеристика с таким названием уже существует',
-            )
-        );
-        return;
       }
 
       await _appBloc.fireStoreService.saveCharacteristic(

@@ -37,7 +37,8 @@ class _NewCharacteristicPageState extends State<NewCharacteristicPage> {
           Navigator.pop(context);
         }
 
-        if (state.status == StateStatus.error) {
+        if (state.status == StateStatus.error
+            && state.errorMessage == 'Характеристика с таким названием уже существует') {
           showDialog(
               context: context,
               builder: (context) => CustomAlertDialog(
