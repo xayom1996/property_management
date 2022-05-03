@@ -70,24 +70,24 @@ class FireStoreService {
     object['tenantItems'] = tenantMap;
 
     if (object['expensesItems'] != null) {
-      for (var i = 0; i < object['expensesItems'].length; i++){
+      for (var key in object['expensesItems'].keys){
         if (object['tenantItems'] != null && isNotEmpty(object['tenantItems'][10]['value'])
-            && isNotEmpty(object['expensesItems'][i][5]['value'])) {
+            && isNotEmpty(object['expensesItems'][key][5]['value'])) {
           try {
-            object['expensesItems'][i][4]['value'] =
+            object['expensesItems'][key][4]['value'] =
                 double.parse(
-                    object['expensesItems'][i][5]['value']) *
+                    object['expensesItems'][key][5]['value']) *
                     (100 - double.parse(
                         object['tenantItems'][10]['value'])) /
                     100;
-            object['expensesItems'][i][4]['value'] =
-                double.parse(object['expensesItems'][i][4]['value']
+            object['expensesItems'][key][4]['value'] =
+                double.parse(object['expensesItems'][key][4]['value']
                     .toStringAsFixed(2)).toString();
           } catch (e) {
             print(e);
           }
         } else {
-          object['expensesItems'][i][4]['value'] = '0';
+          object['expensesItems'][key][4]['value'] = '0';
         }
       }
     }

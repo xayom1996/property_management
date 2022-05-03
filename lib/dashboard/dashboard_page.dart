@@ -72,7 +72,9 @@ class DashboardPage extends StatelessWidget {
         },
         builder: (context, state) {
           if (state.status == ObjectsStatus.fetched && state.places.isNotEmpty) {
-            Place place = context.read<ObjectsBloc>().state.places[0];
+            int selectedPlaceId = context.read<CharacteristicsCubit>().state.selectedPlaceId;
+
+            Place place = context.read<ObjectsBloc>().state.places[selectedPlaceId];
 
             context.read<AddExpenseArticleCubit>().getItems(
                 context.read<AppBloc>().state.owners[place.objectItems[3].value]['expense_article_characteristics']

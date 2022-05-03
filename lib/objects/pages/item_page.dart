@@ -116,21 +116,20 @@ class _ItemPageState extends State<ItemPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        widget.item.title == 'Собственник' || widget.item.choices!.isNotEmpty
+                        widget.item.choices!.isNotEmpty
                         ? Column(
                             children: [
-                              if (widget.item.title == 'Собственник')
-                                for (var item in state.owners.keys)
-                                  ContainerForTransition(
-                                    title: item,
-                                    icon: checkedItem == item ? Icons.check : null,
-                                    onTap: () {
-                                      textController.text = item;
-                                      setState(() {
-                                        checkedItem = item;
-                                      });
-                                    },
-                                  ),
+                              for (var item in state.owners.keys)
+                                ContainerForTransition(
+                                  title: item,
+                                  icon: checkedItem == item ? Icons.check : null,
+                                  onTap: () {
+                                    textController.text = item;
+                                    setState(() {
+                                      checkedItem = item;
+                                    });
+                                  },
+                                ),
                             ],
                           )
                         : Column(

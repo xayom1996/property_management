@@ -131,6 +131,17 @@ class SettingsCubit extends Cubit<SettingsState> {
             : '';
       }
 
+      int count = characteristics.where((element) => element.title == characteristic.title).length;
+      if ((action == 'add' && count == 1) || count > 1)  {
+        emit(
+            state.copyWith(
+              status: StateStatus.error,
+              errorMessage: 'Характеристика с таким названием уже существует',
+            )
+        );
+        return;
+      }
+
       await _appBloc.fireStoreService.saveCharacteristic(
           characteristics: characteristics,
           ownerName: ownerName, characteristicsName: characteristicsName);

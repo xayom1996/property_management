@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:property_management/app/widgets/custom_alert_dialog.dart';
 import 'package:property_management/characteristics/models/characteristics.dart';
 import 'package:property_management/settings/pages/change_field_page.dart';
 import 'package:property_management/app/theme/colors.dart';
@@ -34,6 +35,17 @@ class _NewCharacteristicPageState extends State<NewCharacteristicPage> {
       listener: (context, state) {
         if (state.status == StateStatus.success) {
           Navigator.pop(context);
+        }
+
+        if (state.status == StateStatus.error) {
+          showDialog(
+              context: context,
+              builder: (context) => CustomAlertDialog(
+                title: state.errorMessage,
+                firstButtonTitle: 'Ок',
+                secondButtonTitle: null,
+              )
+          );
         }
       },
       builder: (context, state) {
