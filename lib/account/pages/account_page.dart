@@ -15,6 +15,7 @@ import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/container_for_transition.dart';
+import 'package:property_management/chat/pages/list_chats_page.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -49,7 +50,10 @@ class AccountPage extends StatelessWidget {
               iconColor: Colors.black,
               backgroundColor: Colors.white,
               onTap: () {
-
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ListChatsPage()),
+                );
               },
             ),
           ],
