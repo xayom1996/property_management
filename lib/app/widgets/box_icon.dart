@@ -28,7 +28,7 @@ class BoxIcon extends StatelessWidget {
         height: size ?? 44,
         width: size ?? 44,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(22)),
+          borderRadius: BorderRadius.all(Radius.circular(size ?? 22)),
           color: backgroundColor,
           gradient: gradient,
           boxShadow: [

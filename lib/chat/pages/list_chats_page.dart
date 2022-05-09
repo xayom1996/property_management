@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/chat/cubit/chat_cubit.dart';
+import 'package:property_management/chat/pages/chat_page.dart';
 import 'package:property_management/chat/pages/search_chats_page.dart';
 import 'package:property_management/chat/widgets/chat_object.dart';
 
@@ -56,17 +59,35 @@ class ListChatsPage extends StatelessWidget {
         toolbarHeight: 68,
         backgroundColor: kBackgroundColor,
       ),
-      body: ListView.builder(
-          itemCount: 5,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-              child: GestureDetector(
-                  onTap: () {},
-                  child: ChatObject()
-              )
-            );
-          }
+      body: BlocConsumer<ChatCubit, ChatState> (
+        listener: (context, state) {
+
+        },
+        builder: (context, state) {
+          return state.status == ChatStateStatus.loading
+              ? Center(child: CircularProgressIndicator(),)
+              : ListView.builder(
+                  itemCount: state.chats.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                      child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ChatPage(
+                                chat: state.chats[index],
+                              )),
+                            );
+                          },
+                          child: ChatObject(
+                            chat: state.chats[index],
+                          )
+                      )
+                    );
+                  }
+              );
+        }
       ),
     );
   }

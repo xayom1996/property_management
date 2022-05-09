@@ -21,6 +21,7 @@ import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
 import 'package:property_management/bloc_observer.dart';
 import 'package:property_management/characteristics/cubit/characteristics_cubit.dart';
+import 'package:property_management/chat/cubit/chat_cubit.dart';
 import 'package:property_management/dashboard/cubit/dashboard_cubit.dart';
 import 'package:property_management/dashboard/dashboard_page.dart';
 import 'package:property_management/exploitation/cubit/add_expense_article_cubit.dart';
@@ -137,6 +138,7 @@ class App extends StatelessWidget {
               appBloc: _appBloc)),
           BlocProvider(create: (_) => EditPlanCubit(fireStoreService: _fireStoreService)),
           BlocProvider(create: (_) => SettingsCubit(appBloc: _appBloc)),
+          BlocProvider(create: (_) => ChatCubit(appBloc: _appBloc)),
         ],
         child: ScreenUtilInit(
           designSize: const Size(375, 812),

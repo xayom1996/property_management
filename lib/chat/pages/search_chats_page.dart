@@ -4,6 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/chat/cubit/chat_cubit.dart';
+import 'package:property_management/chat/models/chat.dart';
+import 'package:property_management/chat/pages/chat_page.dart';
+import 'package:property_management/chat/widgets/chat_object.dart';
 import 'package:property_management/objects/bloc/objects_bloc.dart';
 import 'package:property_management/objects/models/place.dart';
 import 'package:property_management/objects/widgets/object_card.dart';
@@ -24,12 +28,13 @@ class _SearchChatsPageState extends State<SearchChatsPage> {
   bool isLoading = false;
   String searchText = '';
   final searchedController = TextEditingController();
-  List<Place> searchedPlaces = [];
-  List<Place> places = [];
+  List<Chat> searchedChats = [];
+  List<Chat> chats = [];
   late StreamSubscription _objectsSubscription;
 
   @override
   void initState() {
+    chats = context.read<ChatCubit>().state.chats;
     super.initState();
   }
 
@@ -39,11 +44,11 @@ class _SearchChatsPageState extends State<SearchChatsPage> {
     setState(() {
       searchText = text;
       if (searchText == '') {
-        searchedPlaces = [];
+        searchedChats = [];
       }
       else {
         isLoading = true;
-        searchedPlaces = List.from(places.where((element) => element.isContains(searchText)));
+        searchedChats = List.from(chats.where((element) => element.name.toLowerCase().contains(searchText.toLowerCase())));
       }
     });
     isLoading = false;
@@ -146,7 +151,7 @@ class _SearchChatsPageState extends State<SearchChatsPage> {
               ],
             ),
           ),
-          body: (searchText == '' || searchedPlaces.isEmpty) && !isLoading
+          body: (searchText == '' || searchedChats.isEmpty) && !isLoading
               ? CustomScrollView(
             slivers: [
               SliverFillRemaining(
@@ -176,24 +181,31 @@ class _SearchChatsPageState extends State<SearchChatsPage> {
             ],
           )
               : ListView.builder(
-              itemCount: isLoading
-                  ? 10
-                  : searchedPlaces.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
-                  child: isLoading
-                      ? ObjectSkeleton()
-                      : GestureDetector(
-                      onTap: () {
-                        widget.onTapObject(searchedPlaces[index].id);
-                        Navigator.pop(context);
-                      },
-                      child: ObjectCard(id: index, place: searchedPlaces[index], isLast: index == searchedPlaces.length - 1,)
-                  ),
-                );
-              }
-          ),
+                    itemCount: isLoading
+                        ? 10
+                        : searchedChats.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
+                        child: isLoading
+                            ? ObjectSkeleton()
+                            : InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => ChatPage(
+                                      chat: searchedChats[index],
+                                    )),
+                                  );
+                                },
+                                child: ChatObject(
+                                  chat: searchedChats[index],
+                                )
+                            ),
+                      );
+                    }
+                ),
         ),
       ),
     );

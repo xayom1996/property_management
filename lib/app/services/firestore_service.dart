@@ -5,6 +5,8 @@ import 'package:property_management/account/models/user.dart';
 import 'package:property_management/app/utils/cache.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/characteristics/models/characteristics.dart';
+import 'package:property_management/chat/models/chat.dart';
+import 'package:property_management/chat/models/message_chat.dart';
 import 'package:property_management/objects/models/place.dart';
 
 class FireStoreService {
@@ -524,4 +526,90 @@ class FireStoreService {
         .then((value) => print("Updated"))
         .catchError((error) => throw Exception('Error adding'));
   }
+
+  Stream<QuerySnapshot> getChatStream(String chatId, int limit) {
+    return _fireStore
+        .collection('messages')
+        .doc(chatId)
+        .collection(chatId)
+        .orderBy('timestamp', descending: true)
+        // .limit(limit)
+        .snapshots();
+  }
+
+  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId) {
+    DocumentReference documentReference = _fireStore
+        .collection('messages')
+        .doc(chatId)
+        .collection(chatId)
+        .doc(DateTime.now().millisecondsSinceEpoch.toString());
+
+    MessageChat messageChat = MessageChat(
+      idFrom: currentUserId,
+      idTo: peerId,
+      timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
+      content: content,
+      type: type,
+    );
+
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.set(
+        documentReference,
+        messageChat.toJson(),
+      );
+    });
+  }
+
+  Future<List<Chat>> getListChats(User currentUser) async {
+    List<Chat> chats = [];
+    List<User> users = [];
+    QuerySnapshot querySnapshot;
+    if (currentUser.role == 'admin') {
+      querySnapshot = await _fireStore.collection('users').where('role', whereIn: ['admin', 'manager']).get();
+      users += List.from(querySnapshot.docs.map((e) => User.fromJson(e.data() as Map<String, dynamic>)));
+      users.removeAt(users.lastIndexWhere((element) => element.email == currentUser.email));
+    } else if (currentUser.role == 'manager') {
+      querySnapshot = await _fireStore.collection('users').where('role', isEqualTo: 'admin').get();
+      users += List.from(querySnapshot.docs.map((e) => User.fromJson(e.data() as Map<String, dynamic>)));
+      QuerySnapshot ownersQuerySnapshot = await _fireStore.collection('owners').where('managers', arrayContains: currentUser.email).get();
+      List owners = [];
+      for (var owner in ownersQuerySnapshot.docs) {
+        owners = owners + owner['holders'];
+      }
+
+      querySnapshot = await _fireStore.collection('users').where('email', whereIn: owners).get();
+      users += List.from(querySnapshot.docs.map((e) => User.fromJson(e.data() as Map<String, dynamic>)));
+    } else if (currentUser.role == 'owner') {
+      QuerySnapshot ownersQuerySnapshot = await _fireStore.collection('users').where('holders', arrayContains: currentUser.email).get();
+      List owners = [];
+      for (var owner in ownersQuerySnapshot.docs) {
+        owners = owners + owner['managers'];
+      }
+      querySnapshot = await _fireStore.collection('users').where('email', whereIn: owners).get();
+      users += List.from(querySnapshot.docs.map((e) => User.fromJson(e.data() as Map<String, dynamic>)));
+    }
+
+    chats = List<Chat>.from(users.map((user) => Chat(
+      name: user.getFullName(),
+      role: user.role,
+      chatId: getChatId(currentUser.id, user.id),
+      currentUserId: currentUser.id,
+      peerId: user.id
+    )));
+
+    for (var chat in chats ) {
+      QuerySnapshot querySnapshot = await _fireStore
+          .collection('messages')
+          .doc(chat.chatId)
+          .collection(chat.chatId)
+          .orderBy('timestamp', descending: true)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+        chat.lastMessage = MessageChat.fromDocument(querySnapshot.docs.first);
+      }
+    }
+
+    return chats;
+  }
+
 }

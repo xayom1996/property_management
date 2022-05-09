@@ -305,3 +305,11 @@ List sortList(List lst) {
   });
   return lst;
 }
+
+String getChatId(String currentUserId, String peerId) {
+  if (currentUserId.compareTo(peerId) > 0) {
+    return '$currentUserId-$peerId';
+  } else {
+    return '$peerId-$currentUserId';
+  }
+}

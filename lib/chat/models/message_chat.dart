@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class MessageChat {
   String idFrom;
@@ -32,5 +33,10 @@ class MessageChat {
     String content = doc.get('content');
     int type = doc.get('type');
     return MessageChat(idFrom: idFrom, idTo: idTo, timestamp: timestamp, content: content, type: type);
+  }
+
+  String getTime() {
+    DateTime time = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
+    return DateFormat('kk:mm').format(time);
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:property_management/app/theme/styles.dart';
+import 'package:property_management/chat/models/chat.dart';
 
 class ChatObject extends StatelessWidget {
-  const ChatObject({Key? key}) : super(key: key);
+  final Chat chat;
+  const ChatObject({Key? key, required this.chat}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +23,13 @@ class ChatObject extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Иванов Алексей Викторович',
+                      chat.name,
                       style: body,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '(менеджер)',
+                      '(${chat.role})',
                       style: body.copyWith(
                         color: Color(0xff5589F1)
                       ),
@@ -36,7 +38,9 @@ class ChatObject extends StatelessWidget {
                 ),
               ),
               Text(
-                '11:04',
+                chat.lastMessage != null
+                  ? chat.lastMessage!.getTime()
+                  : '',
                 style: body.copyWith(
                   color: Color(0xffC7C9CC)
                 ),
@@ -47,7 +51,9 @@ class ChatObject extends StatelessWidget {
             height: 8,
           ),
           Text(
-            'Здравствуйте! У меня возникли вопросы. asfh kjahsfkjh akjshfkj afhskj',
+            chat.lastMessage == null
+                ? 'Нет собщений'
+                : chat.lastMessage!.content,
             style: body.copyWith(
                 color: Color(0xffC7C9CC)
             ),
