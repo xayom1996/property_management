@@ -15,7 +15,9 @@ import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
 import 'package:property_management/app/widgets/container_for_transition.dart';
+import 'package:property_management/chat/cubit/chat_cubit.dart';
 import 'package:property_management/chat/pages/list_chats_page.dart';
+import 'package:property_management/chat/widgets/unread_container.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -45,16 +47,32 @@ class AccountPage extends StatelessWidget {
               style: body,
             ),
             Spacer(),
-            BoxIcon(
-              iconPath: 'assets/icons/chat.svg',
-              iconColor: Colors.black,
-              backgroundColor: Colors.white,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ListChatsPage()),
+            BlocBuilder<ChatCubit, ChatState>(
+              builder: (context, state) {
+                return Stack(
+                  children: [
+                    BoxIcon(
+                      iconPath: 'assets/icons/chat.svg',
+                      iconColor: Colors.black,
+                      backgroundColor: Colors.white,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ListChatsPage()),
+                        );
+                      },
+                    ),
+                    if (state.newMessages)
+                      const Positioned(
+                        top: 0,
+                        right: 0,
+                        child: UnreadContainer(
+                          size: 14,
+                        )
+                      ),
+                  ],
                 );
-              },
+              }
             ),
           ],
         ),

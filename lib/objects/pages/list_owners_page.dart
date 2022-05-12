@@ -59,6 +59,7 @@ class _ListOwnersPageState extends State<ListOwnersPage> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

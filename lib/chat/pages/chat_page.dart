@@ -5,9 +5,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/theme/colors.dart';
 import 'package:property_management/app/theme/styles.dart';
 import 'package:property_management/app/widgets/box_icon.dart';
+import 'package:property_management/characteristics/widgets/document_page.dart';
 import 'package:property_management/chat/cubit/chat_cubit.dart';
 import 'package:property_management/chat/models/chat.dart';
 import 'package:property_management/chat/models/message_chat.dart';
@@ -27,23 +29,30 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
   List<QueryDocumentSnapshot> listMessage = [];
+  File? selectedFile;
 
   void onSendMessage() {
-    if (textEditingController.text.trim() != '') {
+    if (textEditingController.text.trim() != '' || selectedFile != null) {
       context.read<ChatCubit>().sendMessage(
           textEditingController.text, 0, widget.chat.chatId,
-          widget.chat.currentUserId, widget.chat.peerId);
+          widget.chat.currentUserId, widget.chat.peerId,
+          selectedFile
+      );
     }
     textEditingController.clear();
+    selectedFile = null;
+    setState(() {});
   }
 
+  void onRemoveFile() {
+    selectedFile = null;
+    setState(() {});
+  }
   void onUploadFile () async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
-      File file = File(result.files.first.path!);
-      String fileName = result.files.first.name;
-
-      Navigator.pop(context);
+      selectedFile = File(result.files.first.path!);
+      setState(() {});
 
       // try {
       //   await firebase_storage.FirebaseStorage.instance
@@ -84,67 +93,67 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      appBar: AppBar(
-        centerTitle: true,
-        leading: null,
-        automaticallyImplyLeading: false,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BoxIcon(
-              iconPath: 'assets/icons/back.svg',
-              iconColor: Colors.black,
-              backgroundColor: Colors.white,
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            Spacer(),
-            Text(widget.chat.name,
-              style: body,
-            ),
-            Spacer(),
-            Container(
-              height: 44,
-              width: 44,
-            ),
-          ],
-        ),
-        elevation: 0,
-        toolbarHeight: 68,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
         backgroundColor: kBackgroundColor,
-      ),
-      body: WillPopScope(
-        child: Stack(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                // List of messages
-                buildListMessage(context),
-
-                // Input content
-                buildInput(),
-              ],
-            ),
-
-            // Loading
-            // buildLoading()
-          ],
+        appBar: AppBar(
+          centerTitle: true,
+          leading: null,
+          automaticallyImplyLeading: false,
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              BoxIcon(
+                iconPath: 'assets/icons/back.svg',
+                iconColor: Colors.black,
+                backgroundColor: Colors.white,
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              Spacer(),
+              Text(widget.chat.name,
+                style: body,
+              ),
+              Spacer(),
+              Container(
+                height: 44,
+                width: 44,
+              ),
+            ],
+          ),
+          elevation: 0,
+          toolbarHeight: 68,
+          backgroundColor: kBackgroundColor,
         ),
-        onWillPop: onBackPress,
+        body: WillPopScope(
+          child: Stack(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  // List of messages
+                  buildListMessage(context),
+
+                  // Input content
+                  buildInput(),
+                ],
+              ),
+
+              // Loading
+              // buildLoading()
+            ],
+          ),
+          onWillPop: onBackPress,
+        ),
       ),
     );
   }
 
   Future<bool> onBackPress() {
-    // chatProvider.updateDataFirestore(
-    //   FirestoreConstants.pathUserCollection,
-    //   currentUserId,
-    //   {FirestoreConstants.chattingWith: null},
-    // );
     Navigator.pop(context);
 
     return Future.value(false);
@@ -155,27 +164,13 @@ class _ChatPageState extends State<ChatPage> {
       padding: EdgeInsets.only(bottom: 16),
       child: Row(
         children: <Widget>[
-          // Button send image
-          // Material(
-          //   child: Container(
-          //     margin: EdgeInsets.symmetric(horizontal: 1),
-          //     child: IconButton(
-          //       icon: Icon(Icons.image),
-          //       onPressed: () {},
-          //       // onPressed: getImage,
-          //       color: Colors.black,
-          //     ),
-          //   ),
-          //   color: Colors.white,
-          // ),
-
           // Edit text
           Flexible(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
-                textInputAction: TextInputAction.search,
-                autofocus: true,
+                textInputAction: TextInputAction.done,
+                // autofocus: true,
                 onTap: () {},
                 controller: textEditingController,
                 onChanged: (text) {
@@ -205,6 +200,13 @@ class _ChatPageState extends State<ChatPage> {
                   hintStyle: body.copyWith(
                     color: Color(0xffC7C9CC),
                   ),
+                  // prefixIcon: SvgPicture.asset(
+                  //   'assets/icons/message_file.svg',
+                  //   // color: iconColor,
+                  //   // height: 10,
+                  //   // width: 10,
+                  //   // fit: BoxFit.cover,
+                  // ),
                   prefixIcon: IconButton(
                     icon: Icon(
                       Icons.attach_file,
@@ -219,26 +221,47 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
 
-          // Button send message
-          Material(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              child: BoxIcon(
-                iconPath: 'assets/icons/forward.svg',
-                iconColor: Colors.white,
-                // iconSize: 20,
-                size: 56,
-                backgroundColor: Color(0xff5589F1),
-                onTap: onSendMessage,
-              ),
-              // child: IconButton(
-              //   icon: Icon(Icons.send),
-              //   onPressed: (){},
-              //   // onPressed: () => onSendMessage(textEditingController.text, TypeMessage.text),
-              //   color: Colors.red,
-              // ),
+          if (selectedFile != null)
+            Stack(
+              children: [
+                SizedBox(
+                  width: 46,
+                  height: 56,
+                ),
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  child: SvgPicture.asset(
+                    'assets/icons/message_file.svg',
+                    height: 40,
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child:  GestureDetector(
+                    onTap: onRemoveFile,
+                    child: BoxIcon(
+                      size: 24,
+                      iconSize: 12,
+                      iconPath: 'assets/icons/clear.svg',
+                      backgroundColor: Color(0xffE9ECEE),
+                      iconColor: Color(0xffC7C9CC),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            color: Colors.white,
+          // Button send message
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 8),
+            child: BoxIcon(
+              iconPath: 'assets/icons/forward.svg',
+              iconColor: Colors.white,
+              size: 56,
+              backgroundColor: Color(0xff5589F1),
+              onTap: onSendMessage,
+            ),
           ),
         ],
       ),
@@ -260,14 +283,25 @@ class _ChatPageState extends State<ChatPage> {
                   if (listMessage.isNotEmpty) {
                     MessageChat lastMessage = MessageChat.fromDocument(listMessage.first);
                     context.read<ChatCubit>().updateLastMessage(widget.chat.chatId, lastMessage);
+                    if (lastMessage.idFrom != context.read<AppBloc>().state.user.id) {
+                      context.read<ChatCubit>().readMessages(widget.chat.chatId);
+                    }
 
                     return ListView.builder(
                       padding: EdgeInsets.all(16),
-                      itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: buildItem(index, snapshot.data?.docs[index])
-                      ),
-                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (context, index) {
+                        bool hasDate = true;
+                        MessageChat message = MessageChat.fromDocument(listMessage[index]);
+                        if (index < listMessage.length - 1) {
+                          MessageChat nextMessage = MessageChat.fromDocument(listMessage[index + 1]);
+                          hasDate = message.getDate() != nextMessage.getDate();
+                        }
+                        return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6.5),
+                            child: buildItem(index, message, hasDate)
+                        );
+                      },
+                      itemCount: listMessage.length,
                       reverse: true,
                       controller: listScrollController,
                     );
@@ -287,12 +321,12 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget buildItem(int index, DocumentSnapshot? document) {
-    if (document == null) {
-      return SizedBox.shrink();
-    }
+  Widget buildItem(int index, MessageChat messageChat, bool hasDate) {
+    // if (document == null) {
+    //   return SizedBox.shrink();
+    // }
 
-    MessageChat messageChat = MessageChat.fromDocument(document);
+    // MessageChat messageChat = MessageChat.fromDocument(document);
     Alignment alignment;
     if (messageChat.idFrom == widget.chat.currentUserId) {
       alignment = Alignment.centerRight;
@@ -300,8 +334,19 @@ class _ChatPageState extends State<ChatPage> {
       alignment = Alignment.centerLeft;
     }
 
-    return Stack(
+    return Column(
       children: [
+        if (hasDate)
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6.5),
+              child: Text(
+                messageChat.getDate(),
+                style: caption1,
+              ),
+            ),
+          ),
         Align(
           alignment: alignment,
           child: Container(
@@ -320,14 +365,58 @@ class _ChatPageState extends State<ChatPage> {
             ),
             child: Stack(
               children: [
-                Text(
-                  '${messageChat.content}\n',
-                  style: body.copyWith(
-                    color: alignment == Alignment.centerLeft
-                        ? Color(0xffFCFCFC)
-                        : Colors.black,
+                if (messageChat.type == 1)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (messageChat.type == 1)
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => DocumentPage(
+                                documentUrl: 'messages/${messageChat.content}',
+                              )),
+                            );
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/message_file.svg',
+                            height: 30,
+                            color: alignment == Alignment.centerLeft
+                                ? Color(0xffFCFCFC)
+                                : Colors.black,
+                          ),
+                        ),
+                      if (messageChat.type == 1)
+                        SizedBox(
+                          width: 10,
+                        ),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.65 - 80,
+                          minWidth: 60,
+                        ),
+                        child: Text(
+                          '${messageChat.content}\n',
+                          style: body.copyWith(
+                            color: alignment == Alignment.centerLeft
+                                ? Color(0xffFCFCFC)
+                                : Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                if (messageChat.type == 0)
+                  Text(
+                    '${messageChat.content}\n',
+                    style: body.copyWith(
+                      color: alignment == Alignment.centerLeft
+                          ? Color(0xffFCFCFC)
+                          : Colors.black,
+                    ),
+                  ),
                 Positioned(
                   bottom: 0,
                   right: 0,

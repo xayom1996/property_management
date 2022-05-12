@@ -10,8 +10,33 @@ import 'package:property_management/chat/pages/chat_page.dart';
 import 'package:property_management/chat/pages/search_chats_page.dart';
 import 'package:property_management/chat/widgets/chat_object.dart';
 
-class ListChatsPage extends StatelessWidget {
+class ListChatsPage extends StatefulWidget {
   const ListChatsPage({Key? key}) : super(key: key);
+
+  @override
+  State<ListChatsPage> createState() => _ListChatsPageState();
+}
+
+class _ListChatsPageState extends State<ListChatsPage> {
+  @override
+  void initState() {
+    isOneChat();
+    super.initState();
+  }
+
+  void isOneChat() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (context.read<ChatCubit>().state.chats.length == 1) {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ChatPage(
+            chat: context.read<ChatCubit>().state.chats.first,
+          )),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,5 +116,4 @@ class ListChatsPage extends StatelessWidget {
       ),
     );
   }
-
 }

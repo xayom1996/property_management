@@ -100,8 +100,10 @@ class SettingsCubit extends Cubit<SettingsState> {
       Map<String, dynamic> owners = _appBloc.state.owners;
       List<Characteristics> characteristics = owners[ownerName][characteristicsName];
 
-      int count = characteristics.where((element) => element.title.toLowerCase().replaceAll(' ', '') == selectedCharacteristic['title'].toLowerCase().replaceAll(' ', '')).length;
-      if ((action == 'add' && count == 1) || count > 1)  {
+      int count = characteristics.where(
+              (element) => element.title.toLowerCase().replaceAll(' ', '') == selectedCharacteristic['title'].toLowerCase().replaceAll(' ', '')
+                  && element.id != selectedCharacteristic['id']).length;
+      if (count >= 1)  {
         emit(
             state.copyWith(
               status: StateStatus.error,
@@ -140,6 +142,7 @@ class SettingsCubit extends Cubit<SettingsState> {
           return;
         }
         characteristic.title = selectedCharacteristic['title'];
+        characteristic.placeholder = 'Введите ${selectedCharacteristic['title'].toString().toLowerCase()}';
         characteristic.additionalInfo = selectedCharacteristic['additionalInfo'];
         characteristic.unit = selectedCharacteristic['type'] == 'Число'
             ? selectedCharacteristic['unit']

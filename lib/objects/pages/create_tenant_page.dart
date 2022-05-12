@@ -99,7 +99,7 @@ class CreateTenantPage extends StatelessWidget {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => item.title == 'Реквизиты арендатора'
+                                MaterialPageRoute(builder: (context) => item.id == 8
                                     ? RequisitesItemPage(
                                         item: item,
                                         onChange: (int id, List<String> details, String documentUrl) {

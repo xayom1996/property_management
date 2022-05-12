@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,9 +32,25 @@ class ChatCubit extends Cubit<ChatState> {
       status: ChatStateStatus.loading
     ));
 
+    List<Chat> chats = await _appBloc.fireStoreService.getListChats(_appBloc.state.user);
+    chats.sort((a, b) {
+      if (a.lastMessage != null && b.lastMessage != null) {
+        return b.lastMessage!.timestamp.compareTo(a.lastMessage!.timestamp);
+      }
+
+      if (a.lastMessage == null && b.lastMessage == null) {
+        return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      }
+
+      return a.lastMessage != null ? 0 : 1;
+    });
+
+    bool newMessages = chats.where((element) => element.unreadMessages != 0).isNotEmpty;
+
     emit(state.copyWith(
-      chats: await _appBloc.fireStoreService.getListChats(_appBloc.state.user),
+      chats: chats,
       status: ChatStateStatus.success,
+      newMessages: newMessages,
     ));
   }
 
@@ -56,9 +73,24 @@ class ChatCubit extends Cubit<ChatState> {
     int index = chats.lastIndexWhere((element) => element.chatId == chatId);
     chats[index].lastMessage = messageChat;
 
+    chats.sort((a, b) {
+      if (a.lastMessage != null && b.lastMessage != null) {
+        return b.lastMessage!.timestamp.compareTo(a.lastMessage!.timestamp);
+      }
+
+      if (a.lastMessage == null && b.lastMessage == null) {
+        return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      }
+
+      return a.lastMessage != null ? 0 : 1;
+    });
+
+    bool newMessages = chats.where((element) => element.unreadMessages != 0).isNotEmpty;
+
     emit(state.copyWith(
       status: ChatStateStatus.success,
       chats: chats,
+      newMessages:newMessages,
     ));
   }
 
@@ -66,7 +98,27 @@ class ChatCubit extends Cubit<ChatState> {
     return _appBloc.fireStoreService.getChatStream(chatId, limit);
   }
 
-  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId) {
-    _appBloc.fireStoreService.sendMessage(content, type, chatId, currentUserId, peerId);
+  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId, File? selectedFile) {
+    _appBloc.fireStoreService.sendMessage(content, type, chatId, currentUserId, peerId, selectedFile);
+  }
+
+  void readMessages(String chatId) {
+    emit(state.copyWith(
+        status: ChatStateStatus.loading
+    ));
+
+    _appBloc.fireStoreService.readMessages(chatId);
+
+    List<Chat> chats = state.chats;
+    int index = chats.lastIndexWhere((element) => element.chatId == chatId);
+    chats[index].unreadMessages = 0;
+
+    bool newMessages = chats.where((element) => element.unreadMessages != 0).isNotEmpty;
+
+    emit(state.copyWith(
+      status: ChatStateStatus.success,
+      chats: chats,
+      newMessages: newMessages,
+    ));
   }
 }
