@@ -17,6 +17,7 @@ import 'package:property_management/analytics/cubit/analytics_cubit.dart';
 import 'package:property_management/analytics/cubit/edit_plan_cubit.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/services/firestore_service.dart';
+import 'package:property_management/app/services/push_notifications_service.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
 import 'package:property_management/bloc_observer.dart';
@@ -68,6 +69,8 @@ Future<void> main() async {
   await userRepository.user.first;
 
   final fireStoreService = FireStoreService();
+
+  await PushNotificationService().setupInteractedMessage();
 
   final appBloc = AppBloc(
       userRepository: userRepository,

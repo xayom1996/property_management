@@ -37,6 +37,12 @@ class _DocumentViewState extends State<DocumentView> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return isLoading == true || url == ''
       ? Center(

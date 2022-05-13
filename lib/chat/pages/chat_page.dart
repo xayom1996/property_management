@@ -14,6 +14,7 @@ import 'package:property_management/chat/cubit/chat_cubit.dart';
 import 'package:property_management/chat/models/chat.dart';
 import 'package:property_management/chat/models/message_chat.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 class ChatPage extends StatefulWidget {
   final Chat chat;
@@ -29,65 +30,89 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
   List<QueryDocumentSnapshot> listMessage = [];
-  File? selectedFile;
+  String fileUrl = '';
+  bool loadingFile = false;
 
   void onSendMessage() {
-    if (textEditingController.text.trim() != '' || selectedFile != null) {
+    if (loadingFile == true) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(milliseconds: 2000),
+        content: const Text('Дождитесь окончания загрузки файла...'),
+        backgroundColor: Color(0xff5589F1),
+        action: SnackBarAction(
+          label: 'ok',
+          textColor: Colors.white,
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      ));
+      return;
+    }
+    if (textEditingController.text.trim() != '' || fileUrl.isNotEmpty) {
       context.read<ChatCubit>().sendMessage(
           textEditingController.text, 0, widget.chat.chatId,
           widget.chat.currentUserId, widget.chat.peerId,
-          selectedFile
+          fileUrl
       );
     }
     textEditingController.clear();
-    selectedFile = null;
+    fileUrl = '';
+    loadingFile = false;
     setState(() {});
   }
 
   void onRemoveFile() {
-    selectedFile = null;
+    fileUrl = '';
     setState(() {});
   }
+
   void onUploadFile () async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
-      selectedFile = File(result.files.first.path!);
+      setState(() {
+        loadingFile = true;
+      });
+      File selectedFile = File(result.files.first.path!);
+      String fileName = result.files.first.name;
       setState(() {});
 
-      // try {
-      //   await firebase_storage.FirebaseStorage.instance
-      //       .ref('documents/$fileName')
-      //       .putFile(file);
-      //   // String _documentUrl = await firebase_storage.FirebaseStorage.instance
-      //   //     .ref('documents/$fileName')
-      //   //     .getDownloadURL();
-      //   setState(() {
-      //     documentUrl = 'documents/$fileName';
-      //   });
-      // } on firebase_core.FirebaseException catch (e) {
-      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //     content: const Text('Произошла ошибка'),
-      //     backgroundColor: Colors.red,
-      //     action: SnackBarAction(
-      //       label: '',
-      //       textColor: Colors.white,
-      //       onPressed: () {
-      //         // Some code to undo the change.
-      //       },
-      //     ),
-      //   ));
-      //   setState(() {
-      //     documentUrl = '';
-      //     hasDocument = false;
-      //   });
-      // } finally {
-      //   setState(() {
-      //     loadingDocument = false;
-      //   });
-      // }
+      try {
+        await firebase_storage.FirebaseStorage.instance
+            .ref('messages/$fileName')
+            .putFile(selectedFile);
+        // String _documentUrl = await firebase_storage.FirebaseStorage.instance
+        //     .ref('documents/$fileName')
+        //     .getDownloadURL();
+        setState(() {
+          fileUrl = fileName;
+        });
+      } on firebase_core.FirebaseException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Произошла ошибка'),
+          backgroundColor: Colors.red,
+          action: SnackBarAction(
+            label: '',
+            textColor: Colors.white,
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ),
+        ));
+        setState(() {
+          fileUrl = '';
+        });
+      } finally {
+        setState(() {
+          loadingFile = false;
+        });
+      }
 
     } else {
       // User canceled the picker
+      setState(() {
+        loadingFile = false;
+      });
     }
   }
 
@@ -115,11 +140,20 @@ class _ChatPageState extends State<ChatPage> {
                   Navigator.pop(context);
                 },
               ),
-              Spacer(),
-              Text(widget.chat.name,
-                style: body,
+              // Spacer(),
+              Expanded(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    widget.chat.name,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    style: body,
+                  ),
+                ),
               ),
-              Spacer(),
+              // Spacer(),
               Container(
                 height: 44,
                 width: 44,
@@ -137,7 +171,6 @@ class _ChatPageState extends State<ChatPage> {
                 children: <Widget>[
                   // List of messages
                   buildListMessage(context),
-
                   // Input content
                   buildInput(),
                 ],
@@ -163,6 +196,118 @@ class _ChatPageState extends State<ChatPage> {
     return Container(
       padding: EdgeInsets.only(bottom: 16),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              // width: 300,
+              child: TextField(
+                textInputAction: TextInputAction.done,
+                // keyboardType: TextInputType.multiline,
+                // autofocus: true,
+                onTap: () {},
+                controller: textEditingController,
+                onChanged: (text) {
+                  // changedSearchText(text);
+                },
+                maxLines: 5,
+                minLines: 1,
+                style: const TextStyle(
+                  color: Color(0xff151515),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Color(0xffF5F7F9),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(60) //                 <--- border radius here
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: new BorderSide(color: Color(0xffe9ecf1)),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(60) //                 <--- border radius here
+                    ),
+                  ),
+                  // prefixIconConstraints: BoxConstraints(maxWidth: 32),
+                  hintText: 'Напишите сообщение',
+                  hintStyle: body.copyWith(
+                    color: Color(0xffC7C9CC),
+                  ),
+                  // prefixIcon: SvgPicture.asset(
+                  //   'assets/icons/message_file.svg',
+                  //   // color: iconColor,
+                  //   // height: 10,
+                  //   // width: 10,
+                  //   // fit: BoxFit.cover,
+                  // ),
+                  prefixIcon: IconButton(
+                    icon: Icon(
+                      Icons.attach_file,
+                      size: 20,
+                      color: Colors.black,
+                    ),
+                    onPressed: onUploadFile,
+                  ),
+                  contentPadding: EdgeInsets.all(16),
+                ),
+              ),
+            ),
+          ),
+          if (fileUrl.isNotEmpty || loadingFile)
+            Stack(
+              children: [
+                SizedBox(
+                  width: 46,
+                  height: 56,
+                ),
+                Positioned(
+                    top: 10,
+                    left: 0,
+                    child: !loadingFile
+                        ? SvgPicture.asset(
+                      'assets/icons/message_file.svg',
+                      height: 40,
+                    )
+                        : CircularProgressIndicator()
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child:  GestureDetector(
+                    onTap: onRemoveFile,
+                    child: BoxIcon(
+                      size: 24,
+                      iconSize: 12,
+                      iconPath: 'assets/icons/clear.svg',
+                      backgroundColor: Color(0xffE9ECEE),
+                      iconColor: Color(0xffC7C9CC),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          // Button send message
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 8),
+            child: BoxIcon(
+              iconPath: 'assets/icons/forward.svg',
+              iconColor: Colors.white,
+              size: 56,
+              backgroundColor: Color(0xff5589F1),
+              onTap: onSendMessage,
+            ),
+          ),
+        ],
+      ),
+    );
+    return Container(
+      padding: EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           // Edit text
           Flexible(
@@ -170,12 +315,15 @@ class _ChatPageState extends State<ChatPage> {
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
                 textInputAction: TextInputAction.done,
+                // keyboardType: TextInputType.multiline,
                 // autofocus: true,
                 onTap: () {},
                 controller: textEditingController,
                 onChanged: (text) {
                   // changedSearchText(text);
                 },
+                maxLines: 5,
+                minLines: 1,
                 style: const TextStyle(
                   color: Color(0xff151515),
                   fontWeight: FontWeight.w500,
@@ -221,7 +369,7 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
 
-          if (selectedFile != null)
+          if (fileUrl.isNotEmpty || loadingFile)
             Stack(
               children: [
                 SizedBox(
@@ -231,10 +379,12 @@ class _ChatPageState extends State<ChatPage> {
                 Positioned(
                   top: 10,
                   left: 0,
-                  child: SvgPicture.asset(
-                    'assets/icons/message_file.svg',
-                    height: 40,
-                  ),
+                  child: !loadingFile
+                      ? SvgPicture.asset(
+                          'assets/icons/message_file.svg',
+                          height: 40,
+                        )
+                      : CircularProgressIndicator()
                 ),
                 Positioned(
                   top: 0,
@@ -334,102 +484,105 @@ class _ChatPageState extends State<ChatPage> {
       alignment = Alignment.centerLeft;
     }
 
-    return Column(
-      children: [
-        if (hasDate)
+    return GestureDetector(
+      onTap: () {
+        if (messageChat.type == 1) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) =>
+                DocumentPage(
+                  documentUrl: 'messages/${messageChat.content}',
+                )),
+          );
+        }
+      },
+      child: Column(
+        children: [
+          if (hasDate)
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6.5),
+                child: Text(
+                  messageChat.getDate(),
+                  style: caption1,
+                ),
+              ),
+            ),
           Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6.5),
-              child: Text(
-                messageChat.getDate(),
-                style: caption1,
+            alignment: alignment,
+            child: Container(
+              padding: EdgeInsets.all(16),
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.65,
+                minWidth: 60,
               ),
-            ),
-          ),
-        Align(
-          alignment: alignment,
-          child: Container(
-            padding: EdgeInsets.all(16),
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.65,
-              minWidth: 60,
-            ),
-            decoration: BoxDecoration(
-              color: alignment == Alignment.centerLeft
-                  ? Color(0xff5589F1)
-                  : Color(0xffF5F7F9),
-              borderRadius: BorderRadius.all(
-                  Radius.circular(16) //                 <--- border radius here
+              decoration: BoxDecoration(
+                color: alignment == Alignment.centerLeft
+                    ? Color(0xff5589F1)
+                    : Color(0xffF5F7F9),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(16) //                 <--- border radius here
+                ),
               ),
-            ),
-            child: Stack(
-              children: [
-                if (messageChat.type == 1)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (messageChat.type == 1)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => DocumentPage(
-                                documentUrl: 'messages/${messageChat.content}',
-                              )),
-                            );
-                          },
-                          child: SvgPicture.asset(
+              child: Stack(
+                children: [
+                  if (messageChat.type == 1)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (messageChat.type == 1)
+                          SvgPicture.asset(
                             'assets/icons/message_file.svg',
                             height: 30,
                             color: alignment == Alignment.centerLeft
                                 ? Color(0xffFCFCFC)
                                 : Colors.black,
                           ),
-                        ),
-                      if (messageChat.type == 1)
-                        SizedBox(
-                          width: 10,
-                        ),
-                      Container(
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.65 - 80,
-                          minWidth: 60,
-                        ),
-                        child: Text(
-                          '${messageChat.content}\n',
-                          style: body.copyWith(
-                            color: alignment == Alignment.centerLeft
-                                ? Color(0xffFCFCFC)
-                                : Colors.black,
+                        if (messageChat.type == 1)
+                          SizedBox(
+                            width: 10,
+                          ),
+                        Container(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.65 - 80,
+                            minWidth: 60,
+                          ),
+                          child: Text(
+                            '${messageChat.content}\n',
+                            style: body.copyWith(
+                              color: alignment == Alignment.centerLeft
+                                  ? Color(0xffFCFCFC)
+                                  : Colors.black,
+                            ),
                           ),
                         ),
+                      ],
+                    ),
+                  if (messageChat.type == 0)
+                    Text(
+                      '${messageChat.content}\n',
+                      style: body.copyWith(
+                        color: alignment == Alignment.centerLeft
+                            ? Color(0xffFCFCFC)
+                            : Colors.black,
                       ),
-                    ],
-                  ),
-                if (messageChat.type == 0)
-                  Text(
-                    '${messageChat.content}\n',
-                    style: body.copyWith(
-                      color: alignment == Alignment.centerLeft
-                          ? Color(0xffFCFCFC)
-                          : Colors.black,
+                    ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Text(
+                      messageChat.getTime(),
+                      style: caption,
                     ),
                   ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Text(
-                    messageChat.getTime(),
-                    style: caption,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

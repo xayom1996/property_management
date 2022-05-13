@@ -98,8 +98,8 @@ class ChatCubit extends Cubit<ChatState> {
     return _appBloc.fireStoreService.getChatStream(chatId, limit);
   }
 
-  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId, File? selectedFile) {
-    _appBloc.fireStoreService.sendMessage(content, type, chatId, currentUserId, peerId, selectedFile);
+  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId, String fileUrl) {
+    _appBloc.fireStoreService.sendMessage(content, type, chatId, currentUserId, peerId, fileUrl);
   }
 
   void readMessages(String chatId) {

@@ -41,6 +41,16 @@ class Chat {
     return DateFormat('dd.MM').format(date);
   }
 
+  String getRole() {
+    if (role == 'admin') {
+      return 'админ';
+    }
+    if (role == 'manager') {
+      return 'менеджер';
+    }
+    return role;
+  }
+
   // Map<String, dynamic> toJson() {
   //   return {
   //     'idFrom': idFrom,

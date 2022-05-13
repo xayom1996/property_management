@@ -26,7 +26,8 @@ class _ListChatsPageState extends State<ListChatsPage> {
 
   void isOneChat() {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (context.read<ChatCubit>().state.chats.length == 1) {
+      if (context.read<ChatCubit>().state.chats.length == 1
+          && context.read<ChatCubit>().state.status == ChatStateStatus.success) {
         Navigator.pop(context);
         Navigator.push(
           context,

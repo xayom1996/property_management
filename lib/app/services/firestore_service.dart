@@ -541,7 +541,7 @@ class FireStoreService {
         .snapshots();
   }
 
-  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId, File? selectedFile) async {
+  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId, String fileUrl) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DocumentReference documentReference = _fireStore
         .collection('messages')
@@ -567,40 +567,28 @@ class FireStoreService {
       });
     }
 
-    if (selectedFile != null) {
-      String fileName = selectedFile.path.split('/').last;
-      try {
-        await firebase_storage.FirebaseStorage.instance
-            .ref('messages/$fileName')
-            .putFile(selectedFile);
-        // String _documentUrl = await firebase_storage.FirebaseStorage.instance
-        //     .ref('messages/$fileName')
-        //     .getDownloadURL();
+    if (fileUrl.isNotEmpty) {
+      MessageChat messageChat = MessageChat(
+        idFrom: currentUserId,
+        idTo: peerId,
+        timestamp: (timestamp + 1000).toString(),
+        content: fileUrl,
+        type: 1,
+        read: false,
+      );
 
-        MessageChat messageChat = MessageChat(
-          idFrom: currentUserId,
-          idTo: peerId,
-          timestamp: (timestamp + 1000).toString(),
-          content: fileName,
-          type: 1,
-          read: false,
+      DocumentReference documentReference1 = _fireStore
+          .collection('messages')
+          .doc(chatId)
+          .collection(chatId)
+          .doc((timestamp + 1000).toString());
+
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(
+          documentReference1,
+          messageChat.toJson(),
         );
-
-        documentReference = _fireStore
-            .collection('messages')
-            .doc(chatId)
-            .collection(chatId)
-            .doc((timestamp + 1000).toString());
-
-        FirebaseFirestore.instance.runTransaction((transaction) async {
-          transaction.set(
-            documentReference,
-            messageChat.toJson(),
-          );
-        });
-      } on firebase_core.FirebaseException catch (e) {
-        print(e);
-      }
+      });
     }
   }
 
@@ -618,7 +606,7 @@ class FireStoreService {
       QuerySnapshot ownersQuerySnapshot = await _fireStore.collection('owners').where('managers', arrayContains: currentUser.email).get();
       List owners = [];
       for (var owner in ownersQuerySnapshot.docs) {
-        owners = owners + owner['holders'];
+        owners = owner['holders'];
 
         querySnapshot = await _fireStore.collection('users')
             .where('email', whereIn: owners)

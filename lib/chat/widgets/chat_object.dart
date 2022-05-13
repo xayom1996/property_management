@@ -33,7 +33,7 @@ class ChatObject extends StatelessWidget {
                     //   height: 8,
                     // ),
                     Text(
-                      '(${chat.role})',
+                      '(${chat.getRole()})',
                       style: body.copyWith(
                         color: Color(0xff5589F1)
                       ),

@@ -55,20 +55,23 @@ class AccountPage extends StatelessWidget {
                       iconPath: 'assets/icons/chat.svg',
                       iconColor: Colors.black,
                       backgroundColor: Colors.white,
+                      isLoading: state.status == ChatStateStatus.loading,
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ListChatsPage()),
-                        );
+                        if (state.status != ChatStateStatus.loading) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ListChatsPage()),
+                          );
+                        }
                       },
                     ),
                     if (state.newMessages)
                       const Positioned(
-                        top: 0,
-                        right: 0,
-                        child: UnreadContainer(
-                          size: 14,
-                        )
+                          top: 0,
+                          right: 0,
+                          child: UnreadContainer(
+                            size: 14,
+                          )
                       ),
                   ],
                 );
