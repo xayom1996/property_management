@@ -99,6 +99,8 @@ class _ListChatsPageState extends State<ListChatsPage> {
                       padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
                       child: InkWell(
                           onTap: () {
+                            context.read<ChatCubit>().changeChatId(state.chats[index].chatId);
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => ChatPage(

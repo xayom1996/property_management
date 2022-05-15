@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:property_management/account/models/user.dart';
@@ -26,6 +27,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                   status: AppStatus.loading,
                 ));
                 User _user = await _userRepository.getUser();
+                String? fcmToken = await FirebaseMessaging.instance.getToken();
+                if (fcmToken != null && _user.pushToken != fcmToken) {
+                  _user = _user.copyWith(pushToken: fcmToken);
+                  await _userRepository.updateUser(_user);
+                }
                 Map<String,
                     Map<String,
                         List<Characteristics>>> owners = await fireStoreService

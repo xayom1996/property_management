@@ -13,6 +13,7 @@ class User {
     this.patronymic,
     this.owner,
     required this.role,
+    this.pushToken,
   });
 
   final String id;
@@ -22,6 +23,7 @@ class User {
   final String? patronymic;
   final String role;
   final String? owner;
+  final String? pushToken;
 
   /// Empty user which represents an unauthenticated user.
   static const empty = User(id: '', email: '', role: 'user');
@@ -53,6 +55,7 @@ class User {
     patronymic: json["patronymic"] ?? '',
     role: json["role"] ?? 'user',
     owner: json["owner"] ?? '',
+    pushToken: json["pushToken"] ?? '',
   );
 
   Map<String, dynamic> toJson() => {
@@ -63,6 +66,7 @@ class User {
     "patronymic": patronymic ?? '',
     "role": role,
     "owner": owner ?? '',
+    "pushToken": pushToken ?? '',
   };
 
   User copyWith({
@@ -73,6 +77,7 @@ class User {
     String? patronymic,
     String? role,
     String? owner,
+    String? pushToken,
   }) {
     return User(
       id: id ?? this.id,
@@ -82,6 +87,7 @@ class User {
       patronymic: patronymic ?? this.patronymic,
       role: role ?? this.role,
       owner: owner ?? this.owner,
+      pushToken: pushToken ?? this.pushToken,
     );
   }
 

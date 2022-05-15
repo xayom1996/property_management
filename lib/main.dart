@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,8 @@ import 'package:property_management/analytics/cubit/analytics_cubit.dart';
 import 'package:property_management/analytics/cubit/edit_plan_cubit.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/services/firestore_service.dart';
+import 'package:property_management/app/services/locator.dart';
+import 'package:property_management/app/services/navigator_service.dart';
 import 'package:property_management/app/services/push_notifications_service.dart';
 import 'package:property_management/authentication/cubit/auth/auth_cubit.dart';
 import 'package:property_management/authentication/cubit/recovery_password/recovery_password_cubit.dart';
@@ -50,6 +53,8 @@ Future<void> main() async {
     statusBarBrightness: Brightness.light,
   ));
 
+  setupLocator();
+
   await Hive.initFlutter();
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,6 +76,8 @@ Future<void> main() async {
   final fireStoreService = FireStoreService();
 
   await PushNotificationService().setupInteractedMessage();
+
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
 
   final appBloc = AppBloc(
       userRepository: userRepository,
@@ -146,6 +153,7 @@ class App extends StatelessWidget {
         child: ScreenUtilInit(
           designSize: const Size(375, 812),
           builder: () => MaterialApp(
+            navigatorKey: locator<NavigationService>().navigatorKey,
             title: 'Управление недвижимостью',
             theme: ThemeData(
               // primarySwatch: Colors.blue,

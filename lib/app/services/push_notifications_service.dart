@@ -1,6 +1,17 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/services/locator.dart';
+import 'package:property_management/app/services/navigator_service.dart';
+import 'package:property_management/app/utils/utils.dart';
+import 'package:property_management/chat/cubit/chat_cubit.dart';
+import 'package:property_management/chat/models/chat.dart';
+import 'package:property_management/chat/pages/chat_page.dart';
+
+import '../../chat/pages/list_chats_page.dart';
 // ignore: slash_for_doc_comments
 /**
  * Documents added by Alaa, enjoy ^-^:
@@ -45,11 +56,19 @@ class PushNotificationService {
     // Stream listener
     // This function is called when the app is in the background and user clicks on the notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+
+      // BuildContext context = locator<NavigationService>().navigatorKey.currentState!.context;
+      // context.read<ChatCubit>().getNewMessage(message.data);
+      // String chatId = getChatId(message.data['idFrom'], message.data['idTo']);
+      // Chat? chat = context.read<ChatCubit>().getChat(chatId);
+      // if (chat != null) {
+      //   locator<NavigationService>().navigateToPage(ChatPage(chat: chat));
+      // }
       // Get.toNamed(NOTIFICATIOINS_ROUTE);
-      if (message.data['type'] == 'chat') {
-        // Navigator.pushNamed(context, '/chat',
-        //     arguments: ChatArguments(message));
-      }
+      // if (message.data['type'] == 'chat') {
+      //   Navigator.pushNamed(context, '/chat',
+      //       arguments: ChatArguments(message));
+      // }
     });
     await enableIOSNotifications();
     await registerNotificationListeners();
@@ -68,9 +87,9 @@ class PushNotificationService {
       requestBadgePermission: false,
       requestAlertPermission: false,
     );
-    var initSetttings =
+    var initSettings =
     InitializationSettings(android: androidSettings, iOS: iOSSettings);
-    flutterLocalNotificationsPlugin.initialize(initSetttings,
+    flutterLocalNotificationsPlugin.initialize(initSettings,
         onSelectNotification: (message) async {
           // This function handles the click in the notification when the app is in foreground
           // Get.toNamed(NOTIFICATIOINS_ROUTE);
@@ -78,7 +97,11 @@ class PushNotificationService {
 // onMessage is called when the app is in foreground and a notification is received
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
       // Get.find<HomeController>().getNotificationsNumber();
-      print(message);
+      BuildContext context = locator<NavigationService>().navigatorKey.currentState!.context;
+      if (message != null && context.read<AppBloc>().state.user.id != message.data['idFrom']) {
+        context.read<ChatCubit>().getNewMessage(message.data);
+      }
+
       RemoteNotification? notification = message!.notification;
       AndroidNotification? android = message.notification?.android;
 // If `onMessage` is triggered with a notification, construct our own

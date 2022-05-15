@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
+import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/chat/models/chat.dart';
 import 'package:property_management/chat/models/message_chat.dart';
 
@@ -64,6 +65,64 @@ class ChatCubit extends Cubit<ChatState> {
   //   return firebaseFirestore.collection(collectionPath).doc(docPath).update(dataNeedUpdate);
   // }
 
+  Chat? getChat(String chatId) {
+    int index = state.chats.lastIndexWhere((element) => element.chatId == chatId);
+    if (index == -1) {
+      return null;
+    }
+    return state.chats[index];
+  }
+  void getNewMessage(Map message) {
+    String chatId = getChatId(message['idFrom'], message['idTo']);
+    if (state.currentChatId == chatId) {
+      return;
+    }
+
+    emit(state.copyWith(
+        status: ChatStateStatus.loading
+    ));
+
+    List<Chat> chats = state.chats;
+    int index = chats.lastIndexWhere((element) => element.chatId == getChatId(message['idFrom'], message['idTo']));
+    MessageChat newMessage = MessageChat(
+      idFrom: message['idFrom'],
+      idTo: message['idTo'],
+      read: false,
+      type: int.parse(message['type']),
+      content: message['content'],
+      timestamp: message['timestamp'],
+    );
+
+    if (chats[index].lastMessage == null || chats[index].lastMessage!.timestamp != newMessage.timestamp) {
+      chats[index].unreadMessages = chats[index].unreadMessages + 1;
+    }
+    chats[index].lastMessage = newMessage;
+
+    bool newMessages = state.newMessages;
+
+    chats.sort((a, b) {
+      if (a.lastMessage != null && b.lastMessage != null) {
+        return b.lastMessage!.timestamp.compareTo(a.lastMessage!.timestamp);
+      }
+
+      if (a.lastMessage == null && b.lastMessage == null) {
+        return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      }
+
+      return a.lastMessage != null ? 0 : 1;
+    });
+
+    if (chats[index].unreadMessages == 1) {
+      newMessages = true;
+    }
+
+    emit(state.copyWith(
+      status: ChatStateStatus.success,
+      chats: chats,
+      newMessages: newMessages,
+    ));
+  }
+
   void updateLastMessage(String chatId, MessageChat messageChat) {
     emit(state.copyWith(
         status: ChatStateStatus.loading
@@ -90,7 +149,7 @@ class ChatCubit extends Cubit<ChatState> {
     emit(state.copyWith(
       status: ChatStateStatus.success,
       chats: chats,
-      newMessages:newMessages,
+      newMessages: newMessages,
     ));
   }
 
@@ -98,8 +157,8 @@ class ChatCubit extends Cubit<ChatState> {
     return _appBloc.fireStoreService.getChatStream(chatId, limit);
   }
 
-  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId, String fileUrl) {
-    _appBloc.fireStoreService.sendMessage(content, type, chatId, currentUserId, peerId, fileUrl);
+  void sendMessage(String content, int type, String chatId, String currentUserName, String currentUserId, String peerId, String fileUrl) {
+    _appBloc.fireStoreService.sendMessage(content, type, chatId, currentUserName, currentUserId, peerId, fileUrl);
   }
 
   void readMessages(String chatId) {
@@ -119,6 +178,12 @@ class ChatCubit extends Cubit<ChatState> {
       status: ChatStateStatus.success,
       chats: chats,
       newMessages: newMessages,
+    ));
+  }
+
+  void changeChatId(String chatId) {
+    emit(state.copyWith(
+      currentChatId: chatId
     ));
   }
 }

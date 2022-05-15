@@ -52,6 +52,7 @@ class _ChatPageState extends State<ChatPage> {
     if (textEditingController.text.trim() != '' || fileUrl.isNotEmpty) {
       context.read<ChatCubit>().sendMessage(
           textEditingController.text, 0, widget.chat.chatId,
+          context.read<AppBloc>().state.user.getFullName(),
           widget.chat.currentUserId, widget.chat.peerId,
           fileUrl
       );
@@ -187,6 +188,8 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<bool> onBackPress() {
+    context.read<ChatCubit>().changeChatId('');
+
     Navigator.pop(context);
 
     return Future.value(false);
@@ -203,8 +206,8 @@ class _ChatPageState extends State<ChatPage> {
               padding: EdgeInsets.symmetric(horizontal: 16),
               // width: 300,
               child: TextField(
-                textInputAction: TextInputAction.done,
-                // keyboardType: TextInputType.multiline,
+                // textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.multiline,
                 // autofocus: true,
                 onTap: () {},
                 controller: textEditingController,

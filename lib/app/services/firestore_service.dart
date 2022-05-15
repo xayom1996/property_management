@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:property_management/account/models/user.dart';
@@ -541,7 +542,7 @@ class FireStoreService {
         .snapshots();
   }
 
-  void sendMessage(String content, int type, String chatId, String currentUserId, String peerId, String fileUrl) async {
+  void sendMessage(String content, int type, String chatId, String currentUserName, String currentUserId, String peerId, String fileUrl) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DocumentReference documentReference = _fireStore
         .collection('messages')
@@ -565,6 +566,7 @@ class FireStoreService {
           messageChat.toJson(),
         );
       });
+      // await sendNotification(peerId, 'Новое сообщение от $currentUserName', messageChat.content, message: messageChat);
     }
 
     if (fileUrl.isNotEmpty) {
@@ -589,7 +591,50 @@ class FireStoreService {
           messageChat.toJson(),
         );
       });
+
+      // await sendNotification(peerId, 'Новое сообщение от $currentUserName', messageChat.content, message: messageChat);
     }
+  }
+
+  Future<void> sendNotification(String toUserId, String title, String description, {MessageChat? message}) async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .where('id', isEqualTo: toUserId)
+        .get()
+        .then((value) {
+          if (value.docs.isNotEmpty) {
+            var user = value.docs.first.data();
+            if (user['pushToken'] != null) {
+              String pushToken = user['pushToken'];
+              var data = {
+                'title': title,
+                'content': description
+              };
+
+              String messageType = 'object';
+
+              if (message != null) {
+                data = {
+                  'title': title,
+                  'content': message.content,
+                  'idFrom': message.idFrom,
+                  'idTo': message.idTo,
+                  'timestamp': message.timestamp,
+                  'type': message.type.toString(),
+                  'read': message.read.toString(),
+                };
+                messageType = 'chat';
+              }
+
+              FirebaseMessaging.instance.sendMessage(
+                to: pushToken,
+                data: data,
+                messageType: messageType,
+              );
+            }
+          }
+        })
+        .catchError((error) => throw Exception('Error'));
   }
 
   Future<List<Chat>> getListChats(User currentUser) async {
@@ -606,21 +651,24 @@ class FireStoreService {
       QuerySnapshot ownersQuerySnapshot = await _fireStore.collection('owners').where('managers', arrayContains: currentUser.email).get();
       List owners = [];
       for (var owner in ownersQuerySnapshot.docs) {
-        owners = owner['holders'];
+        owners = owner['holders'] ?? [];
 
         querySnapshot = await _fireStore.collection('users')
             .where('email', whereIn: owners)
             .get();
-        List<User> userOwners = List.from(querySnapshot.docs.map((e) =>
-            User.fromJson(e.data() as Map<String, dynamic>)));
+        if (querySnapshot.docs.isNotEmpty) {
+          List<User> userOwners = List.from(querySnapshot.docs.map((e) =>
+              User.fromJson(e.data() as Map<String, dynamic>)));
 
-        chats += List<Chat>.from(userOwners.map((user) => Chat(
-            name: user.getFullName(),
-            role: owner['name'],
-            chatId: getChatId(currentUser.id, user.id),
-            currentUserId: currentUser.id,
-            peerId: user.id
-        )));
+          chats += List<Chat>.from(userOwners.map((user) =>
+              Chat(
+                  name: user.getFullName(),
+                  role: owner['name'],
+                  chatId: getChatId(currentUser.id, user.id),
+                  currentUserId: currentUser.id,
+                  peerId: user.id
+              )));
+        }
       }
     } else if (currentUser.role == 'owner') {
       QuerySnapshot ownersQuerySnapshot = await _fireStore.collection('owners')
@@ -628,7 +676,7 @@ class FireStoreService {
           .get();
       List managers = [];
       for (var owner in ownersQuerySnapshot.docs) {
-        managers = managers + owner['managers'];
+        managers = managers + (owner['managers'] ?? []);
       }
       if (managers.isNotEmpty) {
         querySnapshot = await _fireStore.collection('users')

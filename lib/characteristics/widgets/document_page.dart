@@ -32,7 +32,16 @@ class _DocumentPageState extends State<DocumentPage> {
     Directory? appDocDir = Platform.isAndroid
         ? await getExternalStorageDirectory() //FOR ANDROID
         : await getApplicationSupportDirectory();
-    String fileName = widget.documentUrl.split('documents/').last;
+    String fileName;
+    if (widget.documentUrl.startsWith('messages/')) {
+      fileName = widget.documentUrl
+          .split('messages/')
+          .last;
+    } else {
+      fileName = widget.documentUrl
+          .split('documents/')
+          .last;
+    }
     String ext = fileName.split('.').last;
     File downloadToFile = File('${appDocDir!.path}/$fileName');
     await firebase_storage.FirebaseStorage.instance

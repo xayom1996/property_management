@@ -12,11 +12,13 @@ enum ChatStateStatus {
 class ChatState extends Equatable {
   const ChatState({
     this.chats = const [],
+    this.currentChatId = '',
     this.newMessages = false,
     this.status = ChatStateStatus.initial,
   });
 
   final List<Chat> chats;
+  final String currentChatId;
   final bool newMessages;
   final ChatStateStatus status;
 
@@ -27,11 +29,13 @@ class ChatState extends Equatable {
     List<Chat>? chats,
     ChatStateStatus? status,
     bool? newMessages,
+    String? currentChatId,
   }) {
     return ChatState(
       chats: chats ?? this.chats,
       status: status ?? this.status,
       newMessages: newMessages ?? this.newMessages,
+      currentChatId: currentChatId ?? this.currentChatId,
     );
   }
 }
