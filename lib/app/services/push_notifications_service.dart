@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
+import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/app/services/locator.dart';
 import 'package:property_management/app/services/navigator_service.dart';
 import 'package:property_management/app/utils/utils.dart';
 import 'package:property_management/chat/cubit/chat_cubit.dart';
 import 'package:property_management/chat/models/chat.dart';
 import 'package:property_management/chat/pages/chat_page.dart';
+import 'package:property_management/objects/bloc/objects_bloc.dart';
 
 import '../../chat/pages/list_chats_page.dart';
 // ignore: slash_for_doc_comments
@@ -96,13 +98,26 @@ class PushNotificationService {
         });
 // onMessage is called when the app is in foreground and a notification is received
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
-      // Get.find<HomeController>().getNotificationsNumber();
       BuildContext context = locator<NavigationService>().navigatorKey.currentState!.context;
-      if (message != null && context.read<AppBloc>().state.user.id != message.data['idFrom']) {
+      if (context.read<AppBloc>().state.status != AppStatus.authenticated) {
+        return;
+      }
+      print(message);
+      if (message!.data != null && context.read<AppBloc>().state.user.id == message.data['idTo']) {
+        if (!context.read<ChatCubit>().showNotification(message.data)){
+          return;
+        }
         context.read<ChatCubit>().getNewMessage(message.data);
       }
 
-      RemoteNotification? notification = message!.notification;
+      if (message.data != null && message.data.containsKey('action')) {
+        context.read<ObjectsBloc>().add(ObjectsUpdateEvent());
+        if (message.data['action'] != 'added') {
+          return;
+        }
+      }
+
+      RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
 // If `onMessage` is triggered with a notification, construct our own
       // local notification to show to users using the created channel.

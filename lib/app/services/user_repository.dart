@@ -79,6 +79,12 @@ class UserRepository {
     return _cache.read<User>(key: userCacheKey) ?? User.empty;
   }
 
+  void reloadUser() async {
+    if (_firebaseAuth.currentUser != null) {
+      await _firebaseAuth.currentUser?.reload();
+    }
+  }
+
   Future<void> addUser() {
     return _fireStore.collection('users')
         .add({

@@ -72,6 +72,20 @@ class ChatCubit extends Cubit<ChatState> {
     }
     return state.chats[index];
   }
+
+  bool showNotification(Map message) {
+    String chatId = getChatId(message['idFrom'], message['idTo']);
+
+    List<Chat> chats = state.chats;
+    int index = chats.lastIndexWhere((element) => element.chatId == chatId);
+
+    if (chats[index].lastMessage != null
+        && int.parse(chats[index].lastMessage!.timestamp) >= int.parse(message['timestamp'])) {
+      return false;
+    }
+    return true;
+  }
+
   void getNewMessage(Map message) {
     String chatId = getChatId(message['idFrom'], message['idTo']);
     if (state.currentChatId == chatId) {

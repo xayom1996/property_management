@@ -77,7 +77,7 @@ Future<void> main() async {
 
   await PushNotificationService().setupInteractedMessage();
 
-  String? fcmToken = await FirebaseMessaging.instance.getToken();
+  // String? fcmToken = await FirebaseMessaging.instance.getToken();
 
   final appBloc = AppBloc(
       userRepository: userRepository,

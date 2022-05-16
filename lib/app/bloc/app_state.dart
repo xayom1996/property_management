@@ -15,6 +15,7 @@ class AppState extends Equatable {
     this.user = User.empty,
     this.owners = const {},
     this.planItems = const [],
+    this.hasConnection = true,
   });
 
   // const AppState.loading(User user, List<String> owners, List<Characteristics> objectItems, List<Characteristics> tenantItems)
@@ -29,21 +30,24 @@ class AppState extends Equatable {
   final User user;
   final Map<String, dynamic> owners;
   final List<Characteristics> planItems;
+  final bool hasConnection;
 
   @override
-  List<Object> get props => [status, user, owners];
+  List<Object> get props => [status, user, owners, hasConnection];
 
   AppState copyWith({
     AppStatus? status,
     User? user,
     Map<String, dynamic>? owners,
     List<Characteristics>? planItems,
+    bool? hasConnection,
   }) {
     return AppState(
       status: status ?? this.status,
       user: user ?? this.user,
       owners: owners ?? this.owners,
       planItems: planItems ?? this.planItems,
+      hasConnection: hasConnection ?? this.hasConnection,
     );
   }
 }

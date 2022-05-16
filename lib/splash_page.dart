@@ -43,18 +43,21 @@ class _SplashPageState extends State<SplashPage> {
         listeners: [
           BlocListener<AppBloc, AppState>(
             listener: (context, state) {
-              Timer(const Duration(milliseconds: 1500), () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) => state.status == AppStatus.unauthenticated
-                        ? AuthorizationPage()
-                        : DashboardPage(),
-                    transitionDuration: Duration.zero,
-                  ),
-                );
-              });
+              if (state.status != AppStatus.loading) {
+                Timer(const Duration(milliseconds: 800), () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                      state.status == AppStatus.unauthenticated
+                          ? AuthorizationPage()
+                          : DashboardPage(),
+                      transitionDuration: Duration.zero,
+                    ),
+                  );
+                });
+              }
             },
         ),
         BlocListener<ObjectsBloc, ObjectsState>(
