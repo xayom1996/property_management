@@ -652,6 +652,9 @@ class FireStoreService {
       List owners = [];
       for (var owner in ownersQuerySnapshot.docs) {
         owners = owner['holders'] ?? [];
+        if (owners.isEmpty) {
+          continue;
+        }
 
         querySnapshot = await _fireStore.collection('users')
             .where('email', whereIn: owners)

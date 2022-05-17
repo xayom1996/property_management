@@ -25,16 +25,10 @@ class Chat {
     if (lastMessage == null) {
       return '';
     }
-    List<String> months = [
-      'января', 'февраля', 'марта',
-      'апреля', 'мая', 'июня',
-      'июля', 'августа', 'сентября',
-      'октября', 'ноября', 'декабря'
-    ];
     DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(lastMessage!.timestamp));
     DateTime now = DateTime.now();
     if (date.day == now.day && date.month == now.month && date.year == now.year) {
-      return DateFormat('KK:mm').format(date);
+      return DateFormat('HH:mm').format(date);
     } else if (date.year != now.year) {
       return DateFormat('dd.MM.yyyy').format(date);
     }

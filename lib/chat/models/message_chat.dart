@@ -49,7 +49,7 @@ class MessageChat {
 
   String getTime() {
     DateTime time = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
-    return DateFormat('KK:mm').format(time);
+    return DateFormat('HH:mm').format(time);
   }
 
   String getDate() {

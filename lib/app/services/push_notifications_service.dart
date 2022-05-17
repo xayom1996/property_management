@@ -112,7 +112,7 @@ class PushNotificationService {
 
       if (message.data != null && message.data.containsKey('action')) {
         context.read<ObjectsBloc>().add(ObjectsUpdateEvent());
-        if (message.data['action'] != 'added') {
+        if (message.notification!.title != 'Новый объект') {
           return;
         }
       }
@@ -143,7 +143,7 @@ class PushNotificationService {
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
       alert: true, // Required to display a heads up notification
-      badge: true,
+      badge: false,
       sound: true,
     );
   }
