@@ -83,7 +83,7 @@ class User {
       id: id ?? this.id,
       email: email ?? this.email,
       firstName: firstName ?? this.firstName,
-      secondName: secondName ?? this.patronymic,
+      secondName: secondName ?? this.secondName,
       patronymic: patronymic ?? this.patronymic,
       role: role ?? this.role,
       owner: owner ?? this.owner,

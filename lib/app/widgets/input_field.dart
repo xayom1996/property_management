@@ -27,6 +27,7 @@ class BoxInputField extends StatefulWidget {
   final bool autoFocus;
   final TextInputType? keyboardType;
   final FocusNode? focusNode;
+  final bool? required;
 
 
   BoxInputField({
@@ -38,6 +39,7 @@ class BoxInputField extends StatefulWidget {
     this.placeholder = '',
     this.enabled = true,
     this.disableSpace = false,
+    this.required = false,
     this.leading,
     this.trailing,
     this.trailingTapped,
@@ -132,7 +134,30 @@ class _BoxInputFieldState extends State<BoxInputField> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BoxText.caption(widget.title),
+                        widget.required == true
+                          ? Row(
+                            children: [
+                              Text(
+                                widget.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: caption1,
+                              ),
+                              SizedBox(width: 4,),
+                              Text(
+                                '*',
+                                style: caption1.copyWith(
+                                  color: Colors.red
+                                ),
+                              ),
+                            ],
+                          )
+                        : Text(
+                            widget.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: caption1,
+                          ),
                         widget.title == 'Отмеченный клиент' && widget.controller!.text.isNotEmpty
                         ? Container(
                             width: MediaQuery.of(context).size.width,

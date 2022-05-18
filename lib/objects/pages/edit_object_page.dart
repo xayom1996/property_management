@@ -123,6 +123,7 @@ class EditObjectPage extends StatelessWidget {
                                     title: item.title,
                                     additionalInfo: item.additionalInfo,
                                     enabled: false,
+                                    required: context.read<AddObjectCubit>().isRequired(item.id),
                                     onTap: () {
                                       if (context.read<AddObjectCubit>().showInCreating(item)) {
                                         Navigator.push(

@@ -36,6 +36,11 @@ class AddObjectCubit extends Cubit<AddObjectState> {
         && items[15].getFullValue().isNotEmpty && items[15].value != '0';
   }
 
+  bool isRequired(int index) {
+    List listRequiredIds = [0, 1, 2, 3, 6, 7, 15];
+    return listRequiredIds.contains(index);
+  }
+
   bool showInCreating(Characteristics item) {
     return item.id != 8 && item.id != 13;
   }

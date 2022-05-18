@@ -364,7 +364,7 @@ class _TotalChartsState extends State<TotalCharts> {
                             scrollDirection: Axis.horizontal,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              // mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
                                   padding: EdgeInsets.only(bottom: 12, left: 24, right: 24, top: 24),
