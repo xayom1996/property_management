@@ -65,6 +65,7 @@ dependencies:
   flutter_local_notifications: ^9.5.0
   get_it: ^7.2.0
   connectivity_plus: ^2.3.0
+  flutter_app_badger: ^1.4.0
 
 dependency_overrides:
   firebase_messaging_platform_interface: 3.1.6

@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
@@ -78,6 +79,7 @@ Future<void> main() async {
   await PushNotificationService().setupInteractedMessage();
 
   // String? fcmToken = await FirebaseMessaging.instance.getToken();
+  FlutterAppBadger.removeBadge();
 
   final appBloc = AppBloc(
       userRepository: userRepository,

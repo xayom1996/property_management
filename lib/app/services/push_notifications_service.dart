@@ -112,9 +112,9 @@ class PushNotificationService {
 
       if (message.data != null && message.data.containsKey('action')) {
         context.read<ObjectsBloc>().add(ObjectsUpdateEvent());
-        if (message.notification!.title != 'Новый объект') {
-          return;
-        }
+        // if (message.notification!.title != 'Новый объект') {
+        //   return;
+        // }
       }
 
       RemoteNotification? notification = message.notification;
