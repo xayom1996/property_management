@@ -98,8 +98,8 @@ class _ListChatsPageState extends State<ListChatsPage> {
                     return Padding(
                       padding: EdgeInsets.symmetric(horizontal: horizontalPadding(context, 44)),
                       child: InkWell(
-                          onTap: () {
-                            context.read<ChatCubit>().changeChatId(state.chats[index].chatId);
+                          onTap: () async {
+                            await context.read<ChatCubit>().changeChatId(state.chats[index].chatId);
 
                             Navigator.push(
                               context,

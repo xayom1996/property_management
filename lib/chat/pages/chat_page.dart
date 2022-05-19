@@ -117,6 +117,14 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Future<bool> onBackPress() async {
+    await context.read<ChatCubit>().changeChatId('');
+
+    Navigator.pop(context);
+
+    return Future.value(false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -137,9 +145,7 @@ class _ChatPageState extends State<ChatPage> {
                 iconPath: 'assets/icons/back.svg',
                 iconColor: Colors.black,
                 backgroundColor: Colors.white,
-                onTap: () {
-                  Navigator.pop(context);
-                },
+                onTap: onBackPress
               ),
               // Spacer(),
               Expanded(
@@ -185,14 +191,6 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
     );
-  }
-
-  Future<bool> onBackPress() {
-    context.read<ChatCubit>().changeChatId('');
-
-    Navigator.pop(context);
-
-    return Future.value(false);
   }
 
   Widget buildInput() {

@@ -20,7 +20,7 @@ import 'package:property_management/characteristics/models/characteristics.dart'
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc({required UserRepository userRepository, required FireStoreService fireStore,})
-      : _userRepository = userRepository,
+      : userRepository = userRepository,
         fireStoreService = fireStore,
         super(
         const AppState(status: AppStatus.loading),
@@ -35,7 +35,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             add(AppConnectionUpdated(hasConnection));
           });
 
-          _userSubscription = _userRepository.user.listen(
+          _userSubscription = userRepository.user.listen(
               (user) async {
                 emit(state.copyWith(
                   status: AppStatus.loading,
@@ -47,13 +47,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
                 if (!hasConnection) {
                   return;
                 }
-                User _user = await _userRepository.getUser();
+                User _user = await userRepository.getUser();
                 add(AppUserChanged(_user));
               }
           );
         }
 
-  final UserRepository _userRepository;
+  final UserRepository userRepository;
   final FireStoreService fireStoreService;
   late final StreamSubscription<User> _userSubscription;
   late final StreamSubscription _connectivitySubscription;
@@ -72,7 +72,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     String? fcmToken = await FirebaseMessaging.instance.getToken();
     if (fcmToken != null && _user.isNotEmpty && _user.pushToken != fcmToken) {
       _user = _user.copyWith(pushToken: fcmToken);
-      await _userRepository.updateUser(_user);
+      await userRepository.updateUser(_user);
     }
     Map<String,
         Map<String,
@@ -93,7 +93,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(state.copyWith(
         status: AppStatus.loading,
     ));
-    await _userRepository.updateUser(event.user);
+    await userRepository.updateUser(event.user);
     emit(state.copyWith(
       status: AppStatus.authenticated,
       user: event.user,
@@ -111,7 +111,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _onLogoutRequested(AppLogoutRequested event, Emitter<AppState> emit) {
-    unawaited(_userRepository.logOut());
+    unawaited(userRepository.logOut());
   }
 
   void _onConnectionUpdated(AppConnectionUpdated event, Emitter<AppState> emit) async {
@@ -129,7 +129,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       );
     } else {
       if (state.hasConnection == false) {
-        User _user = await _userRepository.getUser();
+        User _user = await userRepository.getUser();
         add(AppUserChanged(_user));
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Интернет-соединение восстановлено'),

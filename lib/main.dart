@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:device_preview_screenshot/device_preview_screenshot.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -91,6 +92,10 @@ Future<void> main() async {
         DevicePreview(
           enabled: !kReleaseMode,
           // enabled: false,
+          tools: [
+            ...DevicePreview.defaultTools,
+            const DevicePreviewScreenshot(),
+          ],
           builder: (context) => App(
               userRepository: userRepository,
               fireStoreService: fireStoreService,

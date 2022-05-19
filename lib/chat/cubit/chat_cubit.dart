@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:property_management/account/models/user.dart';
 import 'package:property_management/app/bloc/app_bloc.dart';
 import 'package:property_management/app/bloc/app_state.dart';
 import 'package:property_management/app/utils/utils.dart';
@@ -195,9 +196,19 @@ class ChatCubit extends Cubit<ChatState> {
     ));
   }
 
-  void changeChatId(String chatId) {
+  Future<void> changeChatId(String chatId) async {
+    print(chatId);
     emit(state.copyWith(
       currentChatId: chatId
     ));
+    User _user = _appBloc.state.user;
+    String chattingWith;
+    if (chatId == ''){
+      chattingWith = '';
+    } else {
+      chattingWith = chatId.replaceAll(_user.id, '').replaceAll('-', '');
+    }
+    _user = _user.copyWith(chattingWith: chattingWith);
+    await _appBloc.userRepository.updateUser(_user);
   }
 }
