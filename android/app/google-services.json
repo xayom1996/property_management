@@ -40,6 +40,42 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034640285854:android:c05de10948f535f5d91b8f",
+        "android_client_info": {
+          "package_name": "com.property.management"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034640285854-1ualcegqdj3r85jg3dougjvdbpl8pj7h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMbQZxtmIVjHRJxW2pmPyh2SkhZMwmpsI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034640285854-1ualcegqdj3r85jg3dougjvdbpl8pj7h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1034640285854-g2nfodvgsju6jkuvgk98ko7q883abpol.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "A439B5ABK7.com.example.propertymanagement"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
