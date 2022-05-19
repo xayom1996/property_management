@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.property_management">
+    package="com.property.management">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="property_management"
