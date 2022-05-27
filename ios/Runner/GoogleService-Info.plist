@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1034640285854-g2nfodvgsju6jkuvgk98ko7q883abpol.apps.googleusercontent.com</string>
+	<string>1034640285854-n088u7lpee0a1do00v5ln4dcsjt6aqpj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1034640285854-g2nfodvgsju6jkuvgk98ko7q883abpol</string>
+	<string>com.googleusercontent.apps.1034640285854-n088u7lpee0a1do00v5ln4dcsjt6aqpj</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAG49Mm3CWjuMSAncoy4100QDedkTmjIDU</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>A439B5ABK7.com.example.propertymanagement</string>
+	<string>com.property.management.F3T9J976MY</string>
 	<key>PROJECT_ID</key>
 	<string>property-management-df2b6</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1034640285854:ios:d48632e4ba452b90d91b8f</string>
+	<string>1:1034640285854:ios:663ef2dc4f791f90d91b8f</string>
 </dict>
 </plist>
